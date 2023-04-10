@@ -101,6 +101,10 @@ class Propiedad(models.Model):
     propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     tipopropiedad_id = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
     rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad')
+    
+    def __str__(self):
+        return self.cod_ppdd
+    
             
 # model banco-cuenta-tipo cuenta
 
@@ -125,10 +129,70 @@ class Cuenta(models.Model):
     cuenta = models.IntegerField()
     banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
     tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
-    estado_cuenta = models.BooleanField()
+    estado_cuenta = models.CharField( verbose_name='Estado de cuenta')
     propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.cuenta
+    
+# model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
+
+class Arrendatario(models.Model):
+    rut_arr = models.CharField(max_length=12, unique=True, verbose_name='Rut Arrendatario')
+    pri_nom_arr = models.CharField(max_length=50, verbose_name='Primer Nombre')
+    seg_nom_arr = models.CharField(max_length=50, verbose_name='Segundo Nombre')
+    pri_ape_arr = models.CharField(max_length=50, verbose_name='Primero Apellido')
+    seg_ape_arr = models.CharField(max_length=50, verbose_name='Segundo Apellido')
+    contacto_arr = models.IntegerField( verbose_name='Contacto')
+    correo_arr = models.EmailField(verbose_name='Correo')
+    cuenta = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
+    estado = models.BooleanField()
+    saldo = models.IntegerField()
+    
+    def __str__(self):
+        return self.rut_arr
+    
+class Arriendo(models.Model):
+    cod_arriendo = models.IntegerField( verbose_name='Codigo Arriendo')
+    arrendatario_id = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
+    fecha_inicio = models.DateField( verbose_name='Fecha de Inicio')
+    fecha_termino = models.DateField( verbose_name= 'Fecha de Termino')
+    fecha_pri_ajuste = models.DateField(verbose_name='Fecha Primer Reajuste')
+    periodo_reajuste = models.DateField(verbose_name='Perdio Reajuste')
+    monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
+    fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo')
+    estado_arriendo = models.CharField(verbose_name='Estado del arriendo')
+    porcentaje_multa = models.IntegerField(verbose_name='Porcentaje Multa')
+    
+    def __str__(self):
+        return self.cod_arriendo
+    
+class ServiciosExtras(models.Model):
+    arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
+    descripcion = models.CharField(max_length=250)
+    fecha = models.DateField()
+    Monto = models.IntegerField()
+    
+    def __str__(self):
+        return self.arriendo_id +' - '+ self.nom_servicio
+    
+class Gastocomun(models.Model):
+    arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    valor = models.IntegerField()
+    fecha = models.DateField()
+    
+    def __str__(self):
+        return self.arriendo_id + ' - ' + self.valor
+    
+class DetalleArriendo(models.Model):
+    arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    propiedad_id = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
+    fecha_pago = models.DateField()
+    
+    def __str__(self):
+        return self.arriendo_id
+    
+    
     
     
