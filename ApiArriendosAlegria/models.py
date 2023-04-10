@@ -63,7 +63,7 @@ class Trabajador(models.Model):
     def __str__(self):
         return self.rut_trab
  
-# model propietario-propiedad   
+# model propietario-personalidadJuridica   
 
 class Propietario(models.Model):
     rut_prop = models.CharField(max_length=12, unique=True, verbose_name='Rut Propietario')
@@ -79,6 +79,28 @@ class Propietario(models.Model):
     def __str__(self):
         return self.rut_prop
     
+class PersonalidadJuridica(models.Model):
+    rol = models.CharField(max_length=80, unique=True)
+    razon_social = models.CharField(max_length=250, verbose_name='Razón Social')
+    representante = models.CharField(max_length=150)
+    propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.rol
+
+# model propiedad - tipo propiedad  
+
+class TipoPropiedad(models.Model):
+    nombre_tipoppdd = models.CharField(max_length=150, verbose_name='Tipo de propiedad')
+    descripcion_tipoppdd = models.CharField(max_length=250, verbose_name='Descripción')
+    
+class Propiedad(models.Model):
+    cod_ppdd = models.CharField(max_length=40, unique=True, verbose_name='Código Propiedad')
+    direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
+    comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
+    propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
+    tipopropiedad_id = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
+    rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad')
             
 # model banco-cuenta-tipo cuenta
 
@@ -101,8 +123,8 @@ class TipoCuenta(models.Model):
     
 class Cuenta(models.Model):
     cuenta = models.IntegerField()
-    tipo_cuenta = models.CharField(max_length=150, verbose_name='Tipo de cuenta')
     banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
+    tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
     estado_cuenta = models.BooleanField()
     propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     
