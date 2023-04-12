@@ -25,14 +25,14 @@ sexo = {
 # Models region-comuna
 
 class Region(models.Model):
-    id = models.CharField(primary_key=True )
+    id = models.CharField(primary_key=True , max_length=40)
     nom_reg = models.CharField(max_length=200, verbose_name="Nombre Región")
     
     def __str__(self):
         return self.nom_reg
     
 class Comuna(models.Model):
-    id = models.CharField(primary_key=True)
+    id = models.CharField(primary_key=True, max_length=40)
     nom_com = models.CharField(max_length=200, unique=True, verbose_name="Nombre Comuna")
     reg_id = models.ForeignKey(Region, on_delete= models.CASCADE)
     
@@ -130,7 +130,7 @@ class Cuenta(models.Model):
     cuenta = models.IntegerField()
     banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
     tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
-    estado_cuenta = models.CharField( verbose_name='Estado de cuenta')
+    estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')
     propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     
     def __str__(self):
@@ -162,7 +162,7 @@ class Arriendo(models.Model):
     periodo_reajuste = models.DateField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo')
-    estado_arriendo = models.CharField(verbose_name='Estado del arriendo')
+    estado_arriendo = models.CharField(max_length=120, verbose_name='Estado del arriendo')
     porcentaje_multa = models.IntegerField(verbose_name='Porcentaje Multa')
     
     def __str__(self):
