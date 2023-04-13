@@ -1,4 +1,6 @@
-from rest_framework import status
+from rest_framework import status, permissions
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -7,6 +9,8 @@ from ApiArriendosAlegria.serializers import SerializadorUsuario
 
 
 @api_view(['GET', 'POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([permissions.IsAuthenticated])
 def user_api_view(request):
 
     # List
