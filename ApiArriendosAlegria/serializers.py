@@ -1,5 +1,8 @@
 from rest_framework import serializers
-from ApiArriendosAlegria.models import Usuario
+from ApiArriendosAlegria.models import Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
+                                        TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
+                                        Gastocomun, DetalleArriendo 
+
 
 
 class SerializadorTokenUsuario(serializers.ModelSerializer):
@@ -37,3 +40,29 @@ class SerializadorListaUsuario(serializers.ModelSerializer):
             'email': instance['email'],
             'password': instance['password'],
         }
+        
+class serializerRegion(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Region
+        fields = '__all__'
+
+class serializerComuna(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Comuna
+        fields = '__all__'
+        
+class serializerTipoTrabajado(serializers.ModelSerializer):
+    
+    class Meta:
+        model = TipoTrabajador
+        fields = '__all__'
+        
+class serializerTrabajador(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Trabajador
+        fields = '__all__'
+
+    
