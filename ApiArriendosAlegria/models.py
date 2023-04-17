@@ -78,7 +78,7 @@ class Trabajador(models.Model):
     comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     tipo_trab = models.ForeignKey(TipoTrabajador, on_delete=models.CASCADE, verbose_name='Area Trabajador')
     cuenta = models.CharField(max_length = 120)
-    # agregar usuario|
+    usuario_id = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.rut_trab
