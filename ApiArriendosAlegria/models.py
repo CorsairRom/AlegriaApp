@@ -57,6 +57,27 @@ class Comuna(models.Model):
     
     def __str__(self):
         return self.nom_com
+
+# model banco-cuenta-tipo cuenta
+
+class Banco(models.Model):
+    nombre_banco = models.CharField(max_length=180, unique=True, verbose_name='Nombre del Banco')
+    nic_banco = models.CharField(max_length=50, unique=True, verbose_name='Siglas Banco')
+    cod_banco = models.CharField(max_length=100, unique=True, verbose_name='Código Banco ')
+
+    def __str__(self):
+        return self.nic_banco
+    
+
+class TipoCuenta(models.Model):
+    nom_cuenta = models.CharField(max_length=150, verbose_name='Nombre de la cuenta')
+    desc_cuenta = models.CharField(max_length=250, verbose_name='Descripcion de la cuenta')
+    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.nom_cuenta
+    
+
     
 # model trabajador
 
@@ -93,8 +114,8 @@ class Propietario(models.Model):
     seg_ape_prop = models.CharField(max_length=50, verbose_name='Segundo Apellido')
     direccion_prop = models.CharField(max_length=200, verbose_name='Dirección Principal')
     comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
-    email_prop = models.EmailField()
-    contacto_prop = models.IntegerField()
+    email_prop = models.EmailField(verbose_name='Email Propietario')
+    contacto_prop = models.IntegerField(verbose_name='Contacto Propietario')
     
     def __str__(self):
         return self.rut_prop
@@ -125,35 +146,16 @@ class Propiedad(models.Model):
     def __str__(self):
         return self.cod_ppdd
     
-            
-# model banco-cuenta-tipo cuenta
-
-class Banco(models.Model):
-    nombre_banco = models.CharField(max_length=180, unique=True, verbose_name='Nombre del Banco')
-    nic_banco = models.CharField(max_length=50, unique=True, verbose_name='Siglas Banco')
-    cod_banco = models.CharField(max_length=100, unique=True, verbose_name='Código Banco ')
-
-    def __str__(self):
-        return self.nic_banco
-    
-
-class TipoCuenta(models.Model):
-    nom_cuenta = models.CharField(max_length=150, verbose_name='Nombre de la cuenta')
-    desc_cuenta = models.CharField(max_length=250, verbose_name='Descripcion de la cuenta')
-    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.nom_cuenta
-    
 class Cuenta(models.Model):
-    cuenta = models.IntegerField()
+    cuenta = models.IntegerField(verbose_name='Numero de cuenta')
     banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
     tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
     estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')
-    propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
+    propietario_id = models.IntegerField( verbose_name='Propietario de la cuenta')
     
     def __str__(self):
-        return self.cuenta
+        return self.cuenta            
+
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
 
