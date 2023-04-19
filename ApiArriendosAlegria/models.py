@@ -70,13 +70,19 @@ class Banco(models.Model):
 
 class TipoCuenta(models.Model):
     nom_cuenta = models.CharField(max_length=150, verbose_name='Nombre de la cuenta')
-    desc_cuenta = models.CharField(max_length=250, verbose_name='Descripcion de la cuenta')
-    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
-    
+   
     def __str__(self):
         return self.nom_cuenta
     
-
+class Cuenta(models.Model):
+    cuenta = models.IntegerField(verbose_name='Numero de cuenta')
+    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
+    tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
+    estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')
+    propietario_rut = models.CharField( max_length=12, verbose_name='Propietario de la cuenta')
+    
+    def __str__(self):
+        return self.cuenta      
     
 # model trabajador
 
@@ -143,17 +149,7 @@ class Propiedad(models.Model):
     rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad')
     
     def __str__(self):
-        return self.cod_ppdd
-    
-class Cuenta(models.Model):
-    cuenta = models.IntegerField(verbose_name='Numero de cuenta')
-    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
-    tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
-    estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')
-    propietario_id = models.IntegerField( verbose_name='Propietario de la cuenta')
-    
-    def __str__(self):
-        return self.cuenta            
+        return self.cod_ppdd      
 
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
