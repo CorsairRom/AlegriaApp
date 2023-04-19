@@ -62,7 +62,6 @@ class Comuna(models.Model):
 
 class Banco(models.Model):
     nombre_banco = models.CharField(max_length=180, unique=True, verbose_name='Nombre del Banco')
-    nic_banco = models.CharField(max_length=50, unique=True, verbose_name='Siglas Banco')
     cod_banco = models.CharField(max_length=100, unique=True, verbose_name='Código Banco ')
 
     def __str__(self):
