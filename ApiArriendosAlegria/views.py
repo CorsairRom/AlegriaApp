@@ -144,3 +144,25 @@ def get_post_api_CrudTyperWorkers(request):
             typerWorkers_srz.save()
             return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
         return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+def get_put_delete_CrudTyperWorkers(request, tpTrab_id):
+    # queryset of typeWorker
+    typerWorkers = TipoTrabajador.objects.filter(id=tpTrab_id).first()
+    if typerWorkers:
+        # obtain a name for the typeWorker
+        tipoName = typerWorkers.tipo
+        # retrieve typeWorker
+        if request.method == 'GET':
+            typerWorkers_srz = serializerTipoTrabajado(typerWorkers)
+            return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
+        # update typeWorker
+        elif request.method == 'PUT':
+            typerWorkers_srz = serializerTipoTrabajado(typerWorkers, data=request.data)
+            if typerWorkers_srz.is_valid():
+                typerWorkers_srz.save()
+                return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            typerWorkers.delete()
+            return Response({'message' : f'TypeWorker ID : {tpTrab_id} deleted'}, status=status.HTTP_200_OK)
+    return Response({'message': f"TypeWorker ID:{tpTrab_id} not have TypeWorker"}, status=status.HTTP_400_BAD_REQUEST)
