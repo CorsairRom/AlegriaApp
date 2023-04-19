@@ -58,7 +58,7 @@ class Comuna(models.Model):
     def __str__(self):
         return self.nom_com
 
-# model banco-cuenta-tipo cuenta
+# model banco
 
 class Banco(models.Model):
     nombre_banco = models.CharField(max_length=180, unique=True, verbose_name='Nombre del Banco')
@@ -68,13 +68,27 @@ class Banco(models.Model):
         return self.nombre_banco
     
 
+# relations for the cuenta model and the tipo cuenta model    
+
+
 class TipoCuenta(models.Model):
     nom_cuenta = models.CharField(max_length=150, verbose_name='Nombre de la cuenta')
-    desc_cuenta = models.CharField(max_length=250, verbose_name='Descripcion de la cuenta')
-    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.nom_cuenta
+
+
+class Cuenta(models.Model):
+    cuenta = models.IntegerField(verbose_name='Numero de cuenta')
+    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
+    tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
+    estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')
+    propietario_rut = models.CharField( max_length=12, verbose_name='Propietario de la cuenta')
+    
+    def __str__(self):
+        return self.propietario_rut        
+
+
     
 
     
@@ -145,15 +159,7 @@ class Propiedad(models.Model):
     def __str__(self):
         return self.cod_ppdd
     
-class Cuenta(models.Model):
-    cuenta = models.IntegerField(verbose_name='Numero de cuenta')
-    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
-    tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
-    estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')
-    propietario_id = models.IntegerField( verbose_name='Propietario de la cuenta')
-    
-    def __str__(self):
-        return self.cuenta            
+        
 
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
@@ -214,6 +220,5 @@ class DetalleArriendo(models.Model):
     def __str__(self):
         return self.arriendo_id
     
-    
-    
+
     
