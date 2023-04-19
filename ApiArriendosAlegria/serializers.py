@@ -64,5 +64,23 @@ class serializerTrabajador(serializers.ModelSerializer):
     class Meta:
         model = Trabajador
         fields = '__all__'
+        
+class serializerBanco(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Banco
+        fields = '__all__'
+        
+class serializerTipoCuenta(serializers.ModelSerializer):
+    
+    class Meta:
+        model = TipoCuenta
+        fields = '__all__'
+        
+class serializerCuenta(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Cuenta
+        fields = '__all__'
 
     
