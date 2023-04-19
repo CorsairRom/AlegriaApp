@@ -7,8 +7,9 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes
-from ApiArriendosAlegria.models import Banco, Region, Comuna
-from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador
+from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabajador
+from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
+                serializerTipoCuenta
 from django.db import transaction
 
 import time
@@ -108,5 +109,20 @@ def get_api_comunas_by_id_reg(request, id_reg):
             return Response(comunas_srz.data, status=status.HTTP_200_OK)
     return Response({'message':f'Comunas with ID: {id_reg} not found'}, status=status.HTTP_400_BAD_REQUEST)
 
+#-----Api Banks only method get
+@api_view(['GET'])
+def get_api_banks(request):
+    #List Banks
+    if request.method == 'GET':
+        bancos = Banco.objects.all()
+        bancos_srz = serializerBanco(bancos, many = True)
+        return Response(bancos_srz.data, status=status.HTTP_200_OK)
 
-
+#-----Api TypeAccountsBanks only method get
+@api_view(['GET'])
+def get_api_TypeAccountsBanks(request):
+    #List TypeAccounts
+    if request.method == 'GET':
+        typeAcounts = TipoCuenta.objects.all()
+        typeAcounts_srz = serializerTipoCuenta(typeAcounts, many = True)
+        return Response(typeAcounts_srz.data, status=status.HTTP_200_OK)
