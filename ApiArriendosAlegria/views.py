@@ -131,7 +131,7 @@ def get_api_TypeAccountsBanks(request):
 #-----Api Crud TypeWorkers
 
 @api_view(['GET', 'POST'])
-def get_api_CrudTyperWorkers(request):
+def get_post_api_CrudTyperWorkers(request):
     # List typeWorkers
     if request.method == 'GET':
         typerWorkers = TipoTrabajador.objects.all()
