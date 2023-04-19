@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from ApiArriendosAlegria.models import Banco
+from ApiArriendosAlegria.models import Banco, Region, Comuna
 from ApiArriendosAlegria.serializers import SerializadorTokenUsuario
 from django.db import transaction
 
@@ -87,29 +87,3 @@ class Logout(APIView):
                             status=status.HTTP_409_CONFLICT)
 
 
-def load_data_bank(request):
-    
-    path = 'list-bank-chile.json'
-    with open(path, 'r', encoding='utf-8-sig') as file:
-        try:
-            dataBank = json.load(file)
-            msg = {"message": dataBank}
-        except json.decoder.JSONDecodeError:
-            msg = {'Error': "Error al abrir el archivo"}
-            
-    with transaction.atomic():        
-        for data in dataBank:
-            banks = Banco()
-            # print(data)
-            banks.nombre_banco = data['name']
-            banks.cod_banco = data['code']
-            time.sleep(1)
-            banks.save()
-    
-    
-    d = Banco.objects.all()
-    print(d)
-    
-        
-    
-    return JsonResponse(msg)
