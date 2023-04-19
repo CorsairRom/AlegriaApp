@@ -6,9 +6,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from ApiArriendosAlegria.models import Banco
-
+from ApiArriendosAlegria.models import Banco, Region, Comuna
 from ApiArriendosAlegria.serializers import SerializadorTokenUsuario
+from django.db import transaction
+
+import time
+import json
 
 
 # Create your views here.

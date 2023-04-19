@@ -44,14 +44,14 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 # Models region-comuna
 
 class Region(models.Model):
-    id = models.CharField(primary_key=True , max_length=40)
-    nom_reg = models.CharField(max_length=200, verbose_name="Nombre Región")
+    id = models.IntegerField(verbose_name="Numero Región", primary_key=True)
+    orden = models.IntegerField(verbose_name="orden region", default=0, unique=True)
+    nom_reg = models.CharField(max_length=250, verbose_name="Nombre Región", unique=True)
     
     def __str__(self):
         return self.nom_reg
     
 class Comuna(models.Model):
-    id = models.CharField(primary_key=True, max_length=40)
     nom_com = models.CharField(max_length=200, unique=True, verbose_name="Nombre Comuna")
     reg_id = models.ForeignKey(Region, on_delete= models.CASCADE)
     
