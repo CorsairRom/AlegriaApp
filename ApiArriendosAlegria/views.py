@@ -6,8 +6,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.decorators import api_view, permission_classes
 from ApiArriendosAlegria.models import Banco, Region, Comuna
-from ApiArriendosAlegria.serializers import SerializadorTokenUsuario
+from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador
 from django.db import transaction
 
 import time
@@ -85,5 +86,27 @@ class Logout(APIView):
         except:
             return Response({'ERROR': 'No se ha encontrado el token ingresado'},
                             status=status.HTTP_409_CONFLICT)
+            
+            
+#-----Api Regiones only method get
+@api_view(['GET'])
+def get_api_regions(request):
+    #List regions
+    if request.method == 'GET':
+        regiones = Region.objects.all()
+        regiones_srz = serializerRegion(regiones, many = True)
+        return Response(regiones_srz.data, status=status.HTTP_200_OK)
+
+
+#-----Api Comunas filtered by id_reg only method get
+@api_view(['GET'])
+def get_api_comunas_by_id_reg(request, id_reg):
+    comunas = Comuna.objects.filter(reg_id = id_reg)
+    if comunas:
+        if request.method == 'GET':
+            comunas_srz = serializerComuna(comunas, many = True)
+            return Response(comunas_srz.data, status=status.HTTP_200_OK)
+    return Response({'message':f'Comunas with ID: {id_reg} not found'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
