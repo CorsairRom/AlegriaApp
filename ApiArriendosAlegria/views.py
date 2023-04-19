@@ -165,4 +165,4 @@ def get_put_delete_CrudTyperWorkers(request, tpTrab_id):
         elif request.method == 'DELETE':
             typerWorkers.delete()
             return Response({'message' : f'TypeWorker ID : {tpTrab_id} deleted'}, status=status.HTTP_200_OK)
-    return Response({'message': f"TypeWorker ID:{tpTrab_id} not have TypeWorker"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'message': f"TypeWorker ID:{tpTrab_id} not have TypeWorker"}, status=status.HTTP_400_BAD_REQUEST) #fix detail with name
