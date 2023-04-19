@@ -1,11 +1,12 @@
 from datetime import datetime
 from django.contrib.sessions.models import Session
-
+from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
+from ApiArriendosAlegria.models import Banco
 
 from ApiArriendosAlegria.serializers import SerializadorTokenUsuario
 
@@ -81,3 +82,5 @@ class Logout(APIView):
         except:
             return Response({'ERROR': 'No se ha encontrado el token ingresado'},
                             status=status.HTTP_409_CONFLICT)
+
+

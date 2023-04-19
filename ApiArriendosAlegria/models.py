@@ -65,7 +65,7 @@ class Banco(models.Model):
     cod_banco = models.CharField(max_length=100, unique=True, verbose_name='Código Banco ')
 
     def __str__(self):
-        return self.nic_banco
+        return self.nombre_banco
     
 
 class TipoCuenta(models.Model):
