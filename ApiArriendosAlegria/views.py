@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes
-from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabajador
+from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador
 from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
                 serializerTipoCuenta
 from django.db import transaction
@@ -126,3 +126,21 @@ def get_api_TypeAccountsBanks(request):
         typeAcounts = TipoCuenta.objects.all()
         typeAcounts_srz = serializerTipoCuenta(typeAcounts, many = True)
         return Response(typeAcounts_srz.data, status=status.HTTP_200_OK)
+    
+    
+#-----Api Crud TypeWorkers
+
+@api_view(['GET', 'POST'])
+def get_api_CrudTyperWorkers(request):
+    # List typeWorkers
+    if request.method == 'GET':
+        typerWorkers = TipoTrabajador.objects.all()
+        typerWorkers_srz = serializerTipoTrabajado(typerWorkers, many = True)
+        return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
+    #Create typeWorkers
+    elif request.method == 'POST':
+        typerWorkers_srz = serializerTipoTrabajado(data=request.data)
+        if typerWorkers_srz.is_valid():
+            typerWorkers_srz.save()
+            return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
+        return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
