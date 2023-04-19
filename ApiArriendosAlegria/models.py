@@ -79,7 +79,7 @@ class Cuenta(models.Model):
     banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
     tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
     estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')
-    propietario_rut = models.CharField( max_length=12, verbose_name='Propietario de la cuenta')
+    propietario_rut = models.CharField( max_length=12, verbose_name='Propietario de la cuenta', default='01.234.456-7')
     
     def __str__(self):
         return self.cuenta      
