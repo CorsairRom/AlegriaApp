@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes
-from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabajador
+from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador
 from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
                 serializerTipoCuenta
 from django.db import transaction
@@ -126,3 +126,43 @@ def get_api_TypeAccountsBanks(request):
         typeAcounts = TipoCuenta.objects.all()
         typeAcounts_srz = serializerTipoCuenta(typeAcounts, many = True)
         return Response(typeAcounts_srz.data, status=status.HTTP_200_OK)
+    
+    
+#-----Api Crud TypeWorkers
+
+@api_view(['GET', 'POST'])
+def get_post_api_CrudTyperWorkers(request):
+    # List typeWorkers
+    if request.method == 'GET':
+        typerWorkers = TipoTrabajador.objects.all()
+        typerWorkers_srz = serializerTipoTrabajado(typerWorkers, many = True)
+        return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
+    #Create typeWorkers
+    elif request.method == 'POST':
+        typerWorkers_srz = serializerTipoTrabajado(data=request.data)
+        if typerWorkers_srz.is_valid():
+            typerWorkers_srz.save()
+            return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
+        return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+def get_put_delete_CrudTyperWorkers(request, tpTrab_id):
+    # queryset of typeWorker
+    typerWorkers = TipoTrabajador.objects.filter(id=tpTrab_id).first()
+    if typerWorkers:
+        # obtain a name for the typeWorker
+        tipoName = typerWorkers.tipo
+        # retrieve typeWorker
+        if request.method == 'GET':
+            typerWorkers_srz = serializerTipoTrabajado(typerWorkers)
+            return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
+        # update typeWorker
+        elif request.method == 'PUT':
+            typerWorkers_srz = serializerTipoTrabajado(typerWorkers, data=request.data)
+            if typerWorkers_srz.is_valid():
+                typerWorkers_srz.save()
+                return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            typerWorkers.delete()
+            return Response({'message' : f'TypeWorker ID : {tpTrab_id} deleted'}, status=status.HTTP_200_OK)
+    return Response({'message': f"TypeWorker ID:{tpTrab_id} not have TypeWorker"}, status=status.HTTP_400_BAD_REQUEST)
