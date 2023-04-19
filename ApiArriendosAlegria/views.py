@@ -166,3 +166,43 @@ def get_put_delete_CrudTyperWorkers(request, tpTrab_id):
             typerWorkers.delete()
             return Response({'message' : f'TypeWorker ID : {tpTrab_id} deleted'}, status=status.HTTP_200_OK)
     return Response({'message': f"TypeWorker ID:{tpTrab_id} not have TypeWorker"}, status=status.HTTP_400_BAD_REQUEST) #fix detail with name
+
+#-----Api Crud Workers --------------------------------
+
+@api_view(['GET', 'POST'])
+def get_post_api_Workers(request):
+    # List Workers
+    if request.method == 'GET':
+        workers = Trabajador.objects.all()
+        workers_srz = serializerTrabajador(workers, many = True)
+        return Response(workers_srz.data, status=status.HTTP_200_OK)
+    # Create Worker
+    elif request.method == 'POST':
+        workers_srz = serializerTrabajador(data=request.data)
+        if workers_srz.is_valid():
+            workers_srz.save()
+            return Response(workers_srz.data, status=status.HTTP_201_CREATED)
+        return Response(workers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+def get_put_delete_Workers(request, rut):
+    # queryset of Worker
+    worker = Trabajador.objects.filter(rut_trab=rut).first()
+    print(worker)
+    if worker:
+        # obtain a name for the Worker
+        rut = worker.rut_trab
+        # retrieve Worker
+        if request.method == 'GET':
+            worker_srz = serializerTrabajador(worker)
+            return Response(worker_srz.data, status=status.HTTP_200_OK)
+        # update Worker
+        elif request.method == 'PUT':
+            worker_srz = serializerTrabajador(worker, data=request.data)
+            if worker_srz.is_valid():
+                worker_srz.save()
+                return Response(worker_srz.data, status=status.HTTP_200_OK)
+        elif request.method == 'DELETE':
+            worker_srz.delete()
+            return Response({'message' : f'Worker ID : {rut} deleted'}, status=status.HTTP_200_OK)
+    return Response({'message': f"Worker Rut: {worker} not have Worker"}, status=status.HTTP_400_BAD_REQUEST) 

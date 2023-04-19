@@ -2,7 +2,7 @@ from django.urls import path
 from ApiArriendosAlegria.api import user_api_view
 from ApiArriendosAlegria.api import user_detail_api_view
 from ApiArriendosAlegria.views import get_api_regions, get_api_comunas_by_id_reg, get_api_banks, get_api_TypeAccountsBanks, get_post_api_CrudTyperWorkers,\
-    get_put_delete_CrudTyperWorkers
+    get_put_delete_CrudTyperWorkers, get_post_api_Workers, get_put_delete_Workers
 
 
 urlpatterns = [
@@ -14,5 +14,7 @@ urlpatterns = [
     path('tipo_cuentas_bancos/', get_api_TypeAccountsBanks, name='get_api_TypeAccountsBanks'),
     path('tipo_trabajador/', get_post_api_CrudTyperWorkers, name='get_post_api_CrudTyperWorkers'),
     path('tipo_trabajador/<int:tpTrab_id>', get_put_delete_CrudTyperWorkers, name='get_put_delete_CrudTyperWorkers'),
+    path('trabajador/', get_post_api_Workers, name='get_post_api_Workers'),
+    path('trabajador/<str:rut>', get_put_delete_Workers, name='get_put_delete_Workers'),
     
 ]
