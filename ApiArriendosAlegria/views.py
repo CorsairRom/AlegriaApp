@@ -101,6 +101,6 @@ def get_api_comunas_by_id_reg(request, id_reg):
     if comunas:
         if request.method == 'GET':
             comunas_srz = serializerComuna(comunas, many = True)
-        
-    return Response({'message': f'Prospecto Name:{name} deleted'}, status=status.HTTP_200_OK)
+            return Response(comunas_srz.data, status=status.HTTP_200_OK)
+    return Response({'message':f'Comunas with ID: {id_reg} not found'}, status=status.HTTP_400_BAD_REQUEST)
 
