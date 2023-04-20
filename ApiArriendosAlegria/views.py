@@ -102,6 +102,7 @@ def get_api_regions(request):
 #-----Api Comunas filtered by id_reg only method get
 @api_view(['GET'])
 def get_api_comunas_by_id_reg(request, id_reg):
+    
     comunas = Comuna.objects.filter(reg_id = id_reg)
     if comunas:
         if request.method == 'GET':
@@ -188,10 +189,10 @@ def get_post_api_Workers(request):
 def get_put_delete_Workers(request, rut):
     # queryset of Worker
     worker = Trabajador.objects.filter(rut_trab=rut).first()
-    print(worker)
+    
     if worker:
         # obtain a name for the Worker
-        rut = worker.rut_trab
+        
         # retrieve Worker
         if request.method == 'GET':
             worker_srz = serializerTrabajador(worker)
@@ -203,6 +204,7 @@ def get_put_delete_Workers(request, rut):
                 worker_srz.save()
                 return Response(worker_srz.data, status=status.HTTP_200_OK)
         elif request.method == 'DELETE':
-            worker_srz.delete()
+            
+            worker.delete()
             return Response({'message' : f'Worker ID : {rut} deleted'}, status=status.HTTP_200_OK)
     return Response({'message': f"Worker Rut: {worker} not have Worker"}, status=status.HTTP_400_BAD_REQUEST) 
