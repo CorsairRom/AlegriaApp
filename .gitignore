@@ -4,3 +4,7 @@
 venv
 ApiArriendosAlegria\migrations\__pycache__
 .vscode
+AlegriaApp/__pycache__/settings.cpython-310.pyc
+AlegriaApp/__pycache__/urls.cpython-310.pyc
+ApiArriendosAlegria/__pycache__/views.cpython-310.pyc
+ApiArriendosAlegria/__pycache__/models.cpython-310.pyc
