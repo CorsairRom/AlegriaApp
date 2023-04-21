@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'ApiArriendosAlegria',
     "corsheaders",
     'django_filters',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

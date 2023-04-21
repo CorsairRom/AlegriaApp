@@ -6,16 +6,9 @@ from ApiArriendosAlegria.views import get_api_regions, get_api_banks, get_api_Ty
     get_put_delete_CrudTyperWorkers, get_post_api_Workers, get_put_delete_Workers, ComunaReadOnlyViewSet
 
 
-
-router = SimpleRouter()
-router.register(r'comunas', ComunaReadOnlyViewSet)
-
-
-
 urlpatterns = [
     path('usuario/', user_api_view, name='user_api_view'),
     path('usuario/<int:pk>/', user_detail_api_view, name='user_detail_api_view'),
-    path('', include(router.urls)),
     path('regiones/', get_api_regions, name='get_api_regions'),
     path('bancos/', get_api_banks, name='get_api_banks'),
     path('tipo_cuentas_bancos/', get_api_TypeAccountsBanks, name='get_api_TypeAccountsBanks'),
@@ -23,5 +16,6 @@ urlpatterns = [
     path('tipo_trabajador/<int:tpTrab_id>', get_put_delete_CrudTyperWorkers, name='get_put_delete_CrudTyperWorkers'),
     path('trabajador/', get_post_api_Workers, name='get_post_api_Workers'),
     path('trabajador/<str:rut>', get_put_delete_Workers, name='get_put_delete_Workers'),
+    path('', include('ApiArriendosAlegria.routers'), name='trabjador_router'),
     
 ]
