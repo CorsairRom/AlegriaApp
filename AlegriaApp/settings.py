@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'ApiArriendosAlegria',
     "corsheaders",
+    'django_filters',
 ]
 
 MIDDLEWARE = [

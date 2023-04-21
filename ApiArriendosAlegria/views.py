@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.contrib.sessions.models import Session
 from django.http import JsonResponse
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -11,7 +11,7 @@ from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabaj
 from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
                 serializerTipoCuenta
 from django.db import transaction
-
+from django_filters.rest_framework import DjangoFilterBackend
 import time
 import json
 
@@ -97,18 +97,6 @@ def get_api_regions(request):
         regiones = Region.objects.all()
         regiones_srz = serializerRegion(regiones, many = True)
         return Response(regiones_srz.data, status=status.HTTP_200_OK)
-
-
-#-----Api Comunas filtered by id_reg only method get
-@api_view(['GET'])
-def get_api_comunas_by_id_reg(request, id_reg):
-    
-    comunas = Comuna.objects.filter(reg_id = id_reg)
-    if comunas:
-        if request.method == 'GET':
-            comunas_srz = serializerComuna(comunas, many = True)
-            return Response(comunas_srz.data, status=status.HTTP_200_OK)
-    return Response({'message':f'Comunas with ID: {id_reg} not found'}, status=status.HTTP_400_BAD_REQUEST)
 
 #-----Api Banks only method get
 @api_view(['GET'])
@@ -208,3 +196,12 @@ def get_put_delete_Workers(request, rut):
             worker.delete()
             return Response({'message' : f'Worker ID : {rut} deleted'}, status=status.HTTP_200_OK)
     return Response({'message': f"Worker Rut: {worker} not have Worker"}, status=status.HTTP_400_BAD_REQUEST) 
+
+
+
+
+class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Comuna.objects.all()
+    serializer_class = serializerComuna
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['reg_id']
