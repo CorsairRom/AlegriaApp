@@ -1,15 +1,22 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import SimpleRouter
 from ApiArriendosAlegria.api import user_api_view
 from ApiArriendosAlegria.api import user_detail_api_view
-from ApiArriendosAlegria.views import get_api_regions, get_api_comunas_by_id_reg, get_api_banks, get_api_TypeAccountsBanks, get_post_api_CrudTyperWorkers,\
-    get_put_delete_CrudTyperWorkers, get_post_api_Workers, get_put_delete_Workers
+from ApiArriendosAlegria.views import get_api_regions, get_api_banks, get_api_TypeAccountsBanks, get_post_api_CrudTyperWorkers,\
+    get_put_delete_CrudTyperWorkers, get_post_api_Workers, get_put_delete_Workers, ComunaReadOnlyViewSet
+
+
+
+router = SimpleRouter()
+router.register(r'comunas', ComunaReadOnlyViewSet)
+
 
 
 urlpatterns = [
     path('usuario/', user_api_view, name='user_api_view'),
     path('usuario/<int:pk>/', user_detail_api_view, name='user_detail_api_view'),
+    path('', include(router.urls)),
     path('regiones/', get_api_regions, name='get_api_regions'),
-    path('comunas/<int:id_reg>/', get_api_comunas_by_id_reg, name='get_api_comunas_by_id_reg'),
     path('bancos/', get_api_banks, name='get_api_banks'),
     path('tipo_cuentas_bancos/', get_api_TypeAccountsBanks, name='get_api_TypeAccountsBanks'),
     path('tipo_trabajador/', get_post_api_CrudTyperWorkers, name='get_post_api_CrudTyperWorkers'),
