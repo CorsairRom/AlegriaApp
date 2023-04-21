@@ -198,6 +198,27 @@ def get_put_delete_Workers(request, rut):
     return Response({'message': f"Worker Rut: {worker} not have Worker"}, status=status.HTTP_400_BAD_REQUEST) 
 
 
+class TrabajadorViewSet(viewsets.ModelViewSet):
+    serializer_class = serializerTrabajador
+    queryset = Trabajador.objects.all()
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        rut_trab = request.query_params.get('rut_trab', None)
+        pri_nom_trab = request.query_params.get('pri_nom_trab', None)
+        
+        if rut_trab:
+            queryset = queryset.filter(rut_trab=rut_trab)
+        if pri_nom_trab:
+            queryset = queryset.filter(pri_nom_trab=pri_nom_trab)
+
+        if queryset.exists():
+            serializer = serializerTrabajador(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response("No se encontraron trabajadores", status=status.HTTP_400_BAD_REQUEST)
+    
+
 
 
 class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
