@@ -14,8 +14,8 @@ urlpatterns = [
     path('tipo_cuentas_bancos/', get_api_TypeAccountsBanks, name='get_api_TypeAccountsBanks'),
     path('tipo_trabajador/', get_post_api_CrudTyperWorkers, name='get_post_api_CrudTyperWorkers'),
     path('tipo_trabajador/<int:tpTrab_id>', get_put_delete_CrudTyperWorkers, name='get_put_delete_CrudTyperWorkers'),
-    path('trabajador/', get_post_api_Workers, name='get_post_api_Workers'),
-    path('trabajador/<str:rut>', get_put_delete_Workers, name='get_put_delete_Workers'),
+    # path('trabajador/', get_post_api_Workers, name='get_post_api_Workers'),
+    # path('trabajador/<str:rut>', get_put_delete_Workers, name='get_put_delete_Workers'),
     path('', include('ApiArriendosAlegria.routers'), name='trabjador_router'),
     
 ]
