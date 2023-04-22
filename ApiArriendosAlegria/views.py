@@ -224,6 +224,16 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
             typerWorkers_srz.save()
             return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
         return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # def retrieve(self, request, *args, **kwargs):
+    #     try:
+    #         instance = self.get_object()
+    #     except Exception as e:
+    #         return ErrorResponse({'message':str(e)})
+    #     else:
+    #         #any additional logic
+    #         serializer = self.get_serializer(instance)
+    #         return Response({'data': serializer.data})
         
     
 
