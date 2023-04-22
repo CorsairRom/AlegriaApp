@@ -218,6 +218,14 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
         else:
             return Response("No se encontraron trabajadores", status=status.HTTP_400_BAD_REQUEST)
     
+    def create(self, request):
+        typerWorkers_srz = serializerTipoTrabajado(data=request.data)
+        if typerWorkers_srz.is_valid():
+            typerWorkers_srz.save()
+            return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
+        return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    
 
 
 
