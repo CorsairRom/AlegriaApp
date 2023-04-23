@@ -218,6 +218,7 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
         else:
             return Response("No se encontraron trabajadores", status=status.HTTP_400_BAD_REQUEST)
     
+    
 
 
 
