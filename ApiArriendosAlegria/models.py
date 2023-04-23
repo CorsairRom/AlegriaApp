@@ -96,10 +96,11 @@ class TipoTrabajador(models.Model):
 class Trabajador(models.Model):
     rut_trab = models.CharField(max_length=12, unique=True, verbose_name='Rut Trabajador')
     pri_nom_trab = models.CharField(max_length=50, verbose_name='Primer Nombre')
-    seg_nom_trab = models.CharField(max_length=50, verbose_name='Segundo Nombre')
+    seg_nom_trab = models.CharField(max_length=50, verbose_name='Segundo Nombre', blank=True, null=True)
     pri_ape_trab = models.CharField(max_length=50, verbose_name='Primer Apellido')
-    seg_ape_trab = models.CharField(max_length=50, verbose_name='Segundo Apellido')
+    seg_ape_trab = models.CharField(max_length=50, verbose_name='Segundo Apellido', blank=True, null=True)
     celular = models.IntegerField()
+    email = models.EmailField(blank=True, null=True)
     direccion = models.CharField(max_length=250)
     comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     tipo_trab = models.ForeignKey(TipoTrabajador, on_delete=models.CASCADE, verbose_name='Area Trabajador')
