@@ -95,7 +95,7 @@ AUTH_USER_MODEL = "ApiArriendosAlegria.Usuario"
 
 
 # Tiempo de expiración de token (sugerencia: 4 horas, sin refresco, cierra sesiones):
-TOKEN_EXPIRE_TIME_IN_SECONDS = 10
+TOKEN_EXPIRE_TIME_IN_SECONDS = 3600
 
 
 # Password validation
