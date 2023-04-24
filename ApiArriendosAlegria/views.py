@@ -30,6 +30,9 @@ class Login(ObtainAuthToken):
             if user.is_active:
                 token, created = Token.objects.get_or_create(user=user)
                 user_serializer = SerializadorTokenUsuario(user)
+                trabajador = Trabajador.objects.get(usuario_id = user.id)
+                trabajador_tipo = trabajador.tipo_trab
+                print(trabajador_tipo)
                 if created:
                     return Response({
                         'Token': token.key,
