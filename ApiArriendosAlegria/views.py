@@ -12,6 +12,9 @@ from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializer
                 serializerTipoCuenta
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
+
+from ApiArriendosAlegria.authentication_mixins import Authentication
+from rest_framework.permissions import IsAuthenticated
 import time
 import json
 
@@ -199,6 +202,8 @@ def get_put_delete_Workers(request, rut):
 
 
 class TrabajadorViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = serializerTrabajador
     queryset = Trabajador.objects.all()
 
