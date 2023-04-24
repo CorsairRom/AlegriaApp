@@ -25,17 +25,20 @@ class Login(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         login_serializer = self.serializer_class(
             data=request.data, context={'request': request})
+        print(f"---\nlogin_serializer = {login_serializer}")
         if login_serializer.is_valid():
             user = login_serializer.validated_data['user']
             if user.is_active:
                 token, created = Token.objects.get_or_create(user=user)
                 user_serializer = SerializadorTokenUsuario(user)
-                
+                trabajador = Trabajador.objects.get(usuario_id = user.id)
+                trabajador_tipo = trabajador.tipo_trab
                 if created:
                     return Response({
                         'Token': token.key,
                         'Usuario': user_serializer.data,
-                        'Mensaje': 'Ingreso exitoso'
+                        'Tipo_trabajador': trabajador_tipo.id,
+                        'Mensaje': 'Ingreso exitoso.'
                     }, status=status.HTTP_201_CREATED)
                 else:
                     # Delete user token

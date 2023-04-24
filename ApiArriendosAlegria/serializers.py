@@ -17,8 +17,7 @@ class SerializadorUsuario(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        user = Usuario(**validated_data)
-        user.set_password(validated_data['password'])
+        user = Usuario.objects.create_user(**validated_data)
         user.save()
         return user
 
