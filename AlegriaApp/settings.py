@@ -94,6 +94,10 @@ DATABASES = {
 AUTH_USER_MODEL = "ApiArriendosAlegria.Usuario"
 
 
+# Tiempo de expiración de token (sugerencia: 4 horas, sin refresco, cierra sesiones):
+TOKEN_EXPIRE_TIME_IN_SECONDS = 10
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
