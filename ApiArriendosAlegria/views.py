@@ -1,20 +1,20 @@
 from datetime import datetime
 from django.contrib.sessions.models import Session
 from django.http import JsonResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import IsAuthenticated
 from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador
 from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
                 serializerTipoCuenta
-from django.db import transaction
-from django_filters.rest_framework import DjangoFilterBackend
-
+# from django.db import transaction
+from ApiArriendosAlegria.permission import IsAdminUser, IsStaffUser
 from ApiArriendosAlegria.authentication_mixins import Authentication
-from rest_framework.permissions import IsAuthenticated
 import time
 import json
 
@@ -141,8 +141,10 @@ def get_post_api_CrudTyperWorkers(request):
             typerWorkers_srz.save()
             return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
         return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+@permission_classes([IsAuthenticated])    
 @api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([Authentication])
 def get_put_delete_CrudTyperWorkers(request, tpTrab_id):
     # queryset of typeWorker
     typerWorkers = TipoTrabajador.objects.filter(id=tpTrab_id).first()
@@ -164,51 +166,21 @@ def get_put_delete_CrudTyperWorkers(request, tpTrab_id):
             return Response({'message' : f'TypeWorker ID : {tpTrab_id} deleted'}, status=status.HTTP_200_OK)
     return Response({'message': f"TypeWorker ID:{tpTrab_id} not have TypeWorker"}, status=status.HTTP_400_BAD_REQUEST) #fix detail with name
 
-#-----Api Crud Workers --------------------------------
 
-@api_view(['GET', 'POST'])
-def get_post_api_Workers(request):
-    # List Workers
-    if request.method == 'GET':
-        workers = Trabajador.objects.all()
-        workers_srz = serializerTrabajador(workers, many = True)
-        return Response(workers_srz.data, status=status.HTTP_200_OK)
-    # Create Worker
-    elif request.method == 'POST':
-        workers_srz = serializerTrabajador(data=request.data)
-        if workers_srz.is_valid():
-            workers_srz.save()
-            return Response(workers_srz.data, status=status.HTTP_201_CREATED)
-        return Response(workers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-@api_view(['GET', 'PUT', 'DELETE'])
-def get_put_delete_Workers(request, rut):
-    # queryset of Worker
-    worker = Trabajador.objects.filter(rut_trab=rut).first()
-    
-    if worker:
-        # obtain a name for the Worker
-        
-        # retrieve Worker
-        if request.method == 'GET':
-            worker_srz = serializerTrabajador(worker)
-            return Response(worker_srz.data, status=status.HTTP_200_OK)
-        # update Worker
-        elif request.method == 'PUT':
-            worker_srz = serializerTrabajador(worker, data=request.data)
-            if worker_srz.is_valid():
-                worker_srz.save()
-                return Response(worker_srz.data, status=status.HTTP_200_OK)
-        elif request.method == 'DELETE':
-            
-            worker.delete()
-            return Response({'message' : f'Worker ID : {rut} deleted'}, status=status.HTTP_200_OK)
-    return Response({'message': f"Worker Rut: {worker} not have Worker"}, status=status.HTTP_400_BAD_REQUEST) 
+# -------------Api TypeWorkers---------------
+class TypeWorkerViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = serializerTipoTrabajado
+    queryset = TipoTrabajador.objects.all()
 
 
+
+
+# -------------Api Worker---------------
 class TrabajadorViewSet(viewsets.ModelViewSet):
     authentication_classes = [Authentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = serializerTrabajador
     queryset = Trabajador.objects.all()
 
@@ -228,10 +200,10 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
         else:
             return Response("No se encontraron trabajadores", status=status.HTTP_400_BAD_REQUEST)
     
-    
+# -------------Api Communes---------------    
 class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [Authentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStaffUser]
     queryset = Comuna.objects.all()
     serializer_class = serializerComuna
     filter_backends = [DjangoFilterBackend]
