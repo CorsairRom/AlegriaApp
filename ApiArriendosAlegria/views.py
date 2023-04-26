@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador
 from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
                 serializerTipoCuenta
@@ -125,8 +125,9 @@ def get_api_TypeAccountsBanks(request):
     
     
 #-----Api Crud TypeWorkers
-
+@permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
+@authentication_classes([Authentication])
 def get_post_api_CrudTyperWorkers(request):
     # List typeWorkers
     if request.method == 'GET':
@@ -229,6 +230,8 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
     
     
 class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated]
     queryset = Comuna.objects.all()
     serializer_class = serializerComuna
     filter_backends = [DjangoFilterBackend]
