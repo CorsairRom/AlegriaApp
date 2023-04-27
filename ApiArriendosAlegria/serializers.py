@@ -9,12 +9,14 @@ class SerializadorTokenUsuario(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = ('id','username', 'email', 'is_staff', 'is_superuser')
+        extra_kwargs = {'password':{'write_only':True}}
 
 
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = '__all__'
+        extra_kwargs = {'password':{'write_only':True}}
 
     def create(self, validated_data):
         user = Usuario.objects.create_user(**validated_data)
