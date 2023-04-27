@@ -16,7 +16,7 @@ def user_api_view(request):
     # List
     if request.method == 'GET':
         # Queryset
-        users = Usuario.objects.all()
+        users = Usuario.objects.all().filter(is_superuser=False)
         users_serializer = SerializadorUsuario(users, many=True)
 
         return Response(users_serializer.data, status=status.HTTP_200_OK)
