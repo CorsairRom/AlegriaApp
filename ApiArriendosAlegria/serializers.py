@@ -8,7 +8,7 @@ from ApiArriendosAlegria.models import Usuario, Region, Comuna, TipoTrabajador, 
 class SerializadorTokenUsuario(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ('username', 'email')
+        fields = ('id','username', 'email', 'is_staff', 'is_superuser')
 
 
 class SerializadorUsuario(serializers.ModelSerializer):

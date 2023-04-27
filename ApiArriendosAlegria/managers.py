@@ -15,10 +15,10 @@ class GestorUsuario(BaseUserManager):
         user.save(using=self.db)
         return user
     
-    def create_user(self, username, email, password=None,
+    def create_user(self, username, email, password, is_staff=False, is_superuser=False,
                     **extra_fields):
-        return self._create_user(username, email, password, False,
-                     False, **extra_fields)
+        return self._create_user(username, email, password, is_staff, is_superuser,
+                    **extra_fields)
     
     def create_superuser(self, username, email, password=None,
                     **extra_fields):
