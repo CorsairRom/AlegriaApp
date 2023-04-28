@@ -14,7 +14,7 @@ class SerializadorTokenUsuario(serializers.ModelSerializer):
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = '__all__'
+        fields = ('id', 'username', 'email', 'is_active')
 
     def create(self, validated_data):
         user = Usuario.objects.create_user(**validated_data)
@@ -37,7 +37,7 @@ class SerializadorListaUsuario(serializers.ModelSerializer):
             'id': instance['id'],
             'username': instance['username'],
             'email': instance['email'],
-            'password': instance['password'],
+            'is_active': instance['is_active'],
         }
         
 class serializerRegion(serializers.ModelSerializer):
