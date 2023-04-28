@@ -15,8 +15,9 @@ def user_api_view(request):
 
     # List
     if request.method == 'GET':
-        # Queryset
+        # Queryset: devuelve todos los usuarios que no son superuser
         users = Usuario.objects.all().filter(is_superuser=False)
+        print(f"users = {users}")
         users_serializer = SerializadorUsuario(users, many=True)
 
         return Response(users_serializer.data, status=status.HTTP_200_OK)
