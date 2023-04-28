@@ -4,19 +4,16 @@ from ApiArriendosAlegria.models import Usuario, Region, Comuna, TipoTrabajador, 
                                         Gastocomun, DetalleArriendo 
 
 
-
 class SerializadorTokenUsuario(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ('id','username', 'email', 'is_staff', 'is_superuser')
-        extra_kwargs = {'password':{'write_only':True}}
+        fields = ('username', 'email')
 
 
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = '__all__'
-        extra_kwargs = {'password':{'write_only':True}}
+        fields = ('id', 'username', 'email', 'is_active')
 
     def create(self, validated_data):
         user = Usuario.objects.create_user(**validated_data)
@@ -39,7 +36,7 @@ class SerializadorListaUsuario(serializers.ModelSerializer):
             'id': instance['id'],
             'username': instance['username'],
             'email': instance['email'],
-            'password': instance['password'],
+            'is_active': instance['is_active'],
         }
         
 class serializerRegion(serializers.ModelSerializer):
