@@ -4,7 +4,6 @@ from ApiArriendosAlegria.models import Usuario, Region, Comuna, TipoTrabajador, 
                                         Gastocomun, DetalleArriendo 
 
 
-
 class SerializadorTokenUsuario(serializers.ModelSerializer):
     class Meta:
         model = Usuario
