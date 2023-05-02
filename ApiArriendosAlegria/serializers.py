@@ -26,18 +26,6 @@ class SerializadorUsuario(serializers.ModelSerializer):
         updated_user.save()
         return updated_user
 
-
-class SerializadorListaUsuario(serializers.ModelSerializer):
-    class Meta:
-        model = Usuario
-
-    def to_representation(self, instance):
-        return {
-            'id': instance['id'],
-            'username': instance['username'],
-            'email': instance['email'],
-            'is_active': instance['is_active'],
-        }
         
 class serializerRegion(serializers.ModelSerializer):
     
