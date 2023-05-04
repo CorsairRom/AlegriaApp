@@ -30,14 +30,13 @@ class Login(ObtainAuthToken):
             user = login_serializer.validated_data['user']
             if user.is_active:
                 token, created = Token.objects.get_or_create(user=user)
-                user_serializer = SerializadorTokenUsuario(user)
+                user_serializer = SerializadorUsuario(user)
                 trabajador = Trabajador.objects.get(usuario_id = user.id)
                 trabajador_tipo = trabajador.tipo_trab
                 if created:
                     return Response({
                         'token': token.key,
                         'usuario': user_serializer.data,
-                        'tipo_trabajador': trabajador_tipo.id,
                         'message': 'Ingreso exitoso.'
                     }, status=status.HTTP_201_CREATED)
                 else:
