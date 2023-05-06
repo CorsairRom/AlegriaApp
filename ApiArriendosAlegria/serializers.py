@@ -39,97 +39,97 @@ class SerializadorListaUsuario(serializers.ModelSerializer):
             'is_active': instance['is_active'],
         }
         
-class serializerRegion(serializers.ModelSerializer):
+class SerializerRegion(serializers.ModelSerializer):
     
     class Meta:
         model = Region
         fields = '__all__'
 
-class serializerComuna(serializers.ModelSerializer):
+class SerializerComuna(serializers.ModelSerializer):
     
     class Meta:
         model = Comuna
         fields = '__all__'
         
-class serializerTipoTrabajado(serializers.ModelSerializer):
+class SerializerTipoTrabajado(serializers.ModelSerializer):
     
     class Meta:
         model = TipoTrabajador
         fields = '__all__'
         
-class serializerTrabajador(serializers.ModelSerializer):
+class SerializerTrabajador(serializers.ModelSerializer):
     
     class Meta:
         model = Trabajador
         fields = '__all__'
         
-class serializerBanco(serializers.ModelSerializer):
+class SerializerBanco(serializers.ModelSerializer):
     
     class Meta:
         model = Banco
         fields = '__all__'
         
-class serializerTipoCuenta(serializers.ModelSerializer):
+class SerializerTipoCuenta(serializers.ModelSerializer):
     
     class Meta:
         model = TipoCuenta
         fields = '__all__'
         
-class serializerCuenta(serializers.ModelSerializer):
+class SerializerCuenta(serializers.ModelSerializer):
     
     class Meta:
         model = Cuenta
         fields = '__all__'
         
-class serializerPropietario(serializers.ModelSerializer):
+class SerializerPropietario(serializers.ModelSerializer):
     
     class Meta:
         model = Propietario
         fields = '__all__'
 
-class serializerPersonalidadJuridica(serializers.ModelSerializer):
+class SerializerPersonalidadJuridica(serializers.ModelSerializer):
     
     class Meta:
         model = PersonalidadJuridica
         fields = '__all__'
         
-class serializerPropiedad(serializers.ModelSerializer):
+class SerializerPropiedad(serializers.ModelSerializer):
     
     class Meta:
         model = Propiedad
         fields = '__all__'
         
-class serializerTipoPropiedad(serializers.ModelSerializer):
+class SerializerTipoPropiedad(serializers.ModelSerializer):
     
     class Meta:
         model = TipoPropiedad
         fields = '__all__'
 
-class serializerArrendatario(serializers.ModelSerializer):
+class SerializerArrendatario(serializers.ModelSerializer):
     
     class Meta:
         model = Arrendatario
         fields = '__all__'
         
-class serializerArriendo(serializers.ModelSerializer):
+class SerializerArriendo(serializers.ModelSerializer):
     
     class Meta:
         model = Arriendo
         fields = '__all__'
 
-class serializerDetalleArriendo(serializers.ModelSerializer):
+class SerializerDetalleArriendo(serializers.ModelSerializer):
     
     class Meta:
         model = DetalleArriendo
         fields = '__all__'
         
-class serializerServiciosExtas(serializers.ModelSerializer):
+class SerializerServiciosExtas(serializers.ModelSerializer):
     
     class Meta:
         model = ServiciosExtras
         fields = '__all__'
         
-class serializerGastoComun(serializers.ModelSerializer):
+class SerializerGastoComun(serializers.ModelSerializer):
     
     class Meta:
         model = Gastocomun
