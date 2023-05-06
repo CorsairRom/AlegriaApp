@@ -80,5 +80,59 @@ class serializerCuenta(serializers.ModelSerializer):
     class Meta:
         model = Cuenta
         fields = '__all__'
+        
+class serializerPropietario(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Propietario
+        fields = '__all__'
+
+class serializerPersonalidadJuridica(serializers.ModelSerializer):
+    
+    class Meta:
+        model = PersonalidadJuridica
+        fields = '__all__'
+        
+class serializerPropiedad(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Propiedad
+        fields = '__all__'
+        
+class serializerTipoPropiedad(serializers.ModelSerializer):
+    
+    class Meta:
+        model = TipoPropiedad
+        fields = '__all__'
+
+class serializerArrendatario(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Arrendatario
+        fields = '__all__'
+        
+class serializerArriendo(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Arriendo
+        fields = '__all__'
+
+class serializerDetalleArriendo(serializers.ModelSerializer):
+    
+    class Meta:
+        model = DetalleArriendo
+        fields = '__all__'
+        
+class serializerServiciosExtas(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ServiciosExtras
+        fields = '__all__'
+        
+class serializerGastoComun(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Gastocomun
+        fields = '__all__'
 
     

@@ -10,9 +10,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
-from ApiArriendosAlegria.models import Usuario, Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador
+from ApiArriendosAlegria.models import Usuario, Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador, Propiedad, Propietario, TipoPropiedad
 from ApiArriendosAlegria.serializers import SerializadorUsuario, SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
-                serializerTipoCuenta
+                serializerTipoCuenta, serializerPropietario, serializerPropiedad
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsAdminUser, IsStaffUser
 from ApiArriendosAlegria.authentication_mixins import Authentication
@@ -267,3 +267,10 @@ def user_detail_api_view(request, pk=None):
             return Response({'message': 'Usuario eliminado'}, status=status.HTTP_200_OK)
     
     return Response({'message': 'No se ha encontrado un usuario con esos datos'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PropietarioViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = serializerPropietario
+    queryset = Propietario.objects.all()
