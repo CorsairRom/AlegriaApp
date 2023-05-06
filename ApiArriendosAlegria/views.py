@@ -2,15 +2,16 @@ from datetime import datetime
 from django.contrib.sessions.models import Session
 from django.http import JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import permissions, status, viewsets
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
-from ApiArriendosAlegria.models import Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador
-from ApiArriendosAlegria.serializers import SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
+from ApiArriendosAlegria.models import Usuario, Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador
+from ApiArriendosAlegria.serializers import SerializadorUsuario, SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
                 serializerTipoCuenta
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsAdminUser, IsStaffUser
@@ -25,7 +26,6 @@ class Login(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         login_serializer = self.serializer_class(
             data=request.data, context={'request': request})
-        print(f"---\nlogin_serializer = {login_serializer}")
         if login_serializer.is_valid():
             user = login_serializer.validated_data['user']
             if user.is_active:
@@ -35,10 +35,10 @@ class Login(ObtainAuthToken):
                 trabajador_tipo = trabajador.tipo_trab
                 if created:
                     return Response({
-                        'Token': token.key,
-                        'Usuario': user_serializer.data,
-                        'Tipo_trabajador': trabajador_tipo.id,
-                        'Mensaje': 'Ingreso exitoso.'
+                        'token': token.key,
+                        'usuario': user_serializer.data,
+                        'tipo_trabajador': trabajador_tipo.id,
+                        'message': 'Ingreso exitoso.'
                     }, status=status.HTTP_201_CREATED)
                 else:
                     # Delete user token
@@ -52,12 +52,12 @@ class Login(ObtainAuthToken):
                             # auth_user_id is the primary key's user on the session
                             if user.id == int(session_data.get('_auth_user_id')):
                                 session.delete()
-                    return Response({'ERROR': 'Este usuario ya ha ingresado'})
+                    return Response({'error': 'Este usuario ya ha ingresado. Se cerrará la sesión activa.'})
 
-            return Response({'ERROR': 'No se puede ingresar con usuario inactivo'},
+            return Response({'error': 'No se puede ingresar con usuario inactivo'},
                             status=status.HTTP_401_UNAUTHORIZED)
 
-        return Response({'ERROR': 'Usuario o contraseña incorrecta'},
+        return Response({'error': 'Usuario o contraseña incorrecta'},
                         status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -82,8 +82,8 @@ class Logout(APIView):
                 # Delete user token
                 token.delete()
 
-                token_message = 'Token eliminado'
-                session_message = 'Todas las sesiones exitosamente cerradas'
+                token_message = 'Token eliminado.'
+                session_message = 'Sesión exitosamente cerrada.'
                 return Response({'token_message': token_message,
                                 'session_message': session_message},
                                 status=status.HTTP_200_OK)
@@ -209,3 +209,61 @@ class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = serializerComuna
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['reg_id']
+
+
+# --- API view Usuario (lista) ---
+@api_view(['GET', 'POST'])
+@authentication_classes([Authentication])
+@permission_classes([permissions.IsAuthenticated])
+def user_api_view(request):
+
+    # List
+    if request.method == 'GET':
+        # Queryset: devuelve todos los usuarios normales (no superuser)
+        users = Usuario.objects.all().filter(is_superuser=False).order_by('id')
+        users_serializer = SerializadorUsuario(users, many=True)
+
+        return Response(users_serializer.data, status=status.HTTP_200_OK)
+
+    # Create
+    elif request.method == 'POST':
+        users_serializer = SerializadorUsuario(data=request.data)
+        
+        # Validation
+        if users_serializer.is_valid():
+            users_serializer.save()
+            return Response(users_serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(users_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# --- API view Usuario (detalle) ---
+@api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([Authentication])
+@permission_classes([permissions.IsAuthenticated])
+def user_detail_api_view(request, pk=None):
+    # Queryset
+    user = Usuario.objects.filter(id=pk).first()
+
+    # Validation
+    if user:
+
+        # Retrieve
+        if request.method == 'GET':
+            user_serializer = SerializadorUsuario(user)
+            return Response(user_serializer.data, status=status.HTTP_200_OK)
+
+        # Update
+        elif request.method == 'PUT':
+            user_serializer = SerializadorUsuario(user, data=request.data)
+            if user_serializer.is_valid():
+                user_serializer.save()
+                return Response(user_serializer.data, status=status.HTTP_200_OK)
+            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Delete
+        elif request.method == 'DELETE':
+            user.delete()
+            return Response({'message': 'Usuario eliminado'}, status=status.HTTP_200_OK)
+    
+    return Response({'message': 'No se ha encontrado un usuario con esos datos'}, status=status.HTTP_400_BAD_REQUEST)

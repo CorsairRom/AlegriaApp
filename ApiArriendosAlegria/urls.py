@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import SimpleRouter
-from ApiArriendosAlegria.api import user_api_view
-from ApiArriendosAlegria.api import user_detail_api_view
+from ApiArriendosAlegria.views import user_api_view
+from ApiArriendosAlegria.views import user_detail_api_view
 from ApiArriendosAlegria.views import get_api_regions, get_api_banks, get_api_TypeAccountsBanks, get_post_api_CrudTyperWorkers,\
     get_put_delete_CrudTyperWorkers
 

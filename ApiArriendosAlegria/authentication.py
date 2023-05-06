@@ -14,7 +14,6 @@ class ExpiringTokenAuthentication(TokenAuthentication):
     def expires_in(self, token):
         time_elapsed = timezone.now() - token.created
         left_time = timedelta(seconds=settings.TOKEN_EXPIRE_TIME_IN_SECONDS) - time_elapsed
-        print(f"---\nexpires_in.left_time = {left_time}")
         return left_time
 
 
@@ -24,7 +23,6 @@ class ExpiringTokenAuthentication(TokenAuthentication):
 
     def token_expire_handler(self, token):
         is_expire = self.is_token_expired(token)
-        print(f"---\token_expire_handler.is_expire = {is_expire}")
 
         if is_expire:
             user = token.user
