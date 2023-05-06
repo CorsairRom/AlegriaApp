@@ -277,6 +277,12 @@ class PropietarioViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerPropietario
     queryset = Propietario.objects.all()
+    
+class PersonalidadJuridicaViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerPersonalidadJuridica
+    queryset = PersonalidadJuridica.objects.all()
 
 class CuentaViewSet(viewsets.ModelViewSet):
     authentication_classes = [Authentication]
@@ -289,9 +295,39 @@ class PropiedadViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerPropiedad
     queryset = Propiedad.objects.all()
+    
+class TipoPropiedadViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerTipoPropiedad
+    queryset = TipoPropiedad.objects.all()
 
 class ArriendatarioViewSet(viewsets.ModelViewSet):
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
-    serializer_class = Serializer
-    queryset = Propiedad.objects.all()
+    serializer_class = SerializerArrendatario
+    queryset = Arrendatario.objects.all()
+    
+class ArriendoViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerArriendo
+    queryset = Arriendo.objects.all()
+
+class DetalleArriendoViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerDetalleArriendo
+    queryset = DetalleArriendo.objects.all()
+
+class ServiciosExtrasViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerServiciosExtas
+    queryset = ServiciosExtras.objects.all()
+    
+class GastoComunViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerGastoComun
+    queryset = Gastocomun.objects.all()
