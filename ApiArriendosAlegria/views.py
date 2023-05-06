@@ -124,7 +124,7 @@ def get_api_TypeAccountsBanks(request):
         return Response(typeAcounts_srz.data, status=status.HTTP_200_OK)
     
     
-#-----Api Crud TypeWorkers
+#-----Api Crud TypeWorkers <- deprecated
 @permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
 @authentication_classes([Authentication])
@@ -141,7 +141,8 @@ def get_post_api_CrudTyperWorkers(request):
             typerWorkers_srz.save()
             return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
         return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+# <- deprecated
 @permission_classes([IsAuthenticated])    
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([Authentication])
