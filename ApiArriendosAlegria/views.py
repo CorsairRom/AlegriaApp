@@ -287,7 +287,8 @@ class PropietarioViewSet(viewsets.ModelViewSet):
         if rut_prop:
             queryset = queryset.filter(rut_prop=rut_prop)
         if pri_nom_prop:
-            queryset = queryset.filter(pri_nom_trab=pri_nom_prop)
+            print(pri_nom_prop)
+            queryset = queryset.filter(pri_nom_prop=pri_nom_prop)
         if pri_ape_prop:
             queryset = queryset.filter(pri_ape_prop=pri_ape_prop)
 
