@@ -166,7 +166,6 @@ class Arrendatario(models.Model):
     seg_ape_arr = models.CharField(max_length=50, verbose_name='Segundo Apellido', null=True, blank=True)
     contacto_arr = models.IntegerField( verbose_name='Contacto')
     correo_arr = models.EmailField(verbose_name='Correo')
-    cuenta = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
     estado = models.BooleanField()
     saldo = models.IntegerField()
     
