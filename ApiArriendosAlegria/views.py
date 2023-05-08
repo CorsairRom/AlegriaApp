@@ -10,9 +10,12 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
-from ApiArriendosAlegria.models import Usuario, Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador
-from ApiArriendosAlegria.serializers import SerializadorUsuario, SerializadorTokenUsuario, serializerBanco, serializerRegion, serializerComuna, serializerTipoTrabajado, serializerTrabajador,\
-                serializerTipoCuenta
+from ApiArriendosAlegria.models import Usuario, Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador, Propiedad, Propietario, TipoPropiedad, Arrendatario,\
+                                        Arriendo, DetalleArriendo, Cuenta,Gastocomun,PersonalidadJuridica, ServiciosExtras
+from ApiArriendosAlegria.serializers import SerializadorUsuario, SerializadorTokenUsuario, SerializerBanco, SerializerRegion, SerializerComuna, SerializerTipoTrabajado,\
+                                            SerializerTrabajador, SerializerTipoCuenta, SerializerPropietario, SerializerPropiedad, SerializerCuenta, SerializerArrendatario,\
+                                            SerializerArriendo, SerializerDetalleArriendo, SerializerGastoComun, SerializerPersonalidadJuridica, SerializerServiciosExtas,\
+                                            SerializerTipoPropiedad, ServiciosExtras
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsAdminUser, IsStaffUser
 from ApiArriendosAlegria.authentication_mixins import Authentication
@@ -101,7 +104,7 @@ def get_api_regions(request):
     #List regions
     if request.method == 'GET':
         regiones = Region.objects.all()
-        regiones_srz = serializerRegion(regiones, many = True)
+        regiones_srz = SerializerRegion(regiones, many = True)
         return Response(regiones_srz.data, status=status.HTTP_200_OK)
 
 #-----Api Banks only method get
@@ -110,7 +113,7 @@ def get_api_banks(request):
     #List Banks
     if request.method == 'GET':
         bancos = Banco.objects.all()
-        bancos_srz = serializerBanco(bancos, many = True)
+        bancos_srz = SerializerBanco(bancos, many = True)
         return Response(bancos_srz.data, status=status.HTTP_200_OK)
 
 #-----Api TypeAccountsBanks only method get
@@ -119,11 +122,11 @@ def get_api_TypeAccountsBanks(request):
     #List TypeAccounts
     if request.method == 'GET':
         typeAcounts = TipoCuenta.objects.all()
-        typeAcounts_srz = serializerTipoCuenta(typeAcounts, many = True)
+        typeAcounts_srz = SerializerTipoCuenta(typeAcounts, many = True)
         return Response(typeAcounts_srz.data, status=status.HTTP_200_OK)
     
     
-#-----Api Crud TypeWorkers
+#-----Api Crud TypeWorkers <- deprecated
 @permission_classes([IsAuthenticated])
 @api_view(['GET', 'POST'])
 @authentication_classes([Authentication])
@@ -131,16 +134,17 @@ def get_post_api_CrudTyperWorkers(request):
     # List typeWorkers
     if request.method == 'GET':
         typerWorkers = TipoTrabajador.objects.all()
-        typerWorkers_srz = serializerTipoTrabajado(typerWorkers, many = True)
+        typerWorkers_srz = SerializerTipoTrabajado(typerWorkers, many = True)
         return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
     #Create typeWorkers
     elif request.method == 'POST':
-        typerWorkers_srz = serializerTipoTrabajado(data=request.data)
+        typerWorkers_srz = SerializerTipoTrabajado(data=request.data)
         if typerWorkers_srz.is_valid():
             typerWorkers_srz.save()
             return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
         return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
+# <- deprecated
 @permission_classes([IsAuthenticated])    
 @api_view(['GET', 'PUT', 'DELETE'])
 @authentication_classes([Authentication])
@@ -152,11 +156,11 @@ def get_put_delete_CrudTyperWorkers(request, tpTrab_id):
         tipoName = typerWorkers.tipo
         # retrieve typeWorker
         if request.method == 'GET':
-            typerWorkers_srz = serializerTipoTrabajado(typerWorkers)
+            typerWorkers_srz = SerializerTipoTrabajado(typerWorkers)
             return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
         # update typeWorker
         elif request.method == 'PUT':
-            typerWorkers_srz = serializerTipoTrabajado(typerWorkers, data=request.data)
+            typerWorkers_srz = SerializerTipoTrabajado(typerWorkers, data=request.data)
             if typerWorkers_srz.is_valid():
                 typerWorkers_srz.save()
                 return Response(typerWorkers_srz.data, status=status.HTTP_200_OK)
@@ -170,7 +174,7 @@ def get_put_delete_CrudTyperWorkers(request, tpTrab_id):
 class TypeWorkerViewSet(viewsets.ModelViewSet):
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
-    serializer_class = serializerTipoTrabajado
+    serializer_class = SerializerTipoTrabajado
     queryset = TipoTrabajador.objects.all()
 
 
@@ -180,7 +184,7 @@ class TypeWorkerViewSet(viewsets.ModelViewSet):
 class TrabajadorViewSet(viewsets.ModelViewSet):
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
-    serializer_class = serializerTrabajador
+    serializer_class = SerializerTrabajador
     queryset = Trabajador.objects.all()
 
     def list(self, request):
@@ -194,7 +198,7 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(pri_nom_trab=pri_nom_trab)
 
         if queryset.exists():
-            serializer = serializerTrabajador(queryset, many=True)
+            serializer = SerializerTrabajador(queryset, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response("No se encontraron trabajadores", status=status.HTTP_400_BAD_REQUEST)
@@ -204,7 +208,7 @@ class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     queryset = Comuna.objects.all()
-    serializer_class = serializerComuna
+    serializer_class = SerializerComuna
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['reg_id']
 
@@ -265,3 +269,105 @@ def user_detail_api_view(request, pk=None):
             return Response({'message': 'Usuario eliminado'}, status=status.HTTP_200_OK)
     
     return Response({'message': 'No se ha encontrado un usuario con esos datos'}, status=status.HTTP_400_BAD_REQUEST)
+
+# ---------------------Segundo sprint-------------------
+class PropietarioViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerPropietario
+    queryset = Propietario.objects.all()
+    
+    def list(self, request):
+        queryset = self.get_queryset()
+        rut_prop = request.query_params.get('rut_prop', None)
+        pri_nom_prop = request.query_params.get('pri_nom_prop', None)
+        pri_ape_prop = request.query_params.get('pri_ape_prop', None)
+        
+        if rut_prop:
+            queryset = queryset.filter(rut_prop=rut_prop)
+        if pri_nom_prop:          
+            queryset = queryset.filter(pri_nom_prop=pri_nom_prop)
+        if pri_ape_prop:
+            queryset = queryset.filter(pri_ape_prop=pri_ape_prop)
+
+        if queryset.exists():
+            serializer = SerializerPropietario(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response("No se encontraron Propietarios", status=status.HTTP_400_BAD_REQUEST)
+    
+class PersonalidadJuridicaViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerPersonalidadJuridica
+    queryset = PersonalidadJuridica.objects.all()
+
+class CuentaViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerCuenta
+    queryset = Cuenta.objects.all()
+    
+    def list(self, request):
+        queryset = self.get_queryset()
+        cuenta = request.query_params.get('cuenta', None)
+        propietario_rut = request.query_params.get('propietario_rut', None)
+        
+        if cuenta:
+            queryset = queryset.filter(cuenta=cuenta)
+        if propietario_rut:
+            queryset = queryset.filter(propietario_rut=propietario_rut)
+        
+        if queryset.exists():
+            serializer = SerializerCuenta(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response("No se encuentra cuenta", status=status.HTTP_400_BAD_REQUEST)
+    
+    
+
+class PropiedadViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerPropiedad
+    queryset = Propiedad.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['propietario_id']
+    
+    
+    
+class TipoPropiedadViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerTipoPropiedad
+    queryset = TipoPropiedad.objects.all()
+
+class ArriendatarioViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerArrendatario
+    queryset = Arrendatario.objects.all()
+    
+class ArriendoViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerArriendo
+    queryset = Arriendo.objects.all()
+
+class DetalleArriendoViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerDetalleArriendo
+    queryset = DetalleArriendo.objects.all()
+
+class ServiciosExtrasViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerServiciosExtas
+    queryset = ServiciosExtras.objects.all()
+    
+class GastoComunViewSet(viewsets.ModelViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerGastoComun
+    queryset = Gastocomun.objects.all()

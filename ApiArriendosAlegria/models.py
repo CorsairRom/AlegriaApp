@@ -113,10 +113,10 @@ class Trabajador(models.Model):
 
 class Propietario(models.Model):
     rut_prop = models.CharField(max_length=12, unique=True, verbose_name='Rut Propietario')
-    pri_nom_pro = models.CharField(max_length=50, verbose_name='Primer Nombre')
-    seg_nom_prop = models.CharField(max_length=50, verbose_name='Segundo Nombre')
+    pri_nom_prop = models.CharField(max_length=50, verbose_name='Primer Nombre')
+    seg_nom_prop = models.CharField(max_length=50, verbose_name='Segundo Nombre', null=True, blank=True)
     pri_ape_prop = models.CharField(max_length=50, verbose_name='Primero Apellido')
-    seg_ape_prop = models.CharField(max_length=50, verbose_name='Segundo Apellido')
+    seg_ape_prop = models.CharField(max_length=50, verbose_name='Segundo Apellido', null=True, blank=True)
     direccion_prop = models.CharField(max_length=200, verbose_name='Dirección Principal')
     comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     email_prop = models.EmailField(verbose_name='Email Propietario')
@@ -140,16 +140,20 @@ class TipoPropiedad(models.Model):
     nombre_tipoppdd = models.CharField(max_length=150, verbose_name='Tipo de propiedad')
     descripcion_tipoppdd = models.CharField(max_length=250, verbose_name='Descripción')
     
+    def __str__(self):
+        return str(self.id) + " - " + self.nombre_tipoppdd
+    
+    
 class Propiedad(models.Model):
-    cod_ppdd = models.CharField(max_length=40, unique=True, verbose_name='Código Propiedad')
     direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
+    numero_ppdd = models.IntegerField(verbose_name='Número Propiedad')
     comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     tipopropiedad_id = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
-    rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad')
+    rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
     
     def __str__(self):
-        return self.cod_ppdd      
+        return str(self.id)     
 
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
@@ -157,12 +161,11 @@ class Propiedad(models.Model):
 class Arrendatario(models.Model):
     rut_arr = models.CharField(max_length=12, unique=True, verbose_name='Rut Arrendatario')
     pri_nom_arr = models.CharField(max_length=50, verbose_name='Primer Nombre')
-    seg_nom_arr = models.CharField(max_length=50, verbose_name='Segundo Nombre')
+    seg_nom_arr = models.CharField(max_length=50, verbose_name='Segundo Nombre', null=True, blank=True)
     pri_ape_arr = models.CharField(max_length=50, verbose_name='Primero Apellido')
-    seg_ape_arr = models.CharField(max_length=50, verbose_name='Segundo Apellido')
+    seg_ape_arr = models.CharField(max_length=50, verbose_name='Segundo Apellido', null=True, blank=True)
     contacto_arr = models.IntegerField( verbose_name='Contacto')
     correo_arr = models.EmailField(verbose_name='Correo')
-    cuenta = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
     estado = models.BooleanField()
     saldo = models.IntegerField()
     
