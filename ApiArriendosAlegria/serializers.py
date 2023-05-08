@@ -4,17 +4,23 @@ from ApiArriendosAlegria.models import Usuario, Region, Comuna, TipoTrabajador, 
                                         Gastocomun, DetalleArriendo 
 
 
-class SerializadorTokenUsuario(serializers.ModelSerializer):
-    class Meta:
-        model = Usuario
-        fields = ('username', 'email')
-
-
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
         model = Usuario
-        fields = ('id', 'username', 'email', 'is_active')
-        extra_kwargs = {'is_staff': {'write_only': True}, 'password': {'write_only': True}}
+        fields = '__all__'
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
+
+    def to_representation(self, instance):
+        data = {
+            'id': instance.id,
+            'username': instance.username,
+            'email': instance.email,
+            'is_staff': instance.is_staff,
+            'is_superuser': instance.is_superuser
+        }
+        return data
 
     def create(self, validated_data):
         user = Usuario.objects.create_user(**validated_data)

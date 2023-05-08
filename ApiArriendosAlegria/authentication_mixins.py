@@ -4,14 +4,18 @@ from rest_framework.authentication import get_authorization_header
 from ApiArriendosAlegria.authentication import ExpiringTokenAuthentication
 
 class Authentication(authentication.BaseAuthentication):
+    """
+    Módulo base de autenticación de usuarios, que permite la autenticación
+    mediante sistema de tokens de Django REST Framework.
+    """
     user = None
     
     def get_user(self,request):
         """
-        Return:
-            * user      : User Instance or 
-            * message   : Error Message or 
-            * None      : Corrupt Token
+        Retorna:
+            * user      : Instancia de Usuario or 
+            * message   : Mensaje de error or 
+            * None      : Token dañado
         """
         token = get_authorization_header(request).split()
         if token:
