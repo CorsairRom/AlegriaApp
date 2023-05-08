@@ -187,22 +187,9 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerTrabajador
     queryset = Trabajador.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['rut_trab', 'pri_nom_trab']
 
-    def list(self, request):
-        queryset = self.get_queryset()
-        rut_trab = request.query_params.get('rut_trab', None)
-        pri_nom_trab = request.query_params.get('pri_nom_trab', None)
-        
-        if rut_trab:
-            queryset = queryset.filter(rut_trab=rut_trab)
-        if pri_nom_trab:
-            queryset = queryset.filter(pri_nom_trab=pri_nom_trab)
-
-        if queryset.exists():
-            serializer = SerializerTrabajador(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response("No se encontraron trabajadores", status=status.HTTP_400_BAD_REQUEST)
     
 # -------------Api Communes---------------    
 class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -277,25 +264,9 @@ class PropietarioViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerPropietario
     queryset = Propietario.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['rut_prop','pri_nom_prop','pri_ape_prop']
     
-    def list(self, request):
-        queryset = self.get_queryset()
-        rut_prop = request.query_params.get('rut_prop', None)
-        pri_nom_prop = request.query_params.get('pri_nom_prop', None)
-        pri_ape_prop = request.query_params.get('pri_ape_prop', None)
-        
-        if rut_prop:
-            queryset = queryset.filter(rut_prop=rut_prop)
-        if pri_nom_prop:          
-            queryset = queryset.filter(pri_nom_prop=pri_nom_prop)
-        if pri_ape_prop:
-            queryset = queryset.filter(pri_ape_prop=pri_ape_prop)
-
-        if queryset.exists():
-            serializer = SerializerPropietario(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response("No se encontraron Propietarios", status=status.HTTP_400_BAD_REQUEST)
     
 class PersonalidadJuridicaViewSet(viewsets.ModelViewSet):
     authentication_classes = [Authentication]
@@ -308,22 +279,9 @@ class CuentaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerCuenta
     queryset = Cuenta.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['cuenta','propietario_rut']
     
-    def list(self, request):
-        queryset = self.get_queryset()
-        cuenta = request.query_params.get('cuenta', None)
-        propietario_rut = request.query_params.get('propietario_rut', None)
-        
-        if cuenta:
-            queryset = queryset.filter(cuenta=cuenta)
-        if propietario_rut:
-            queryset = queryset.filter(propietario_rut=propietario_rut)
-        
-        if queryset.exists():
-            serializer = SerializerCuenta(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response("No se encuentra cuenta", status=status.HTTP_400_BAD_REQUEST)
     
     
 

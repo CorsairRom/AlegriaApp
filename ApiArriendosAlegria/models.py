@@ -146,7 +146,7 @@ class TipoPropiedad(models.Model):
     
 class Propiedad(models.Model):
     direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
-    numero_ppdd = models.IntegerField(verbose_name='Número Propiedad')
+    numero_ppdd = models.IntegerField(verbose_name='Número Propiedad', null=True, blank=True)
     comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     tipopropiedad_id = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
