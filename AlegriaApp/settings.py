@@ -94,7 +94,7 @@ DATABASES = {
 AUTH_USER_MODEL = "ApiArriendosAlegria.Usuario"
 
 
-# Tiempo de expiración de token (sugerencia: 4 horas, sin refresco, cierra sesiones):
+# Tiempo de expiración de token (sugerencia: 1 hora, sin refresco, cierra sesión inmediantamente tras timeout):
 TOKEN_EXPIRE_TIME_IN_SECONDS = 3600
 
 

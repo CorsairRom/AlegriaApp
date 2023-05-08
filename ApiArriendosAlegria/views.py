@@ -1,9 +1,7 @@
 from datetime import datetime
 from django.contrib.sessions.models import Session
-from django.http import JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions, status, viewsets
-from rest_framework.authentication import TokenAuthentication
+from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -12,7 +10,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.permissions import IsAuthenticated
 from ApiArriendosAlegria.models import Usuario, Banco, Region, Comuna, TipoCuenta, Trabajador, TipoTrabajador, Propiedad, Propietario, TipoPropiedad, Arrendatario,\
                                         Arriendo, DetalleArriendo, Cuenta,Gastocomun,PersonalidadJuridica, ServiciosExtras
-from ApiArriendosAlegria.serializers import SerializadorUsuario, SerializadorTokenUsuario, SerializerBanco, SerializerRegion, SerializerComuna, SerializerTipoTrabajado,\
+from ApiArriendosAlegria.serializers import SerializadorUsuario, SerializerBanco, SerializerRegion, SerializerComuna, SerializerTipoTrabajado,\
                                             SerializerTrabajador, SerializerTipoCuenta, SerializerPropietario, SerializerPropiedad, SerializerCuenta, SerializerArrendatario,\
                                             SerializerArriendo, SerializerDetalleArriendo, SerializerGastoComun, SerializerPersonalidadJuridica, SerializerServiciosExtas,\
                                             SerializerTipoPropiedad, ServiciosExtras
@@ -21,11 +19,18 @@ from ApiArriendosAlegria.permission import IsAdminUser, IsStaffUser
 from ApiArriendosAlegria.authentication_mixins import Authentication
 import time
 import json
+from django.shortcuts import get_object_or_404
 
-
-# Create your views here.
+# --- General views: Login / Logout ---
 class Login(ObtainAuthToken):
+    """
+    Vista API del login.
 
+    Usa autenticación de token propia de Django REST Framework.
+
+    Se admite sólo una sesión activa. Dicha sesión se destruye
+    si se repite la petición POST con la sesión ya iniciada.
+    """
     def post(self, request, *args, **kwargs):
         login_serializer = self.serializer_class(
             data=request.data, context={'request': request})
@@ -33,14 +38,13 @@ class Login(ObtainAuthToken):
             user = login_serializer.validated_data['user']
             if user.is_active:
                 token, created = Token.objects.get_or_create(user=user)
-                user_serializer = SerializadorTokenUsuario(user)
-                trabajador = Trabajador.objects.get(usuario_id = user.id)
+                user_serializer = SerializadorUsuario(user)
+                trabajador = Trabajador.objects.get(usuario_id=user.id)
                 trabajador_tipo = trabajador.tipo_trab
                 if created:
                     return Response({
                         'token': token.key,
                         'usuario': user_serializer.data,
-                        'tipo_trabajador': trabajador_tipo.id,
                         'message': 'Ingreso exitoso.'
                     }, status=status.HTTP_201_CREATED)
                 else:
@@ -65,7 +69,9 @@ class Login(ObtainAuthToken):
 
 
 class Logout(APIView):
-
+    """
+    Vista API del logout, mediante token de Django REST Framework.
+    """
     def post(self, request, *args, **kwargs):
         try:
             token_request = request.GET.get('token')
@@ -96,7 +102,7 @@ class Logout(APIView):
 
         except:
             return Response({'ERROR': 'No se ha encontrado el token ingresado'},
-                            status=status.HTTP_409_CONFLICT)
+                            status=status.HTTP_409_CONFLICT)     
             
             
 #-----Api Regiones only method get
@@ -145,6 +151,7 @@ def get_post_api_CrudTyperWorkers(request):
             return Response(typerWorkers_srz.data, status=status.HTTP_201_CREATED)
         return Response(typerWorkers_srz.errors, status=status.HTTP_400_BAD_REQUEST)
     
+
 # <- deprecated
 @permission_classes([IsAuthenticated])    
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -179,8 +186,6 @@ class TypeWorkerViewSet(viewsets.ModelViewSet):
     queryset = TipoTrabajador.objects.all()
 
 
-
-
 # -------------Api Worker---------------
 class TrabajadorViewSet(viewsets.ModelViewSet):
     authentication_classes = [Authentication]
@@ -204,6 +209,7 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
         else:
             return Response("No se encontraron trabajadores", status=status.HTTP_400_BAD_REQUEST)
     
+
 # -------------Api Communes---------------    
 class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     authentication_classes = [Authentication]
@@ -214,62 +220,57 @@ class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['reg_id']
 
 
-# --- API view Usuario (lista) ---
-@api_view(['GET', 'POST'])
-@authentication_classes([Authentication])
-@permission_classes([permissions.IsAuthenticated])
-def user_api_view(request):
+# --- API Usuario (nuevo) ---
+class UsuarioViewSet(viewsets.GenericViewSet):
+    """
+    Set de vistas API para la entidad "Usuario".
 
-    # List
-    if request.method == 'GET':
-        # Queryset: devuelve todos los usuarios normales (no superuser)
-        users = Usuario.objects.all().filter(is_superuser=False).order_by('id')
-        users_serializer = SerializadorUsuario(users, many=True)
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    model_class = Usuario
+    serializer_class = SerializadorUsuario
+    queryset = model_class.objects.all().order_by('id')
 
-        return Response(users_serializer.data, status=status.HTTP_200_OK)
+    def list(self, request):
+        serializer = self.serializer_class(self.queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # Create
-    elif request.method == 'POST':
-        users_serializer = SerializadorUsuario(data=request.data)
-        
-        # Validation
-        if users_serializer.is_valid():
-            users_serializer.save()
-            return Response(users_serializer.data, status=status.HTTP_201_CREATED)
-        
-        return Response(users_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def create(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def retrieve(self, request, pk=None):
+        usuario = get_object_or_404(self.queryset, pk=pk)
+        if usuario:
+            serializer = self.serializer_class(usuario)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({'error': 'No se ha encontrado al usuario especificado.'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
-# --- API view Usuario (detalle) ---
-@api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([Authentication])
-@permission_classes([permissions.IsAuthenticated])
-def user_detail_api_view(request, pk=None):
-    # Queryset
-    user = Usuario.objects.filter(id=pk).first()
+    def update(self, request, pk=None):
+        usuario = get_object_or_404(self.queryset, pk=pk)
+        if usuario:
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'No se ha encontrado al usuario especificado.'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
-    # Validation
-    if user:
+    def destroy(self, request, pk=None):
+        usuario = get_object_or_404(self.queryset, pk=pk)
+        if usuario:
+            usuario.delete()
+            return Response({'message': 'Usuario eliminado.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'No se ha encontrado al usuario especificado.'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
-        # Retrieve
-        if request.method == 'GET':
-            user_serializer = SerializadorUsuario(user)
-            return Response(user_serializer.data, status=status.HTTP_200_OK)
-
-        # Update
-        elif request.method == 'PUT':
-            user_serializer = SerializadorUsuario(user, data=request.data)
-            if user_serializer.is_valid():
-                user_serializer.save()
-                return Response(user_serializer.data, status=status.HTTP_200_OK)
-            return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        # Delete
-        elif request.method == 'DELETE':
-            user.delete()
-            return Response({'message': 'Usuario eliminado'}, status=status.HTTP_200_OK)
-    
-    return Response({'message': 'No se ha encontrado un usuario con esos datos'}, status=status.HTTP_400_BAD_REQUEST)
 
 # ---------------------Segundo sprint-------------------
 class PropietarioViewSet(viewsets.ModelViewSet):
