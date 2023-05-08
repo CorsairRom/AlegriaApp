@@ -332,19 +332,8 @@ class PropiedadViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerPropiedad
     queryset = Propiedad.objects.all()
-    
-    def list(self, request):
-        queryset = self.get_queryset()
-        propietario_id = request.query_params.get('propietario_id', None)
-        
-        if propietario_id:
-            queryset = queryset.filter(propietario_id=propietario_id)
-        
-        if queryset.exists():
-            serializer = SerializerPropiedad(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response("No se encuentra cuenta", status=status.HTTP_400_BAD_REQUEST)
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['propietario_id']
     
     
     
