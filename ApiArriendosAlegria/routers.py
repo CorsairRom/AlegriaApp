@@ -1,9 +1,11 @@
 from rest_framework.routers import DefaultRouter
 from ApiArriendosAlegria.views import TrabajadorViewSet, ComunaReadOnlyViewSet,TypeWorkerViewSet, PropietarioViewSet, PropiedadViewSet, CuentaViewSet, ArriendatarioViewSet,\
-                                        ArriendoViewSet, PersonalidadJuridicaViewSet, TipoPropiedadViewSet, DetalleArriendoViewSet, ServiciosExtrasViewSet, GastoComunViewSet
+                                        ArriendoViewSet, PersonalidadJuridicaViewSet, TipoPropiedadViewSet, DetalleArriendoViewSet, ServiciosExtrasViewSet, GastoComunViewSet,\
+                                        UsuarioViewSet
 
 router = DefaultRouter()
 
+router.register(r'usuario', UsuarioViewSet, basename="usuario")
 router.register(r'trabajador', TrabajadorViewSet, basename="trabajador")
 router.register(r'comunas', ComunaReadOnlyViewSet, basename="comunas")
 router.register(r'tipo_trabajador', TypeWorkerViewSet, basename="tipo_trabajador")

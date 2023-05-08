@@ -9,6 +9,9 @@ from rest_framework.authentication import TokenAuthentication
 
 
 class ExpiringTokenAuthentication(TokenAuthentication):
+    """
+    Autenticación de credenciales mediante token con tiempo de expiración.
+    """
     token_expired = False
 
     def expires_in(self, token):
