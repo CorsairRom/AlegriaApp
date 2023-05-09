@@ -71,11 +71,17 @@ class SerializerTipoCuenta(serializers.ModelSerializer):
         fields = '__all__'
         
 class SerializerCuenta(serializers.ModelSerializer):
-    banco_id = serializers.StringRelatedField()
-    tipocuenta_id = serializers.StringRelatedField()
+    banco_id = serializers.SerializerMethodField()
+    tipocuenta_id = serializers.SerializerMethodField()
     class Meta:
         model = Cuenta
         fields = '__all__'
+    
+    def get_banco_id(self, obj):
+        return {'id': obj.banco_id.id, 'nombre_banco':obj.banco_id.nombre_banco}
+    
+    def get_tipocuenta_id(self, obj):
+        return {'id':obj.tipocuenta_id.id, 'nom_cuenta':obj.tipocuenta_id.nom_cuenta}
         
 class SerializerPropietario(serializers.ModelSerializer):
     
