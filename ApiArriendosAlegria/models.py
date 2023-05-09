@@ -141,7 +141,7 @@ class TipoPropiedad(models.Model):
     descripcion_tipoppdd = models.CharField(max_length=250, verbose_name='Descripción')
     
     def __str__(self):
-        return str(self.id) + " - " + self.nombre_tipoppdd
+        return self.nombre_tipoppdd 
     
     
 class Propiedad(models.Model):

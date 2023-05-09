@@ -71,7 +71,8 @@ class SerializerTipoCuenta(serializers.ModelSerializer):
         fields = '__all__'
         
 class SerializerCuenta(serializers.ModelSerializer):
-    
+    banco_id = serializers.StringRelatedField()
+    tipocuenta_id = serializers.StringRelatedField()
     class Meta:
         model = Cuenta
         fields = '__all__'
@@ -89,7 +90,8 @@ class SerializerPersonalidadJuridica(serializers.ModelSerializer):
         fields = '__all__'
         
 class SerializerPropiedad(serializers.ModelSerializer):
-    
+    tipopropiedad_id = serializers.StringRelatedField()
+    comuna_id = serializers.StringRelatedField()
     class Meta:
         model = Propiedad
         fields = '__all__'
