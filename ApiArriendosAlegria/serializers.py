@@ -149,10 +149,22 @@ class SerializerArrendatario(serializers.ModelSerializer):
         
 class SerializerArriendo(serializers.ModelSerializer):
     
+    arrendatario_id = serializers.SerializerMethodField()
     class Meta:
         model = Arriendo
         fields = '__all__'
 
+    def get_arrendatario_id(self, obj):
+        return {'id':obj.arrendatario_id.id, 
+                'rut_arr': obj.arrendatario_id.rut_arr,
+                'pri_nom_arr': obj.arrendatario_id.pri_nom_arr,
+                'seg_nom_arr': obj.arrendatario_id.seg_nom_arr,
+                'pri_ape_arr': obj.arrendatario_id.pri_ape_arr,
+                'seg_ape_arr': obj.arrendatario_id.seg_ape_arr,
+                'correo_arr': obj.arrendatario_id.correo_arr,
+                
+                }
+    
 class SerializerDetalleArriendo(serializers.ModelSerializer):
     
     class Meta:
