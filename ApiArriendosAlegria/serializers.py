@@ -55,12 +55,21 @@ class SerializerTipoTrabajado(serializers.ModelSerializer):
     class Meta:
         model = TipoTrabajador
         fields = '__all__'
+    
+    
         
 class SerializerTrabajador(serializers.ModelSerializer):
-    
+    comuna_id = serializers.SerializerMethodField()
+    tipo_trab = serializers.SerializerMethodField()
     class Meta:
         model = Trabajador
         fields = '__all__'
+    
+    def get_comuna_id(self, obj):
+        return {'id': obj.comuna_id.id, 'nom_com': obj.comuna_id.nom_com}
+    
+    def get_tipo_trab(self, obj):
+        return {'id': obj.tipo_trab.id, 'tipo': obj.tipo_trab.tipo}
         
 class SerializerBanco(serializers.ModelSerializer):
     
