@@ -101,13 +101,18 @@ class SerializerPropietario(serializers.ModelSerializer):
     class Meta:
         model = Propietario
         fields = '__all__'
+        
+    
 
 class SerializerPersonalidadJuridica(serializers.ModelSerializer):
-    
+    propietario_id = serializers.SerializerMethodField()
     class Meta:
         model = PersonalidadJuridica
         fields = '__all__'
-        
+     
+    def get_propietario_id(self, obj):
+        return{'id': obj.propietario_id.id, 'rut_prop': obj.propietario_id.rut_prop}  
+     
 class SerializerPropiedad(serializers.ModelSerializer):
     tipopropiedad_id = serializers.SerializerMethodField()
     comuna_id = serializers.SerializerMethodField()
