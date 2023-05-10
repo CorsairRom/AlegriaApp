@@ -41,10 +41,14 @@ class SerializerRegion(serializers.ModelSerializer):
         fields = '__all__'
 
 class SerializerComuna(serializers.ModelSerializer):
+    reg_id = serializers.SerializerMethodField()
     
     class Meta:
         model = Comuna
         fields = '__all__'
+        
+    def get_reg_id(self, obj):
+        return {'id': obj.reg_id.id, 'nom_reg': obj.reg_id.nom_reg}
         
 class SerializerTipoTrabajado(serializers.ModelSerializer):
     
