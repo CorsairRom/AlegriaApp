@@ -10,11 +10,12 @@ from rest_framework.authentication import TokenAuthentication
 
 class ExpiringTokenAuthentication(TokenAuthentication):
     """
-    Autenticación de credenciales mediante token con tiempo de expiración.
+    Autenticación de credenciales mediante token (authtoken) con tiempo de expiración.
     """
     token_expired = False
 
     def expires_in(self, token):
+        # Tiempo que falta para que el token expire.
         time_elapsed = timezone.now() - token.created
         left_time = timedelta(seconds=settings.TOKEN_EXPIRE_TIME_IN_SECONDS) - time_elapsed
         return left_time
