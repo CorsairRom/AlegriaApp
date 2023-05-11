@@ -1,6 +1,6 @@
 .env
 *.pyc
-__pycache__/*
+**/__pycache__/
 venv
 ApiArriendosAlegria\migrations\__pycache__
 .vscode
