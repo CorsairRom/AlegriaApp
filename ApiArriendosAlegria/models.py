@@ -4,7 +4,7 @@ from django.db import models
 from ApiArriendosAlegria.managers import GestorUsuario
 
 # Create your models here.
-# ---------Choises---------
+# ---------Choices---------
 
 tipoCuenta = {
     'vista': "vista",
@@ -21,6 +21,9 @@ sexo = {
 
 # Model abstractUser
 class Usuario(AbstractBaseUser, PermissionsMixin):
+    """
+    Modelo que representa a los usuarios del sistema, basado en AbstractBaseUser.
+    """
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField('Email', max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
@@ -44,6 +47,9 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 # Models region-comuna
 
 class Region(models.Model):
+    """
+    Modelo que representa a las regiones.
+    """
     id = models.IntegerField(verbose_name="Numero Región", primary_key=True)
     orden = models.IntegerField(verbose_name="orden region", default=0, unique=True)
     nom_reg = models.CharField(max_length=250, verbose_name="Nombre Región", unique=True)
@@ -52,6 +58,9 @@ class Region(models.Model):
         return self.nom_reg
     
 class Comuna(models.Model):
+    """
+    Modelo que representa a las comunas.
+    """
     nom_com = models.CharField(max_length=200, unique=True, verbose_name="Nombre Comuna")
     reg_id = models.ForeignKey(Region, on_delete= models.CASCADE)
     
@@ -61,6 +70,9 @@ class Comuna(models.Model):
 # model banco-cuenta-tipo cuenta
 
 class Banco(models.Model):
+    """
+    Modelo que representa a los bancos para el registro de los pagos.
+    """
     nombre_banco = models.CharField(max_length=180, unique=True, verbose_name='Nombre del Banco')
     cod_banco = models.CharField(max_length=100, unique=True, verbose_name='Código Banco ')
 
@@ -69,12 +81,18 @@ class Banco(models.Model):
     
 
 class TipoCuenta(models.Model):
+    """
+    Modelo que representa al tipo de cuenta bancaria.
+    """
     nom_cuenta = models.CharField(max_length=150, verbose_name='Nombre de la cuenta')
    
     def __str__(self):
         return self.nom_cuenta
     
 class Cuenta(models.Model):
+    """
+    Modelo que representa a la cuenta bancaria.
+    """
     cuenta = models.IntegerField(verbose_name='Numero de cuenta')
     banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
     tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
@@ -87,6 +105,9 @@ class Cuenta(models.Model):
 # model trabajador
 
 class TipoTrabajador(models.Model):
+    """
+    Modelo que representa al tipo de trabajador de Propiedades Alegría.
+    """
     tipo = models.CharField(max_length=150, unique=True)
     descripcion = models.CharField(max_length=250)
     
@@ -94,6 +115,9 @@ class TipoTrabajador(models.Model):
         return self.tipo
     
 class Trabajador(models.Model):
+    """
+    Modelo que representa al trabajador de Propiedades Alegría.
+    """
     rut_trab = models.CharField(max_length=12, unique=True, verbose_name='Rut Trabajador')
     pri_nom_trab = models.CharField(max_length=50, verbose_name='Primer Nombre')
     seg_nom_trab = models.CharField(max_length=50, verbose_name='Segundo Nombre', blank=True, null=True)
@@ -112,6 +136,9 @@ class Trabajador(models.Model):
 # model propietario-personalidadJuridica   
 
 class Propietario(models.Model):
+    """
+    Modelo que representa a los propietarios.
+    """
     rut_prop = models.CharField(max_length=12, unique=True, verbose_name='Rut Propietario')
     pri_nom_prop = models.CharField(max_length=50, verbose_name='Primer Nombre')
     seg_nom_prop = models.CharField(max_length=50, verbose_name='Segundo Nombre', null=True, blank=True)
@@ -126,6 +153,9 @@ class Propietario(models.Model):
         return self.rut_prop
     
 class PersonalidadJuridica(models.Model):
+    """
+    Modelo que representa a las personalidades jurídicas, especialmente si son propietarios.
+    """
     rol = models.CharField(max_length=80, unique=True)
     razon_social = models.CharField(max_length=250, verbose_name='Razón Social')
     representante = models.CharField(max_length=150)
@@ -137,6 +167,9 @@ class PersonalidadJuridica(models.Model):
 # model propiedad - tipo propiedad  
 
 class TipoPropiedad(models.Model):
+    """
+    Modelo que representa al tipo de propiedad.
+    """
     nombre_tipoppdd = models.CharField(max_length=150, verbose_name='Tipo de propiedad')
     descripcion_tipoppdd = models.CharField(max_length=250, verbose_name='Descripción')
     
@@ -145,6 +178,9 @@ class TipoPropiedad(models.Model):
     
     
 class Propiedad(models.Model):
+    """
+    Modelo que representa a la propiedad.
+    """
     direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
     numero_ppdd = models.IntegerField(verbose_name='Número Propiedad', null=True, blank=True)
     comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
@@ -159,6 +195,9 @@ class Propiedad(models.Model):
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
 
 class Arrendatario(models.Model):
+    """
+    Modelo que representa al arrendatario.
+    """
     rut_arr = models.CharField(max_length=12, unique=True, verbose_name='Rut Arrendatario')
     pri_nom_arr = models.CharField(max_length=50, verbose_name='Primer Nombre')
     seg_nom_arr = models.CharField(max_length=50, verbose_name='Segundo Nombre', null=True, blank=True)
@@ -173,6 +212,9 @@ class Arrendatario(models.Model):
         return self.rut_arr
     
 class Arriendo(models.Model):
+    """
+    Modelo que representa a los arriendos.
+    """
     cod_arriendo = models.IntegerField( verbose_name='Codigo Arriendo')
     arrendatario_id = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
     fecha_inicio = models.DateField( verbose_name='Fecha de Inicio')
@@ -188,6 +230,11 @@ class Arriendo(models.Model):
         return self.cod_arriendo
     
 class ServiciosExtras(models.Model):
+    """
+    Modelo que representa a los servicios extra.
+
+    Por ejemplo: Gásfiter.
+    """
     arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
     descripcion = models.CharField(max_length=250)
@@ -198,6 +245,9 @@ class ServiciosExtras(models.Model):
         return self.arriendo_id +' - '+ self.nom_servicio
     
 class Gastocomun(models.Model):
+    """
+    Modelo que representa a los gastos comunes.
+    """
     arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     valor = models.IntegerField()
     fecha = models.DateField()
@@ -206,6 +256,9 @@ class Gastocomun(models.Model):
         return self.arriendo_id + ' - ' + self.valor
     
 class DetalleArriendo(models.Model):
+    """
+    Modelo que representa el detalle de los arriendos.
+    """
     arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     propiedad_id = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
     fecha_pago = models.DateField()
