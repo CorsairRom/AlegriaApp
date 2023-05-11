@@ -60,7 +60,7 @@ class Login(ObtainAuthToken):
 
     Usa autenticación de token propia de Django REST Framework (Authtoken).
 
-    Se admite sólo una sesión activa. Dicha sesión se destruye
+    Se admite sólo una sesión activa por usuario. Dicha sesión se destruye
     si se repite la petición POST con la sesión ya iniciada.
     """
     def post(self, request, *args, **kwargs):
@@ -129,11 +129,11 @@ class Logout(APIView):
                                 'session_message': session_message},
                                 status=status.HTTP_200_OK)
 
-            return Response({'ERROR': 'No hay usuario con ese token'},
+            return Response({'error': 'No hay usuario con ese token'},
                             status=status.HTTP_400_BAD_REQUEST)
 
         except:
-            return Response({'ERROR': 'No se ha encontrado el token ingresado'},
+            return Response({'error': 'No se ha encontrado el token ingresado'},
                             status=status.HTTP_409_CONFLICT)     
             
             
