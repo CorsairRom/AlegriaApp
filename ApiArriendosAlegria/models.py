@@ -145,7 +145,7 @@ class Propietario(models.Model):
     pri_ape_prop = models.CharField(max_length=50, verbose_name='Primero Apellido')
     seg_ape_prop = models.CharField(max_length=50, verbose_name='Segundo Apellido', null=True, blank=True)
     direccion_prop = models.CharField(max_length=200, verbose_name='Dirección Principal')
-    comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
+    comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     email_prop = models.EmailField(verbose_name='Email Propietario')
     contacto_prop = models.IntegerField(verbose_name='Contacto Propietario')
     

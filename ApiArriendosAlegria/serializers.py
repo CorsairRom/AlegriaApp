@@ -66,17 +66,34 @@ class SerializerTipoTrabajado(serializers.ModelSerializer):
     
         
 class SerializerTrabajador(serializers.ModelSerializer):
-    comuna_id = serializers.SerializerMethodField()
-    tipo_trab = serializers.SerializerMethodField()
+    
     class Meta:
         model = Trabajador
         fields = '__all__'
     
-    def get_comuna_id(self, obj):
-        return {'id': obj.comuna_id.id, 'nom_com': obj.comuna_id.nom_com}
     
-    def get_tipo_trab(self, obj):
-        return {'id': obj.tipo_trab.id, 'tipo': obj.tipo_trab.tipo}
+    def to_representation(self, instance):
+        data = {
+            'id': instance.id,
+            'rut_trab': instance.rut_trab,
+            'pri_nom_trab': instance.pri_nom_trab,
+            'seg_nom_trab': instance.seg_nom_trab,
+            'pri_ape_trab': instance.pri_ape_trab,
+            'seg_ape_trab': instance.seg_ape_trab,
+            'celular': instance.celular,
+            'email': instance.email,
+            'direccion': instance.direccion,
+            'comuna_id': {
+                'id': instance.comuna_id.id,
+                'nom_com': instance.comuna_id.nom_com
+            },
+            'tipo_trab': {
+                'id': instance.tipo_trab.id,
+                'tipo': instance.tipo_trab.tipo
+            }
+        }
+        return data
+        
         
 class SerializerBanco(serializers.ModelSerializer):
     
@@ -104,11 +121,19 @@ class SerializerCuenta(serializers.ModelSerializer):
         return {'id':obj.tipocuenta_id.id, 'nom_cuenta':obj.tipocuenta_id.nom_cuenta}
         
 class SerializerPropietario(serializers.ModelSerializer):
+    comuna_id= serializers.PrimaryKeyRelatedField(
+        queryset=Comuna.objects.all(),
+        source='comuna', 
+        write_only=True,  
+    )
+    comuna = serializers.SerializerMethodField()
     
     class Meta:
         model = Propietario
         fields = '__all__'
         
+    def get_comuna(self, obj):
+        return {'id':obj.comuna.id, 'nom_comuna':obj.comuna.nom_com}
     
 
 class SerializerPersonalidadJuridica(serializers.ModelSerializer):
