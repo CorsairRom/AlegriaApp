@@ -41,22 +41,35 @@ class SerializerRegion(serializers.ModelSerializer):
         fields = '__all__'
 
 class SerializerComuna(serializers.ModelSerializer):
+    reg_id = serializers.SerializerMethodField()
     
     class Meta:
         model = Comuna
         fields = '__all__'
+        
+    def get_reg_id(self, obj):
+        return {'id': obj.reg_id.id, 'nom_reg': obj.reg_id.nom_reg}
         
 class SerializerTipoTrabajado(serializers.ModelSerializer):
     
     class Meta:
         model = TipoTrabajador
         fields = '__all__'
+    
+    
         
 class SerializerTrabajador(serializers.ModelSerializer):
-    
+    comuna_id = serializers.SerializerMethodField()
+    tipo_trab = serializers.SerializerMethodField()
     class Meta:
         model = Trabajador
         fields = '__all__'
+    
+    def get_comuna_id(self, obj):
+        return {'id': obj.comuna_id.id, 'nom_com': obj.comuna_id.nom_com}
+    
+    def get_tipo_trab(self, obj):
+        return {'id': obj.tipo_trab.id, 'tipo': obj.tipo_trab.tipo}
         
 class SerializerBanco(serializers.ModelSerializer):
     
@@ -88,16 +101,22 @@ class SerializerPropietario(serializers.ModelSerializer):
     class Meta:
         model = Propietario
         fields = '__all__'
+        
+    
 
 class SerializerPersonalidadJuridica(serializers.ModelSerializer):
-    
+    propietario_id = serializers.SerializerMethodField()
     class Meta:
         model = PersonalidadJuridica
         fields = '__all__'
-        
+     
+    def get_propietario_id(self, obj):
+        return{'id': obj.propietario_id.id, 'rut_prop': obj.propietario_id.rut_prop}  
+     
 class SerializerPropiedad(serializers.ModelSerializer):
     tipopropiedad_id = serializers.SerializerMethodField()
     comuna_id = serializers.SerializerMethodField()
+    propietario_id = serializers.SerializerMethodField()
     class Meta:
         model = Propiedad
         fields = '__all__'
@@ -107,7 +126,14 @@ class SerializerPropiedad(serializers.ModelSerializer):
     
     def get_comuna_id(self, obj):
         return{'id': obj.comuna_id.id, 'nom_com': obj.comuna_id.nom_com}
-    
+    def get_propietario_id(self,obj):
+        return{'id': obj.propietario_id.id, 
+               'rut_prop':obj.propietario_id.rut_prop,
+               'pri_nom_prop':obj.propietario_id.pri_nom_prop,
+               'seg_nom_prop':obj.propietario_id.seg_nom_prop,
+               'pri_ape_prop':obj.propietario_id.pri_ape_prop,
+               'seg_ape_prop':obj.propietario_id.seg_ape_prop,
+               }
         
 class SerializerTipoPropiedad(serializers.ModelSerializer):
     
@@ -123,10 +149,22 @@ class SerializerArrendatario(serializers.ModelSerializer):
         
 class SerializerArriendo(serializers.ModelSerializer):
     
+    arrendatario_id = serializers.SerializerMethodField()
     class Meta:
         model = Arriendo
         fields = '__all__'
 
+    def get_arrendatario_id(self, obj):
+        return {'id':obj.arrendatario_id.id, 
+                'rut_arr': obj.arrendatario_id.rut_arr,
+                'pri_nom_arr': obj.arrendatario_id.pri_nom_arr,
+                'seg_nom_arr': obj.arrendatario_id.seg_nom_arr,
+                'pri_ape_arr': obj.arrendatario_id.pri_ape_arr,
+                'seg_ape_arr': obj.arrendatario_id.seg_ape_arr,
+                'correo_arr': obj.arrendatario_id.correo_arr,
+                
+                }
+    
 class SerializerDetalleArriendo(serializers.ModelSerializer):
     
     class Meta:
