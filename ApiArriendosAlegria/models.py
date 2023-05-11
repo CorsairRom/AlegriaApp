@@ -126,7 +126,7 @@ class Trabajador(models.Model):
     celular = models.IntegerField()
     email = models.EmailField(blank=True, null=True)
     direccion = models.CharField(max_length=250)
-    comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
+    comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     tipo_trab = models.ForeignKey(TipoTrabajador, on_delete=models.CASCADE, verbose_name='Area Trabajador')
     usuario_id = models.ForeignKey(Usuario, on_delete=models.CASCADE, blank=True, null=True)
     
@@ -183,7 +183,7 @@ class Propiedad(models.Model):
     """
     direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
     numero_ppdd = models.IntegerField(verbose_name='Número Propiedad', null=True, blank=True)
-    comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
+    comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     tipopropiedad = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
     rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
