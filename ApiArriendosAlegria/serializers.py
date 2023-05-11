@@ -122,7 +122,7 @@ class SerializerCuenta(serializers.ModelSerializer):
         
 class SerializerPropietario(serializers.ModelSerializer):
     comuna= serializers.PrimaryKeyRelatedField(
-        queryset=TipoPropiedad.objects.all(),
+        queryset=Comuna.objects.all(),
         source='comuna_id', 
         write_only=True,  
     )
