@@ -288,7 +288,7 @@ class PropiedadViewSet(viewsets.ModelViewSet):
     serializer_class = SerializerPropiedad
     queryset = Propiedad.objects.all()
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['propietario_id']
+    filterset_fields = ['propietario']
     
     
     
