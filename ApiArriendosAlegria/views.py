@@ -58,9 +58,9 @@ class Login(ObtainAuthToken):
     """
     Vista API del login.
 
-    Usa autenticación de token propia de Django REST Framework.
+    Usa autenticación de token propia de Django REST Framework (Authtoken).
 
-    Se admite sólo una sesión activa. Dicha sesión se destruye
+    Se admite sólo una sesión activa por usuario. Dicha sesión se destruye
     si se repite la petición POST con la sesión ya iniciada.
     """
     def post(self, request, *args, **kwargs):
@@ -102,7 +102,7 @@ class Login(ObtainAuthToken):
 
 class Logout(APIView):
     """
-    Vista API del logout, mediante token de Django REST Framework.
+    Vista API del logout, mediante authtoken de Django REST Framework.
     """
     def post(self, request, *args, **kwargs):
         try:
@@ -129,17 +129,22 @@ class Logout(APIView):
                                 'session_message': session_message},
                                 status=status.HTTP_200_OK)
 
-            return Response({'ERROR': 'No hay usuario con ese token'},
+            return Response({'error': 'No hay usuario con ese token'},
                             status=status.HTTP_400_BAD_REQUEST)
 
         except:
-            return Response({'ERROR': 'No se ha encontrado el token ingresado'},
+            return Response({'error': 'No se ha encontrado el token ingresado'},
                             status=status.HTTP_409_CONFLICT)     
             
             
 
 # -------------Api Bancos---------------
 class BancoViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Set de vistas API para la entidad "Banco".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated]
 
@@ -148,6 +153,11 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
 
 # -------------Api Tipo Cuentas Bancarias---------------
 class TipoCuentaBancariaViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Set de vistas API para la entidad "Tipo Cuenta" (Bancaria).
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated]
 
@@ -157,6 +167,11 @@ class TipoCuentaBancariaViewSet(viewsets.ReadOnlyModelViewSet):
 
 # -------------Api TypeWorkers---------------
 class TypeWorkerViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Tipo Trabajador".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerTipoTrabajado
@@ -165,6 +180,11 @@ class TypeWorkerViewSet(viewsets.ModelViewSet):
 
 # -------------Api Worker---------------
 class TrabajadorViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Trabajador".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerTrabajador
@@ -175,6 +195,11 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
     
 # -------------Api Regiones--------------- 
 class RegionReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Set de vistas API para la entidad "Region".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated]
     queryset = Region.objects.all()
@@ -183,6 +208,11 @@ class RegionReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 
 # -------------Api Communes---------------   
 class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Set de vistas API para la entidad "Comuna".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     queryset = Comuna.objects.all()
@@ -206,6 +236,11 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
 # ---------------------Segundo sprint-------------------
 class PropietarioViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Propietario".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerPropietario
@@ -215,12 +250,23 @@ class PropietarioViewSet(viewsets.ModelViewSet):
     
     
 class PersonalidadJuridicaViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Personalidad Jurídica".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerPersonalidadJuridica
     queryset = PersonalidadJuridica.objects.all()
 
+
 class CuentaViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Cuenta".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerCuenta
@@ -232,6 +278,11 @@ class CuentaViewSet(viewsets.ModelViewSet):
     
 
 class PropiedadViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Propiedad".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerPropiedad
@@ -242,36 +293,66 @@ class PropiedadViewSet(viewsets.ModelViewSet):
     
     
 class TipoPropiedadViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Tipo Propiedad".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerTipoPropiedad
     queryset = TipoPropiedad.objects.all()
 
 class ArriendatarioViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Arrendatario".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArrendatario
     queryset = Arrendatario.objects.all()
     
 class ArriendoViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Arriendo".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArriendo
     queryset = Arriendo.objects.all()
 
 class DetalleArriendoViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Detalle Arriendo".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerDetalleArriendo
     queryset = DetalleArriendo.objects.all()
 
 class ServiciosExtrasViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Servicios Extra".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerServiciosExtas
     queryset = ServiciosExtras.objects.all()
     
 class GastoComunViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Gastos Comun".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerGastoComun
