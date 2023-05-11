@@ -121,19 +121,19 @@ class SerializerCuenta(serializers.ModelSerializer):
         return {'id':obj.tipocuenta_id.id, 'nom_cuenta':obj.tipocuenta_id.nom_cuenta}
         
 class SerializerPropietario(serializers.ModelSerializer):
-    comuna= serializers.PrimaryKeyRelatedField(
+    comuna_id= serializers.PrimaryKeyRelatedField(
         queryset=Comuna.objects.all(),
-        source='comuna_id', 
+        source='comuna', 
         write_only=True,  
     )
-    comuna_id = serializers.SerializerMethodField()
+    comuna = serializers.SerializerMethodField()
     
     class Meta:
         model = Propietario
         fields = '__all__'
         
-    def get_comuna_id(self, obj):
-        return {'id':obj.comuna_id.id, 'nom_comuna':obj.comuna_id.nom_com}
+    def get_comuna(self, obj):
+        return {'id':obj.comuna.id, 'nom_comuna':obj.comuna.nom_com}
     
 
 class SerializerPersonalidadJuridica(serializers.ModelSerializer):
