@@ -90,10 +90,10 @@ class SerializerTrabajador(serializers.ModelSerializer):
         fields = '__all__'
         
     def get_comuna(self, obj):
-        return {'id':obj.comuna.id, 'nom_comuna':obj.comuna.nom_com}
+        return {'id':obj.comuna.id, 'nom_com':obj.comuna.nom_com}
     
     def get_tipo_trab(self, obj):
-        return {'id':obj.comuna.id, 'tipo':obj.comuna.tipo}
+        return {'id':obj.tipo_trab.id, 'tipo':obj.tipo_trab.tipo}
     
     def get_usuario_id(self, obj):
         return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
