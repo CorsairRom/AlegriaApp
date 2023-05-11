@@ -71,28 +71,6 @@ class SerializerTrabajador(serializers.ModelSerializer):
         model = Trabajador
         fields = '__all__'
     
-    
-    def to_representation(self, instance):
-        data = {
-            'id': instance.id,
-            'rut_trab': instance.rut_trab,
-            'pri_nom_trab': instance.pri_nom_trab,
-            'seg_nom_trab': instance.seg_nom_trab,
-            'pri_ape_trab': instance.pri_ape_trab,
-            'seg_ape_trab': instance.seg_ape_trab,
-            'celular': instance.celular,
-            'email': instance.email,
-            'direccion': instance.direccion,
-            'comuna_id': {
-                'id': instance.comuna_id.id,
-                'nom_com': instance.comuna_id.nom_com
-            },
-            'tipo_trab': {
-                'id': instance.tipo_trab.id,
-                'tipo': instance.tipo_trab.tipo
-            }
-        }
-        return data
         
         
 class SerializerBanco(serializers.ModelSerializer):
@@ -108,17 +86,27 @@ class SerializerTipoCuenta(serializers.ModelSerializer):
         fields = '__all__'
         
 class SerializerCuenta(serializers.ModelSerializer):
-    banco_id = serializers.SerializerMethodField()
-    tipocuenta_id = serializers.SerializerMethodField()
+    banco_id = serializers.PrimaryKeyRelatedField(
+        queryset=Banco.objects.all(),
+        source='banco', 
+        write_only=True,  
+    )
+    tipocuenta_id = serializers.PrimaryKeyRelatedField(
+        queryset=TipoCuenta.objects.all(),
+        source='tipocuenta', 
+        write_only=True,  
+    )
+    banco = serializers.SerializerMethodField()
+    tipocuenta = serializers.SerializerMethodField()
     class Meta:
         model = Cuenta
         fields = '__all__'
     
-    def get_banco_id(self, obj):
-        return {'id': obj.banco_id.id, 'nombre_banco':obj.banco_id.nombre_banco}
+    def get_banco(self, obj):
+        return {'id': obj.banco.id, 'nombre_banco':obj.banco.nombre_banco}
     
-    def get_tipocuenta_id(self, obj):
-        return {'id':obj.tipocuenta_id.id, 'nom_cuenta':obj.tipocuenta_id.nom_cuenta}
+    def get_tipocuenta(self, obj):
+        return {'id':obj.tipocuenta.id, 'nom_cuenta':obj.tipocuenta.nom_cuenta}
         
 class SerializerPropietario(serializers.ModelSerializer):
     comuna_id= serializers.PrimaryKeyRelatedField(
