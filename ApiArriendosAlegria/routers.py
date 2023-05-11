@@ -1,16 +1,35 @@
 from rest_framework.routers import DefaultRouter
-from ApiArriendosAlegria.views import TrabajadorViewSet, ComunaReadOnlyViewSet,TypeWorkerViewSet, PropietarioViewSet, PropiedadViewSet, CuentaViewSet, ArriendatarioViewSet,\
-                                        ArriendoViewSet, PersonalidadJuridicaViewSet, TipoPropiedadViewSet, DetalleArriendoViewSet, ServiciosExtrasViewSet, GastoComunViewSet,\
-                                        UsuarioViewSet
+from ApiArriendosAlegria.views import (
+    UsuarioViewSet,
+    TrabajadorViewSet,
+    TypeWorkerViewSet,
+    RegionReadOnlyViewSet,
+    ComunaReadOnlyViewSet,
+    BancoViewSet,
+    TipoCuentaBancariaViewSet,
+    CuentaViewSet,
+    PropietarioViewSet,
+    PersonalidadJuridicaViewSet,
+    PropiedadViewSet,
+    TipoPropiedadViewSet,
+    ArriendatarioViewSet,
+    ArriendoViewSet,
+    DetalleArriendoViewSet,
+    ServiciosExtrasViewSet,
+    GastoComunViewSet
+)
 
 router = DefaultRouter()
 
 router.register(r'usuario', UsuarioViewSet, basename="usuario")
 router.register(r'trabajador', TrabajadorViewSet, basename="trabajador")
-router.register(r'comunas', ComunaReadOnlyViewSet, basename="comunas")
 router.register(r'tipo_trabajador', TypeWorkerViewSet, basename="tipo_trabajador")
-router.register(r'propietario', PropietarioViewSet, basename="propietario")
+router.register(r'regiones', RegionReadOnlyViewSet, basename="regiones")
+router.register(r'comunas', ComunaReadOnlyViewSet, basename="comunas")
+router.register(r'bancos', BancoViewSet, basename="bancos")
+router.register(r'tipo_cuentas_bancos', TipoCuentaBancariaViewSet, basename="tipo_cuentas_bancos")
 router.register(r'cuenta', CuentaViewSet, basename="cuenta")
+router.register(r'propietario', PropietarioViewSet, basename="propietario")
 router.register(r'personalidad_juridica', PersonalidadJuridicaViewSet, basename="personalidad_juridica")
 router.register(r'propiedad', PropiedadViewSet, basename="propiedad")
 router.register(r'tipo_propiedad', TipoPropiedadViewSet, basename="tipo_propiedad")
