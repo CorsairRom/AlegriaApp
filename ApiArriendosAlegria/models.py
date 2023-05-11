@@ -94,8 +94,8 @@ class Cuenta(models.Model):
     Modelo que representa a la cuenta bancaria.
     """
     cuenta = models.IntegerField(verbose_name='Numero de cuenta')
-    banco_id = models.ForeignKey(Banco, on_delete=models.CASCADE)
-    tipocuenta_id = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
+    banco = models.ForeignKey(Banco, on_delete=models.CASCADE)
+    tipocuenta = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
     estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')
     propietario_rut = models.CharField( max_length=12, verbose_name='Propietario de la cuenta', default='01.234.456-7')
     
@@ -159,7 +159,7 @@ class PersonalidadJuridica(models.Model):
     rol = models.CharField(max_length=80, unique=True)
     razon_social = models.CharField(max_length=250, verbose_name='Razón Social')
     representante = models.CharField(max_length=150)
-    propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
+    propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.rol
@@ -184,8 +184,8 @@ class Propiedad(models.Model):
     direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
     numero_ppdd = models.IntegerField(verbose_name='Número Propiedad', null=True, blank=True)
     comuna_id = models.ForeignKey(Comuna, on_delete=models.CASCADE)
-    propietario_id = models.ForeignKey(Propietario, on_delete=models.CASCADE)
-    tipopropiedad_id = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
+    propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE)
+    tipopropiedad = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
     rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
     
     def __str__(self):
@@ -216,7 +216,7 @@ class Arriendo(models.Model):
     Modelo que representa a los arriendos.
     """
     cod_arriendo = models.IntegerField( verbose_name='Codigo Arriendo')
-    arrendatario_id = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
+    arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
     fecha_inicio = models.DateField( verbose_name='Fecha de Inicio')
     fecha_termino = models.DateField( verbose_name= 'Fecha de Termino')
     fecha_pri_ajuste = models.DateField(verbose_name='Fecha Primer Reajuste')
@@ -225,7 +225,7 @@ class Arriendo(models.Model):
     fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo')
     estado_arriendo = models.CharField(max_length=120, verbose_name='Estado del arriendo')
     porcentaje_multa = models.IntegerField(verbose_name='Porcentaje Multa')
-    propiedad_id = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return self.cod_arriendo
@@ -236,7 +236,7 @@ class ServiciosExtras(models.Model):
 
     Por ejemplo: Gásfiter.
     """
-    arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
     descripcion = models.CharField(max_length=250)
     fecha = models.DateField()
@@ -249,23 +249,23 @@ class Gastocomun(models.Model):
     """
     Modelo que representa a los gastos comunes.
     """
-    arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     valor = models.IntegerField()
     fecha = models.DateField()
     
     def __str__(self):
-        return self.arriendo_id + ' - ' + self.valor
+        return self.arriendo + ' - ' + self.valor
     
 class DetalleArriendo(models.Model):
     """
     Modelo que representa el detalle de los arriendos.
     """
-    arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     fecha_pago = models.DateField()
     monto_pago = models.PositiveIntegerField(null=True)
     
     def __str__(self):
-        return self.arriendo_id
+        return self.arriendo
     
     
     
