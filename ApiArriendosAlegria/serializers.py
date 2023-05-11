@@ -66,11 +66,37 @@ class SerializerTipoTrabajado(serializers.ModelSerializer):
     
         
 class SerializerTrabajador(serializers.ModelSerializer):
+    comuna_id= serializers.PrimaryKeyRelatedField(
+        queryset=Comuna.objects.all(),
+        source='comuna', 
+        write_only=True,  
+    )
+    tipo_trab_id= serializers.PrimaryKeyRelatedField(
+        queryset=TipoTrabajador.objects.all(),
+        source='tipo_trab', 
+        write_only=True,  
+    )
+    usuario = serializers.PrimaryKeyRelatedField(
+        queryset=Usuario.objects.all(),
+        source='usuario_id',
+        write_only=True,
+    )
+    comuna = serializers.SerializerMethodField()
+    tipo_trab = serializers.SerializerMethodField()
+    usuario_id = serializers.SerializerMethodField()
     
     class Meta:
         model = Trabajador
         fields = '__all__'
+        
+    def get_comuna(self, obj):
+        return {'id':obj.comuna.id, 'nom_comuna':obj.comuna.nom_com}
     
+    def get_tipo_trab(self, obj):
+        return {'id':obj.comuna.id, 'tipo':obj.comuna.tipo}
+    
+    def get_usuario_id(self, obj):
+        return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
         
         
 class SerializerBanco(serializers.ModelSerializer):
