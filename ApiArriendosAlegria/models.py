@@ -183,6 +183,7 @@ class Arriendo(models.Model):
     fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo')
     estado_arriendo = models.CharField(max_length=120, verbose_name='Estado del arriendo')
     porcentaje_multa = models.IntegerField(verbose_name='Porcentaje Multa')
+    propiedad_id = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.cod_arriendo
@@ -207,8 +208,8 @@ class Gastocomun(models.Model):
     
 class DetalleArriendo(models.Model):
     arriendo_id = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
-    propiedad_id = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
     fecha_pago = models.DateField()
+    monto_pago = models.PositiveIntegerField()
     
     def __str__(self):
         return self.arriendo_id
