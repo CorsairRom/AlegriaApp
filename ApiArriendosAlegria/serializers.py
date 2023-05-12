@@ -160,25 +160,44 @@ class SerializerPersonalidadJuridica(serializers.ModelSerializer):
         return{'id': obj.propietario_id.id, 'rut_prop': obj.propietario_id.rut_prop}  
      
 class SerializerPropiedad(serializers.ModelSerializer):
-    tipopropiedad_id = serializers.SerializerMethodField()
-    comuna_id = serializers.SerializerMethodField()
-    propietario_id = serializers.SerializerMethodField()
+    comuna_id= serializers.PrimaryKeyRelatedField(
+        queryset=Comuna.objects.all(),
+        source='comuna', 
+        write_only=True,  
+    )
+    comuna = serializers.SerializerMethodField()
+
+    tipopropiedad_id= serializers.PrimaryKeyRelatedField(
+        queryset=TipoPropiedad.objects.all(),
+        source='tipopropiedad', 
+        write_only=True,  
+    )
+    tipopropiedad = serializers.SerializerMethodField()
+    
+    propietario_id= serializers.PrimaryKeyRelatedField(
+        queryset=Propiedad.objects.all(),
+        source='propietario', 
+        write_only=True,  
+    )
+    propietario = serializers.SerializerMethodField()    
     class Meta:
         model = Propiedad
         fields = '__all__'
-        
-    def get_tipopropiedad_id(self, obj):
-        return {'id': obj.tipopropiedad_id.id, 'nombre_tipoppdd': obj.tipopropiedad_id.nombre_tipoppdd}
+
     
-    def get_comuna_id(self, obj):
-        return{'id': obj.comuna_id.id, 'nom_com': obj.comuna_id.nom_com}
-    def get_propietario_id(self,obj):
-        return{'id': obj.propietario_id.id, 
-               'rut_prop':obj.propietario_id.rut_prop,
-               'pri_nom_prop':obj.propietario_id.pri_nom_prop,
-               'seg_nom_prop':obj.propietario_id.seg_nom_prop,
-               'pri_ape_prop':obj.propietario_id.pri_ape_prop,
-               'seg_ape_prop':obj.propietario_id.seg_ape_prop,
+    def get_comuna(self, obj):
+        return {'id':obj.comuna.id, 'nom_comuna':obj.comuna.nom_com}
+        
+    def get_tipopropiedad(self, obj):
+        return {'id': obj.tipopropiedad.id, 'nombre_tipoppdd': obj.tipopropiedad.nombre_tipoppdd}
+    
+    def get_propietario(self,obj):
+        return{'id': obj.propietario.id, 
+               'rut_prop':obj.propietario.rut_prop,
+               'pri_nom_prop':obj.propietario.pri_nom_prop,
+               'seg_nom_prop':obj.propietario.seg_nom_prop,
+               'pri_ape_prop':obj.propietario.pri_ape_prop,
+               'seg_ape_prop':obj.propietario.seg_ape_prop,
                }
         
 class SerializerTipoPropiedad(serializers.ModelSerializer):
