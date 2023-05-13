@@ -175,7 +175,7 @@ class SerializerPropiedad(serializers.ModelSerializer):
     tipopropiedad = serializers.SerializerMethodField()
     
     propietario_id= serializers.PrimaryKeyRelatedField(
-        queryset=Propiedad.objects.all(),
+        queryset=Propietario.objects.all(),
         source='propietario', 
         write_only=True,  
     )
