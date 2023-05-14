@@ -80,6 +80,7 @@ class SerializerTrabajador(serializers.ModelSerializer):
         queryset=Usuario.objects.all(),
         source='usuario_id',
         write_only=True,
+        required=False
     )
     comuna = serializers.SerializerMethodField()
     tipo_trab = serializers.SerializerMethodField()
@@ -96,7 +97,10 @@ class SerializerTrabajador(serializers.ModelSerializer):
         return {'id':obj.tipo_trab.id, 'tipo':obj.tipo_trab.tipo}
     
     def get_usuario_id(self, obj):
-        return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
+        if obj.usuario_id:
+            return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
+        return None
+            
         
         
 class SerializerBanco(serializers.ModelSerializer):
