@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ApiArriendosAlegria.models import Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
+from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
                                         Gastocomun, DetalleArriendo 
 from ApiArriendosAlegria.Rut import validarRut
@@ -268,6 +268,13 @@ class SerializerArriendo(serializers.ModelSerializer):
                 'direccion_ppdd': obj.propiedad.direccion_ppdd,
                 'numero_ppdd': obj.propiedad.numero_ppdd
                 }
+
+class SerializerArriendoDepartamento(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ArriendoDepartamento
+        fields = '__all__' 
+
     
 class SerializerDetalleArriendo(serializers.ModelSerializer):
     

@@ -231,7 +231,7 @@ class Arriendo(models.Model):
     def __str__(self):
         return self.cod_arriendo
  
-class ExtraDepartamento(models.Model):
+class ArriendoDepartamento(models.Model):
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE, null=True)
     
