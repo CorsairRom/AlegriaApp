@@ -257,17 +257,11 @@ class SerializerArriendo(serializers.ModelSerializer):
         
     def get_arrendatario(self,obj):
         return{'id': obj.arrendatario.id, 
-               'rut_arr':obj.arrendatario.rut_prop,
-               'pri_nom_arr':obj.arrendatario.pri_nom_arr, 
-               'pri_ape_arr':obj.arrendatario.pri_ape_arr,
-               }
-        
-    def get_arrendatario(self,obj):
-        return{'id': obj.arrendatario.id, 
                'rut_arr':obj.arrendatario.rut_arr,
                'pri_nom_arr':obj.arrendatario.pri_nom_arr, 
                'pri_ape_arr':obj.arrendatario.pri_ape_arr,
                }
+        
 
     def get_propiedad(self, obj):
         return {'id':obj.propiedad.id, 
