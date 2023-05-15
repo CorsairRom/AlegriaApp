@@ -153,6 +153,12 @@ class SerializerPropietario(serializers.ModelSerializer):
     )
     comuna = serializers.SerializerMethodField()
     
+    def validate(self, data):
+        rut_prop = data.get('rut_prop')
+        if not validarRut(rut_prop):
+            raise serializers.ValidationError("Rut inválido")
+        return data
+    
     class Meta:
         model = Propietario
         fields = '__all__'
@@ -222,6 +228,12 @@ class SerializerArrendatario(serializers.ModelSerializer):
     class Meta:
         model = Arrendatario
         fields = '__all__'
+        
+    def validate(self, data):
+        rut_arr = data.get('rut_arr')
+        if not validarRut(rut_arr):
+            raise serializers.ValidationError("Rut inválido")
+        return data
         
 class SerializerArriendo(serializers.ModelSerializer):
     
