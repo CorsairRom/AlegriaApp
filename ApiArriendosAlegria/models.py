@@ -225,7 +225,7 @@ class Arriendo(models.Model):
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
     fecha_inicio = models.DateTimeField( verbose_name='Fecha de Inicio')
     fecha_termino = models.DateTimeField( verbose_name= 'Fecha de Termino')
-    fecha_pri_ajuste = models.DateTimeField()
+    fecha_pri_ajuste = models.DateTimeField(blank=True, null=True)
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
