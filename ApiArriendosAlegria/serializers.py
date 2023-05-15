@@ -266,9 +266,7 @@ class SerializerArriendo(serializers.ModelSerializer):
     def get_propiedad(self, obj):
         return {'id':obj.propiedad.id, 
                 'direccion_ppdd': obj.propiedad.direccion_ppdd,
-                'tipopropiedad': obj.propiedad.tipopropiedad,
-                'numero_ppdd': obj.propiedad.numero_ppdd,
-                'propietario': obj.propiedad.propietario
+                'numero_ppdd': obj.propiedad.numero_ppdd
                 }
     
 class SerializerDetalleArriendo(serializers.ModelSerializer):
