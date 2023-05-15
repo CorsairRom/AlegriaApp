@@ -192,11 +192,6 @@ class Propiedad(models.Model):
     def __str__(self):
         return str(self.id)    
     
-class ExtraDepartamento(models.Model):
-    bodega = models.IntegerField( blank=True, null=True )
-    estacionamiento = models.IntegerField( blank=True, null=True) 
-    propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
-
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
 
@@ -235,6 +230,13 @@ class Arriendo(models.Model):
     
     def __str__(self):
         return self.cod_arriendo
+ 
+class ExtraDepartamento(models.Model):
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return str(self.id)
     
 class ServiciosExtras(models.Model):
     """
