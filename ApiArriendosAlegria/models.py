@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-
+from datetime import datetime
+from rest_framework import serializers
 from ApiArriendosAlegria.managers import GestorUsuario
 
 # Create your models here.
@@ -18,6 +19,21 @@ sexo = {
     'Mujer' : "Mujer",
     'No definido' : "No definido",
 }
+
+
+class CustomDateField(serializers.DateField):
+    def to_representation(self, value):
+        if value:
+            # Formatear la fecha en el formato deseado (DD/MM/YYYY)
+            return value.strftime('%d/%m/%Y')
+        return None
+
+    def to_internal_value(self, data):
+        try:
+            # Parsear la fecha en el formato deseado (DD/MM/YYYY)
+            return datetime.strptime(data, '%d/%m/%Y').date()
+        except ValueError:
+            raise serializers.ValidationError('Fecha inválida. Utilice el formato DD/MM/YYYY.')
 
 # Model abstractUser
 class Usuario(AbstractBaseUser, PermissionsMixin):
@@ -221,9 +237,9 @@ class Arriendo(models.Model):
     """
     cod_arriendo = models.CharField(max_length=50, verbose_name='Codigo Arriendo', null=True, blank=True)
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
-    fecha_inicio = models.DateField( verbose_name='Fecha de Inicio')
+    fecha_inicio = models.DateTimeField( verbose_name='Fecha de Inicio')
     fecha_termino = models.DateField( verbose_name= 'Fecha de Termino')
-    fecha_pri_ajuste = models.DateField(verbose_name='Fecha Primer Reajuste')
+    fecha_pri_ajuste = CustomDateField()
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
