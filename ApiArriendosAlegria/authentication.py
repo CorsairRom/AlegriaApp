@@ -13,6 +13,9 @@ class ExpiringTokenAuthentication(TokenAuthentication):
     Autenticación de credenciales mediante token (authtoken) con tiempo de expiración.
     """
     token_expired = False
+    expiration_hour = 19
+    creation_hour = 8
+    now = timezone.now().astimezone(timezone.pytz.timezone('America/Santiago'))
 
     def expires_in(self, token):
         # Tiempo que falta para que el token expire.
@@ -22,7 +25,8 @@ class ExpiringTokenAuthentication(TokenAuthentication):
 
 
     def is_token_expired(self, token):
-        return self.expires_in(token) < timedelta(seconds=0)
+        return now.hour >= self.expiration_hour
+        # return self.expires_in(token) < timedelta(seconds=0)
 
 
     def token_expire_handler(self, token):
