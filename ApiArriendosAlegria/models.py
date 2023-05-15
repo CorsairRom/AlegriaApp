@@ -223,7 +223,7 @@ class Arriendo(models.Model):
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
-    estado_arriendo = models.CharField(max_length=120, verbose_name='Estado del arriendo')
+    estado_arriendo = models.BooleanField(default=True)
     porcentaje_multa = models.IntegerField(verbose_name='Porcentaje Multa')
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
     
