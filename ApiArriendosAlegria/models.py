@@ -21,20 +21,6 @@ sexo = {
 }
 
 
-class CustomDateField(serializers.DateField):
-    def to_representation(self, value):
-        if value:
-            # Formatear la fecha en el formato deseado (DD/MM/YYYY)
-            return value.strftime('%d/%m/%Y')
-        return None
-
-    def to_internal_value(self, data):
-        try:
-            # Parsear la fecha en el formato deseado (DD/MM/YYYY)
-            return datetime.strptime(data, '%d/%m/%Y').date()
-        except ValueError:
-            raise serializers.ValidationError('Fecha inválida. Utilice el formato DD/MM/YYYY.')
-
 # Model abstractUser
 class Usuario(AbstractBaseUser, PermissionsMixin):
     """
@@ -238,11 +224,11 @@ class Arriendo(models.Model):
     cod_arriendo = models.CharField(max_length=50, verbose_name='Codigo Arriendo', null=True, blank=True)
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
     fecha_inicio = models.DateTimeField( verbose_name='Fecha de Inicio')
-    fecha_termino = models.DateField( verbose_name= 'Fecha de Termino')
-    fecha_pri_ajuste = CustomDateField()
+    fecha_termino = models.DateTimeField( verbose_name= 'Fecha de Termino')
+    fecha_pri_ajuste = models.DateTimeField()
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
-    fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
+    fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
     estado_arriendo = models.BooleanField(default=True)
     porcentaje_multa = models.IntegerField(verbose_name='Porcentaje Multa')
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
@@ -259,7 +245,7 @@ class ServiciosExtras(models.Model):
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
     descripcion = models.CharField(max_length=250)
-    fecha = models.DateField()
+    fecha = models.DateTimeField()
     Monto = models.IntegerField()
     
     def __str__(self):
@@ -271,7 +257,7 @@ class Gastocomun(models.Model):
     """
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     valor = models.IntegerField()
-    fecha = models.DateField()
+    fecha = models.DateTimeField()
     
     def __str__(self):
         return self.arriendo + ' - ' + self.valor
@@ -281,7 +267,7 @@ class DetalleArriendo(models.Model):
     Modelo que representa el detalle de los arriendos.
     """
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
-    fecha_pago = models.DateField()
+    fecha_pago = models.DateTimeField()
     monto_pago = models.PositiveIntegerField(null=True)
     
     def __str__(self):
