@@ -29,7 +29,7 @@ class ExpiringTokenAuthentication(TokenAuthentication):
                 raise exceptions.AuthenticationFailed('Usuario inactivo o eliminado.')
         
         current_time = timezone.localtime(timezone.now()).time()
-        expiration_time = time(19, 0)  # Aquí puedes definir la hora de muerte diaria del token.
+        expiration_time = time(23, 59)  # Aquí puedes definir la hora de muerte diaria del token.
         
         # Cuenta regresiva para la muerte del token: no es visible al usuario, pero es útil para el desarrollador.
         remaining_time = datetime.combine(datetime.now().date(), expiration_time) - datetime.combine(datetime.now().date(), current_time)
