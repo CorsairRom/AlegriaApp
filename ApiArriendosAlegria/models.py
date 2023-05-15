@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-
+from datetime import datetime
+from rest_framework import serializers
 from ApiArriendosAlegria.managers import GestorUsuario
 
 # Create your models here.
@@ -18,6 +19,7 @@ sexo = {
     'Mujer' : "Mujer",
     'No definido' : "No definido",
 }
+
 
 # Model abstractUser
 class Usuario(AbstractBaseUser, PermissionsMixin):
@@ -176,7 +178,6 @@ class TipoPropiedad(models.Model):
     def __str__(self):
         return self.nombre_tipoppdd 
     
-    
 class Propiedad(models.Model):
     """
     Modelo que representa a la propiedad.
@@ -189,7 +190,12 @@ class Propiedad(models.Model):
     rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
     
     def __str__(self):
-        return str(self.id)     
+        return str(self.id)    
+    
+class ExtraDepartamento(models.Model):
+    bodega = models.IntegerField( blank=True, null=True )
+    estacionamiento = models.IntegerField( blank=True, null=True) 
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
 
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
@@ -215,15 +221,15 @@ class Arriendo(models.Model):
     """
     Modelo que representa a los arriendos.
     """
-    cod_arriendo = models.IntegerField( verbose_name='Codigo Arriendo')
+    cod_arriendo = models.CharField(max_length=50, verbose_name='Codigo Arriendo', null=True, blank=True)
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
-    fecha_inicio = models.DateField( verbose_name='Fecha de Inicio')
-    fecha_termino = models.DateField( verbose_name= 'Fecha de Termino')
-    fecha_pri_ajuste = models.DateField(verbose_name='Fecha Primer Reajuste')
-    periodo_reajuste = models.DateField(verbose_name='Perdio Reajuste')
+    fecha_inicio = models.DateTimeField( verbose_name='Fecha de Inicio')
+    fecha_termino = models.DateTimeField( verbose_name= 'Fecha de Termino')
+    fecha_pri_ajuste = models.DateTimeField()
+    periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
-    fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo')
-    estado_arriendo = models.CharField(max_length=120, verbose_name='Estado del arriendo')
+    fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
+    estado_arriendo = models.BooleanField(default=True)
     porcentaje_multa = models.IntegerField(verbose_name='Porcentaje Multa')
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
     
@@ -239,7 +245,7 @@ class ServiciosExtras(models.Model):
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
     descripcion = models.CharField(max_length=250)
-    fecha = models.DateField()
+    fecha = models.DateTimeField()
     Monto = models.IntegerField()
     
     def __str__(self):
@@ -251,7 +257,7 @@ class Gastocomun(models.Model):
     """
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
     valor = models.IntegerField()
-    fecha = models.DateField()
+    fecha = models.DateTimeField()
     
     def __str__(self):
         return self.arriendo + ' - ' + self.valor
@@ -261,7 +267,7 @@ class DetalleArriendo(models.Model):
     Modelo que representa el detalle de los arriendos.
     """
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
-    fecha_pago = models.DateField()
+    fecha_pago = models.DateTimeField()
     monto_pago = models.PositiveIntegerField(null=True)
     
     def __str__(self):

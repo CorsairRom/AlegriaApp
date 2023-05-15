@@ -2,7 +2,7 @@ from rest_framework import serializers
 from ApiArriendosAlegria.models import Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
                                         Gastocomun, DetalleArriendo 
-
+from ApiArriendosAlegria.Rut import validarRut
 
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
@@ -66,6 +66,7 @@ class SerializerTipoTrabajado(serializers.ModelSerializer):
     
         
 class SerializerTrabajador(serializers.ModelSerializer):
+       
     comuna_id= serializers.PrimaryKeyRelatedField(
         queryset=Comuna.objects.all(),
         source='comuna', 
@@ -89,6 +90,12 @@ class SerializerTrabajador(serializers.ModelSerializer):
     class Meta:
         model = Trabajador
         fields = '__all__'
+    
+    def validate(self, data):
+        rut_trab = data.get('rut_trab')
+        if not validarRut(rut_trab):
+            raise serializers.ValidationError("Rut inválido")
+        return data
         
     def get_comuna(self, obj):
         return {'id':obj.comuna.id, 'nom_com':obj.comuna.nom_com}
@@ -100,7 +107,7 @@ class SerializerTrabajador(serializers.ModelSerializer):
         if obj.usuario_id:
             return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
         return None
-            
+    
         
         
 class SerializerBanco(serializers.ModelSerializer):
@@ -145,6 +152,12 @@ class SerializerPropietario(serializers.ModelSerializer):
         write_only=True,  
     )
     comuna = serializers.SerializerMethodField()
+    
+    def validate(self, data):
+        rut_prop = data.get('rut_prop')
+        if not validarRut(rut_prop):
+            raise serializers.ValidationError("Rut inválido")
+        return data
     
     class Meta:
         model = Propietario
@@ -216,22 +229,46 @@ class SerializerArrendatario(serializers.ModelSerializer):
         model = Arrendatario
         fields = '__all__'
         
+    def validate(self, data):
+        rut_arr = data.get('rut_arr')
+        if not validarRut(rut_arr):
+            raise serializers.ValidationError("Rut inválido")
+        return data
+        
 class SerializerArriendo(serializers.ModelSerializer):
+    arrendatario_id= serializers.PrimaryKeyRelatedField(
+        queryset=Arrendatario.objects.all(),
+        source='arrendatario', 
+        write_only=True,  
+    )
+    arrendatario = serializers.SerializerMethodField()   
+     
+    propiedad_id= serializers.PrimaryKeyRelatedField(
+        queryset=Propiedad.objects.all(),
+        source='propiedad', 
+        write_only=True,  
+    )
+    propiedad = serializers.SerializerMethodField()    
     
-    arrendatario_id = serializers.SerializerMethodField()
+    
     class Meta:
         model = Arriendo
         fields = '__all__'
+        
+    def get_arrendatario(self,obj):
+        return{'id': obj.arrendatario.id, 
+               'rut_arr':obj.arrendatario.rut_arr,
+               'pri_nom_arr':obj.arrendatario.pri_nom_arr, 
+               'pri_ape_arr':obj.arrendatario.pri_ape_arr,
+               }
+        
 
-    def get_arrendatario_id(self, obj):
-        return {'id':obj.arrendatario_id.id, 
-                'rut_arr': obj.arrendatario_id.rut_arr,
-                'pri_nom_arr': obj.arrendatario_id.pri_nom_arr,
-                'seg_nom_arr': obj.arrendatario_id.seg_nom_arr,
-                'pri_ape_arr': obj.arrendatario_id.pri_ape_arr,
-                'seg_ape_arr': obj.arrendatario_id.seg_ape_arr,
-                'correo_arr': obj.arrendatario_id.correo_arr,
-                
+    def get_propiedad(self, obj):
+        return {'id':obj.propiedad.id, 
+                'direccion_ppdd': obj.propiedad.direccion_ppdd,
+                'tipopropiedad': obj.propiedad.tipopropiedad,
+                'numero_ppdd': obj.propiedad.numero_ppdd,
+                'propietario': obj.propiedad.propietario
                 }
     
 class SerializerDetalleArriendo(serializers.ModelSerializer):
