@@ -2,7 +2,7 @@ from rest_framework import serializers
 from ApiArriendosAlegria.models import Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
                                         Gastocomun, DetalleArriendo 
-
+from ApiArriendosAlegria.Rut import validarRut
 
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
@@ -66,6 +66,7 @@ class SerializerTipoTrabajado(serializers.ModelSerializer):
     
         
 class SerializerTrabajador(serializers.ModelSerializer):
+       
     comuna_id= serializers.PrimaryKeyRelatedField(
         queryset=Comuna.objects.all(),
         source='comuna', 
@@ -89,6 +90,12 @@ class SerializerTrabajador(serializers.ModelSerializer):
     class Meta:
         model = Trabajador
         fields = '__all__'
+    
+    def validate(self, data):
+        rut_trab = data.get('rut_trab')
+        if not validarRut(rut_trab):
+            raise serializers.ValidationError("Rut inválido")
+        return data
         
     def get_comuna(self, obj):
         return {'id':obj.comuna.id, 'nom_com':obj.comuna.nom_com}
@@ -100,7 +107,7 @@ class SerializerTrabajador(serializers.ModelSerializer):
         if obj.usuario_id:
             return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
         return None
-            
+    
         
         
 class SerializerBanco(serializers.ModelSerializer):
