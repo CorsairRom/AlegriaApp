@@ -215,7 +215,7 @@ class Arriendo(models.Model):
     """
     Modelo que representa a los arriendos.
     """
-    cod_arriendo = models.IntegerField( verbose_name='Codigo Arriendo')
+    cod_arriendo = models.CharField(max_length=50, verbose_name='Codigo Arriendo', null=True, blank=True)
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
     fecha_inicio = models.DateField( verbose_name='Fecha de Inicio')
     fecha_termino = models.DateField( verbose_name= 'Fecha de Termino')
