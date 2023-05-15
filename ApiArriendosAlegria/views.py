@@ -27,9 +27,11 @@ from ApiArriendosAlegria.models import (
     DetalleArriendo,
     Gastocomun,
     ServiciosExtras,
+    ArriendoDepartamento,
 )
 from ApiArriendosAlegria.serializers import (
     SerializadorUsuario,
+    SerializerArriendoDepartamento,
     SerializerTrabajador,
     SerializerTipoTrabajado,
     SerializerRegion,
@@ -334,6 +336,20 @@ class ArriendoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArriendo
     queryset = Arriendo.objects.all()
+    
+    
+class ArriendoDepartamentoViewSet(viewsets.ModelViewSet):
+    """
+    Set de vistas API para la entidad "Arriendo departamento".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerArriendoDepartamento
+    queryset = ArriendoDepartamento.objects.all()
+    
+
 
 class DetalleArriendoViewSet(viewsets.ModelViewSet):
     """
