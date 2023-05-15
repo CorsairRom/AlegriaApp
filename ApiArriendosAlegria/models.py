@@ -220,7 +220,7 @@ class Arriendo(models.Model):
     fecha_inicio = models.DateField( verbose_name='Fecha de Inicio')
     fecha_termino = models.DateField( verbose_name= 'Fecha de Termino')
     fecha_pri_ajuste = models.DateField(verbose_name='Fecha Primer Reajuste')
-    periodo_reajuste = models.DateField(verbose_name='Perdio Reajuste')
+    periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateField(verbose_name='Fecha entrega arriendo')
     estado_arriendo = models.CharField(max_length=120, verbose_name='Estado del arriendo')
