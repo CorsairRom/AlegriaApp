@@ -236,21 +236,45 @@ class SerializerArrendatario(serializers.ModelSerializer):
         return data
         
 class SerializerArriendo(serializers.ModelSerializer):
+    arrendatario_id= serializers.PrimaryKeyRelatedField(
+        queryset=Arrendatario.objects.all(),
+        source='arrendatario', 
+        write_only=True,  
+    )
+    arrendatario = serializers.SerializerMethodField()   
+     
+    propiedad_id= serializers.PrimaryKeyRelatedField(
+        queryset=Propiedad.objects.all(),
+        source='propiedad', 
+        write_only=True,  
+    )
+    propiedad = serializers.SerializerMethodField()    
     
-    arrendatario_id = serializers.SerializerMethodField()
+    
     class Meta:
         model = Arriendo
         fields = '__all__'
+        
+    def get_arrendatario(self,obj):
+        return{'id': obj.arrendatario.id, 
+               'rut_arr':obj.arrendatario.rut_prop,
+               'pri_nom_arr':obj.arrendatario.pri_nom_arr, 
+               'pri_ape_arr':obj.arrendatario.pri_ape_arr,
+               }
+        
+    def get_arrendatario(self,obj):
+        return{'id': obj.arrendatario.id, 
+               'rut_arr':obj.arrendatario.rut_prop,
+               'pri_nom_arr':obj.arrendatario.pri_nom_arr, 
+               'pri_ape_arr':obj.arrendatario.pri_ape_arr,
+               }
 
-    def get_arrendatario_id(self, obj):
-        return {'id':obj.arrendatario_id.id, 
-                'rut_arr': obj.arrendatario_id.rut_arr,
-                'pri_nom_arr': obj.arrendatario_id.pri_nom_arr,
-                'seg_nom_arr': obj.arrendatario_id.seg_nom_arr,
-                'pri_ape_arr': obj.arrendatario_id.pri_ape_arr,
-                'seg_ape_arr': obj.arrendatario_id.seg_ape_arr,
-                'correo_arr': obj.arrendatario_id.correo_arr,
-                
+    def get_propiedad(self, obj):
+        return {'id':obj.propiedad.id, 
+                'direccion_ppdd': obj.propiedad.direccion_ppdd,
+                'tipopropiedad': obj.propiedad.tipopropiedad,
+                'numero_ppdd': obj.propiedad.numero_ppdd,
+                'propietario': obj.propiedad.propietario
                 }
     
 class SerializerDetalleArriendo(serializers.ModelSerializer):

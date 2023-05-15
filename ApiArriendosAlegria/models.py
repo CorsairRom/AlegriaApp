@@ -176,7 +176,6 @@ class TipoPropiedad(models.Model):
     def __str__(self):
         return self.nombre_tipoppdd 
     
-    
 class Propiedad(models.Model):
     """
     Modelo que representa a la propiedad.
@@ -189,7 +188,12 @@ class Propiedad(models.Model):
     rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
     
     def __str__(self):
-        return str(self.id)     
+        return str(self.id)    
+    
+class ExtraDepartamento(models.Model):
+    bodega = models.IntegerField( blank=True, null=True )
+    estacionamiento = models.IntegerField( blank=True, null=True) 
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
 
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
