@@ -1,6 +1,5 @@
 from datetime import datetime, time
 
-from django.conf import settings
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 
@@ -10,7 +9,10 @@ from rest_framework.authentication import TokenAuthentication
 
 class ExpiringTokenAuthentication(TokenAuthentication):
     """
-    Autenticación de credenciales mediante token (authtoken) con tiempo de expiración.
+    Autenticación de credenciales mediante token (authtoken)
+    con tiempo de expiración.
+
+    La hora de expiración diaria global está definida para las 19:00 horas.
     """
     token_expired = False
 
