@@ -175,7 +175,9 @@ class SerializerPersonalidadJuridica(serializers.ModelSerializer):
      
     def get_propietario_id(self, obj):
         return{'id': obj.propietario_id.id, 'rut_prop': obj.propietario_id.rut_prop}  
-     
+
+
+
 class SerializerPropiedad(serializers.ModelSerializer):
     comuna_id= serializers.PrimaryKeyRelatedField(
         queryset=Comuna.objects.all(),
@@ -216,7 +218,9 @@ class SerializerPropiedad(serializers.ModelSerializer):
                'pri_ape_prop':obj.propietario.pri_ape_prop,
                'seg_ape_prop':obj.propietario.seg_ape_prop,
                }
-        
+
+
+ 
 class SerializerTipoPropiedad(serializers.ModelSerializer):
     
     class Meta:

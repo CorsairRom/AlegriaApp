@@ -285,9 +285,6 @@ class CuentaViewSet(viewsets.ModelViewSet):
     queryset = Cuenta.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['cuenta','propietario_rut']
-    
-    
-    
 
 class PropiedadViewSet(viewsets.ModelViewSet):
     """
@@ -301,9 +298,8 @@ class PropiedadViewSet(viewsets.ModelViewSet):
     queryset = Propiedad.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['propietario']
-    
-    
-    
+
+
 class TipoPropiedadViewSet(viewsets.ModelViewSet):
     """
     Set de vistas API para la entidad "Tipo Propiedad".

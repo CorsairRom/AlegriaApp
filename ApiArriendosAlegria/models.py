@@ -184,10 +184,14 @@ class Propiedad(models.Model):
     """
     direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
     numero_ppdd = models.IntegerField(verbose_name='Número Propiedad', null=True, blank=True)
+    rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
+
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     tipopropiedad = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
-    rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
+
+    nro_bodega = models.IntegerField(verbose_name='Número Bodega', null=True, blank=True, default=None)
+    nro_estacionamiento = models.IntegerField(verbose_name='Número Estacionamiento', null=True, blank=True, default=None)
     
     def __str__(self):
         return str(self.id)    
