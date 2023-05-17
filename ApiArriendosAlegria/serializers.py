@@ -178,30 +178,6 @@ class SerializerPersonalidadJuridica(serializers.ModelSerializer):
 
 
 
-class SerializerBodega(serializers.Serializer):
-    numero_bodega = serializers.IntegerField()
-    bodega_independiente = serializers.BooleanField()
-
-class SerializerEstacionamiento(serializers.Serializer):
-    numero_estacionamiento = serializers.IntegerField()
-    estacionamiento_independiente = serializers.BooleanField()
-
-class SerializerRegistroPropiedad(serializers.ModelSerializer):
-    bodega = SerializerBodega(required=False, allow_null=True)
-    estacionamiento = SerializerEstacionamiento(required=False, allow_null=True)
-    class Meta:
-        model = Propiedad
-        fields = (
-            'direccion_ppdd',
-            'numero_ppdd',
-            'rol_ppdd',
-            'comuna',
-            'propietario',
-            'tipopropiedad',
-            'bodega',
-            'estacionamiento'
-        ) 
-
 class SerializerPropiedad(serializers.ModelSerializer):
     comuna_id= serializers.PrimaryKeyRelatedField(
         queryset=Comuna.objects.all(),
