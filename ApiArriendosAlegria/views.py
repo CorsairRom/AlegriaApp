@@ -9,6 +9,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
 
+from drf_yasg.utils import swagger_auto_schema
+from ApiArriendosAlegria.enums import TipoPropiedadEnum
+
 from ApiArriendosAlegria.models import (
     Usuario,
     Trabajador,
@@ -40,6 +43,7 @@ from ApiArriendosAlegria.serializers import (
     SerializerTipoCuenta,
     SerializerCuenta,
     SerializerPropiedad,
+    SerializerRegistroPropiedad,
     SerializerPersonalidadJuridica,
     SerializerTipoPropiedad,
     SerializerPropietario,
@@ -295,12 +299,74 @@ class PropiedadViewSet(viewsets.ModelViewSet):
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
-    authentication_classes = [Authentication]
-    permission_classes = [IsAuthenticated, IsStaffUser]
+    #authentication_classes = [Authentication]
+    #permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerPropiedad
+    serializer_registro_class = SerializerRegistroPropiedad
+
     queryset = Propiedad.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['propietario']
+
+    @swagger_auto_schema(
+            operation_description="Registro de una propiedad",
+            request_body=SerializerRegistroPropiedad,
+            responses={201: SerializerPropiedad}
+    )
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.validated_data
+        bodega = data.pop('bodega')
+        estacionamiento = data.pop('estacionamiento')
+
+
+        propiedad = Propiedad(**data)
+
+        if data['tipopropiedad'].id != TipoPropiedadEnum.DEPARTAMENTO.value:
+            propiedad.save()
+            reponse = self.serializer_class(propiedad)
+            headers = self.get_success_headers(reponse.data)
+            return Response(reponse.data, status=status.HTTP_201_CREATED, headers=headers)
+
+        
+        if bodega and bodega['bodega_independiente']:
+            nro_bodega = bodega['numero_bodega']
+
+            bodega_model = Propiedad(**data)
+
+            bodega_model.tipopropiedad_id = TipoPropiedadEnum.BODEGA.value
+            bodega_model.numero_ppdd = nro_bodega
+
+            bodega_model.save()
+        elif bodega:
+            propiedad.nro_bodega = bodega['numero_bodega']
+
+
+        if estacionamiento and estacionamiento['estacionamiento_independiente']:
+            nro_estacionamiento = estacionamiento['numero_estacionamiento']
+
+            estacionamiento_model = Propiedad(**data)
+
+            estacionamiento_model.tipopropiedad_id = TipoPropiedadEnum.ESTACIONAMIENTO.value
+            estacionamiento_model.numero_ppdd = nro_estacionamiento
+
+            estacionamiento_model.save()
+        elif estacionamiento:
+            propiedad.nro_estacionamiento = estacionamiento['numero_estacionamiento']
+        
+        propiedad.save()
+
+        response = self.serializer_class(propiedad)
+        
+        headers = self.get_success_headers(response.data)
+        return Response(response.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return self.serializer_registro_class
+        return self.serializer_class
     
     
     
