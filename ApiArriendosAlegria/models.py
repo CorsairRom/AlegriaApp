@@ -190,6 +190,8 @@ class Propiedad(models.Model):
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     tipopropiedad = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
+    
+    cod = models.IntegerField(null=True, blank=True)
 
     nro_bodega = models.IntegerField(verbose_name='Número Bodega', null=True, blank=True, default=None)
     nro_estacionamiento = models.IntegerField(verbose_name='Número Estacionamiento', null=True, blank=True, default=None)
