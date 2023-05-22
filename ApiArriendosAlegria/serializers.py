@@ -93,7 +93,7 @@ class SerializerTrabajador(serializers.ModelSerializer):
     
     def validate(self, data):
         rut_trab = data.get('rut_trab')
-        if not validarRut(rut_trab):
+        if rut_trab is not None and not validarRut(rut_trab):
             raise serializers.ValidationError("Rut inválido")
         return data
         
