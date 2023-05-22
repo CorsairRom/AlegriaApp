@@ -58,7 +58,7 @@ from ApiArriendosAlegria.authentication_mixins import Authentication
 # --- General views: Login / Logout ---
 class Login(ObtainAuthToken):
     """
-    Vista API del login.
+    Vista Login.
 
     Usa autenticación de token propia de Django REST Framework (Authtoken).
 
@@ -112,7 +112,9 @@ class Login(ObtainAuthToken):
 
 class Logout(APIView):
     """
-    Vista API del logout, mediante authtoken de Django REST Framework.
+    Vista Logout.
+    
+    Logout mediante authtoken de Django REST Framework.
     """
     def post(self, request, *args, **kwargs):
         try:
@@ -153,7 +155,7 @@ class Logout(APIView):
 # -------------Api Bancos---------------
 class BancoViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Set de vistas API para la entidad "Banco".
+    Vista "Banco".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -166,7 +168,7 @@ class BancoViewSet(viewsets.ReadOnlyModelViewSet):
 # -------------Api Tipo Cuentas Bancarias---------------
 class TipoCuentaBancariaViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Set de vistas API para la entidad "Tipo Cuenta" (Bancaria).
+    Vista "Tipo Cuenta" (Bancaria).
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -180,7 +182,7 @@ class TipoCuentaBancariaViewSet(viewsets.ReadOnlyModelViewSet):
 # -------------Api TypeWorkers---------------
 class TypeWorkerViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Tipo Trabajador".
+    Vista "Tipo Trabajador".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -193,7 +195,7 @@ class TypeWorkerViewSet(viewsets.ModelViewSet):
 # -------------Api Worker---------------
 class TrabajadorViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Trabajador".
+    Vista "Trabajador".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -208,7 +210,7 @@ class TrabajadorViewSet(viewsets.ModelViewSet):
 # -------------Api Regiones--------------- 
 class RegionReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Set de vistas API para la entidad "Region".
+    Vista "Region".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -221,7 +223,7 @@ class RegionReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 # -------------Api Communes---------------   
 class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Set de vistas API para la entidad "Comuna".
+    Vista "Comuna".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -236,7 +238,7 @@ class ComunaReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
 # --- API Usuario (nuevo) ---
 class UsuarioViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Usuario".
+    Vista "Usuario".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -249,7 +251,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 # ---------------------Segundo sprint-------------------
 class PropietarioViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Propietario".
+    Vista "Propietario".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -263,7 +265,7 @@ class PropietarioViewSet(viewsets.ModelViewSet):
     
 class PersonalidadJuridicaViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Personalidad Jurídica".
+    Vista "Personalidad Jurídica".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -275,7 +277,7 @@ class PersonalidadJuridicaViewSet(viewsets.ModelViewSet):
 
 class CuentaViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Cuenta".
+    Vista "Cuenta".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -288,7 +290,7 @@ class CuentaViewSet(viewsets.ModelViewSet):
 
 class PropiedadViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Propiedad".
+    Vista "Propiedad".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -302,7 +304,7 @@ class PropiedadViewSet(viewsets.ModelViewSet):
 
 class TipoPropiedadViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Tipo Propiedad".
+    Vista "Tipo Propiedad".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -313,7 +315,7 @@ class TipoPropiedadViewSet(viewsets.ModelViewSet):
 
 class ArriendatarioViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Arrendatario".
+    Vista "Arrendatario".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -324,7 +326,7 @@ class ArriendatarioViewSet(viewsets.ModelViewSet):
     
 class ArriendoViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Arriendo".
+    Vista "Arriendo".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -336,7 +338,7 @@ class ArriendoViewSet(viewsets.ModelViewSet):
     
 class ArriendoDepartamentoViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Arriendo departamento".
+    Vista "Arriendo departamento".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -349,7 +351,7 @@ class ArriendoDepartamentoViewSet(viewsets.ModelViewSet):
 
 class DetalleArriendoViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Detalle Arriendo".
+    Vista "Detalle Arriendo".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -360,7 +362,7 @@ class DetalleArriendoViewSet(viewsets.ModelViewSet):
 
 class ServiciosExtrasViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Servicios Extra".
+    Vista "Servicios Extra".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
@@ -371,7 +373,7 @@ class ServiciosExtrasViewSet(viewsets.ModelViewSet):
     
 class GastoComunViewSet(viewsets.ModelViewSet):
     """
-    Set de vistas API para la entidad "Gastos Comun".
+    Vista "Gastos Comun".
 
     Métodos disponibles: list, create, retrieve, update, destroy.
     """
