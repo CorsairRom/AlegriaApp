@@ -95,7 +95,7 @@ class Cuenta(models.Model):
     """
     Modelo que representa a la cuenta bancaria.
     """
-    cuenta = models.IntegerField(verbose_name='Numero de cuenta')
+    cuenta = models.PositiveBigIntegerField(verbose_name='Numero de cuenta')
     banco = models.ForeignKey(Banco, on_delete=models.CASCADE)
     tipocuenta = models.ForeignKey(TipoCuenta, on_delete=models.CASCADE)
     estado_cuenta = models.CharField( max_length=100, verbose_name='Estado de cuenta')

@@ -85,11 +85,11 @@ WSGI_APPLICATION = 'AlegriaApp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'alegria',
+        'NAME': 'railway',
         'USER': 'root',
-        'PASSWORD': '1234',
-        'PORT': '3306',
-        'HOST': 'localhost'
+        'PASSWORD': os.getenv("MYSQLPASSWORD"),
+        'PORT': '5628',
+        'HOST': os.getenv("MYSQLHOST")
     }
 }
 
