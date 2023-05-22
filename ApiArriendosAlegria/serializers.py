@@ -135,6 +135,13 @@ class SerializerCuenta(serializers.ModelSerializer):
     )
     banco = serializers.SerializerMethodField()
     tipocuenta = serializers.SerializerMethodField()
+    
+    def validate(self, data):
+        rut_tercero = data.get('rut_tercero')
+        if rut_tercero is not None and not validarRut(rut_tercero):
+            raise serializers.ValidationError("Rut inválido")
+        return data
+    
     class Meta:
         model = Cuenta
         fields = '__all__'
