@@ -184,19 +184,18 @@ class Propiedad(models.Model):
     """
     direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
     numero_ppdd = models.IntegerField(verbose_name='Número Propiedad', null=True, blank=True)
+    rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
+
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     tipopropiedad = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
-    rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
+
+    nro_bodega = models.IntegerField(verbose_name='Número Bodega', null=True, blank=True, default=None)
+    nro_estacionamiento = models.IntegerField(verbose_name='Número Estacionamiento', null=True, blank=True, default=None)
     
     def __str__(self):
         return str(self.id)    
     
-class ExtraDepartamento(models.Model):
-    bodega = models.IntegerField( blank=True, null=True )
-    estacionamiento = models.IntegerField( blank=True, null=True) 
-    propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
-
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
 
@@ -235,6 +234,13 @@ class Arriendo(models.Model):
     
     def __str__(self):
         return self.cod_arriendo
+ 
+class ArriendoDepartamento(models.Model):
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE, null=True)
+    
+    def __str__(self):
+        return str(self.id)
     
 class ServiciosExtras(models.Model):
     """
