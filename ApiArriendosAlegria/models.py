@@ -184,7 +184,7 @@ class Propiedad(models.Model):
     Modelo que representa a la propiedad.
     """
     direccion_ppdd = models.CharField(max_length=150, verbose_name='Dirección Propiedad')
-    numero_ppdd = models.IntegerField(verbose_name='Número Propiedad', null=True, blank=True)
+    numero_ppdd = models.CharField(verbose_name='Número Propiedad', null=True, blank=True, max_length=50)
     rol_ppdd = models.CharField(max_length=50, verbose_name='Rol propiedad', null=True, blank=True)
 
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
