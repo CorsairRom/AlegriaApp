@@ -48,6 +48,7 @@ from ApiArriendosAlegria.serializers import (
     SerializerDetalleArriendo,
     SerializerGastoComun,
     SerializerServiciosExtas,
+    PorcentajeMultaSerializer,
 )
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsStaffUser
@@ -323,6 +324,19 @@ class ArriendatarioViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArrendatario
     queryset = Arrendatario.objects.all()
+
+
+class PorcentajeMultaViewSet(viewsets.ModelViewSet):
+    """
+    Vista "PorcentajeMulta".
+
+    Métodos disponibles: list, create, retrieve, update, destroy.
+    """
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = PorcentajeMultaSerializer
+    queryset = PorcentajeMultaSerializer.Meta.model.objects.all()
+
     
 class ArriendoViewSet(viewsets.ModelViewSet):
     """

@@ -17,7 +17,8 @@ from ApiArriendosAlegria.views import (
     DetalleArriendoViewSet,
     ServiciosExtrasViewSet,
     GastoComunViewSet,
-    ArriendoDepartamentoViewSet
+    ArriendoDepartamentoViewSet,
+    PorcentajeMultaViewSet
 )
 
 router = DefaultRouter()
@@ -40,5 +41,6 @@ router.register(r'detalle_arriendo', DetalleArriendoViewSet, basename="detalle_a
 router.register(r'servicios_extras', ServiciosExtrasViewSet, basename="servicios_extras")
 router.register(r'gasto_comun', GastoComunViewSet, basename="gasto_comun")
 router.register(r'arriendo_departamento', ArriendoDepartamentoViewSet, basename="arriendo_departamento")
+router.register(r'porcentaje_multa', PorcentajeMultaViewSet, basename="porcentaje_multa")
 
 urlpatterns = router.urls
