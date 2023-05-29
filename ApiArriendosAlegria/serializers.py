@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
-                                        Gastocomun, DetalleArriendo 
+                                        Gastocomun, DetalleArriendo, PorcentajeMulta
 from ApiArriendosAlegria.Rut import validarRut
 
 class SerializadorUsuario(serializers.ModelSerializer):
@@ -245,6 +245,13 @@ class SerializerArrendatario(serializers.ModelSerializer):
         if not validarRut(rut_arr):
             raise serializers.ValidationError("Rut inválido")
         return data
+
+
+class PorcentajeMultaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PorcentajeMulta
+        fields = '__all__'
+
         
 class SerializerArriendo(serializers.ModelSerializer):
     arrendatario_id= serializers.PrimaryKeyRelatedField(
@@ -259,7 +266,14 @@ class SerializerArriendo(serializers.ModelSerializer):
         source='propiedad', 
         write_only=True,  
     )
-    propiedad = serializers.SerializerMethodField()    
+    propiedad = serializers.SerializerMethodField()
+
+    porcentaje_multa_id = serializers.PrimaryKeyRelatedField(
+        queryset=PorcentajeMulta.objects.all(),
+        source='porcentaje_multa', 
+        write_only=True, 
+    )
+    porcentaje_multa = serializers.SerializerMethodField()
     
     
     class Meta:
@@ -273,12 +287,17 @@ class SerializerArriendo(serializers.ModelSerializer):
                'pri_ape_arr':obj.arrendatario.pri_ape_arr,
                }
         
-
     def get_propiedad(self, obj):
         return {'id':obj.propiedad.id, 
                 'direccion_ppdd': obj.propiedad.direccion_ppdd,
                 'numero_ppdd': obj.propiedad.numero_ppdd
                 }
+    
+    def get_porcentaje_multa(self, obj):
+        return {'id':obj.porcentaje_multa.id, 
+                'porcentaje': obj.porcentaje_multa.porcentaje
+                }
+
 
 class SerializerArriendoDepartamento(serializers.ModelSerializer):
     
