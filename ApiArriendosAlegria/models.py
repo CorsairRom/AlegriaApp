@@ -218,7 +218,8 @@ class Arrendatario(models.Model):
     
     def __str__(self):
         return self.rut_arr
-    
+
+
 class Arriendo(models.Model):
     """
     Modelo que representa a los arriendos.
@@ -234,7 +235,6 @@ class Arriendo(models.Model):
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
     estado_arriendo = models.BooleanField(default=True)
-    porcentaje_multa = models.IntegerField(verbose_name='Porcentaje Multa')
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
     cod_gassur = models.CharField(verbose_name='Código GasSur', null=True, blank=True, max_length=50)
     cod_esbio = models.CharField(verbose_name='Código ESSBIO', null=True, blank=True, max_length=50)
@@ -243,7 +243,13 @@ class Arriendo(models.Model):
     
     def __str__(self):
         return self.cod_arriendo
- 
+    
+
+class PorcentajeMulta(models.Model):
+    porcentaje = models.IntegerField(verbose_name='Porcentaje Multa')
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+
+
 class ArriendoDepartamento(models.Model):
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE, null=True)
