@@ -239,6 +239,7 @@ class Arriendo(models.Model):
     cod_gassur = models.CharField(verbose_name='Código GasSur', null=True, blank=True, max_length=50)
     cod_esbio = models.CharField(verbose_name='Código ESSBIO', null=True, blank=True, max_length=50)
     cod_luz = models.CharField(verbose_name='Código Luz', null=True, blank=True, max_length=50)
+    dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True)
     
     def __str__(self):
         return self.cod_arriendo
