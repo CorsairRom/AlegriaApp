@@ -7,7 +7,7 @@ from ApiArriendosAlegria.managers import GestorUsuario
 
 class ValoresGlobales(models.Model):
     nombre= models.CharField(max_length=200)
-    valor = models.IntegerField(verbose_name='Porcentaje Multa')
+    valor = models.FloatField()
     
     def __str__(self):
         return self.nombre
