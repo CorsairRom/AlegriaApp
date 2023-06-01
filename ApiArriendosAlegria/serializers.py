@@ -63,8 +63,7 @@ class SerializerTipoTrabajado(serializers.ModelSerializer):
         model = TipoTrabajador
         fields = '__all__'
     
-    
-        
+         
 class SerializerTrabajador(serializers.ModelSerializer):
        
     comuna_id= serializers.PrimaryKeyRelatedField(
@@ -107,8 +106,7 @@ class SerializerTrabajador(serializers.ModelSerializer):
         if obj.usuario_id:
             return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
         return None
-    
-        
+         
         
 class SerializerBanco(serializers.ModelSerializer):
     
@@ -159,7 +157,6 @@ class SerializerPersonalidadJuridica(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class SerializerPropietario(serializers.ModelSerializer):
 
     personalidad_juridica = SerializerPersonalidadJuridica(required=False, allow_null=True)
@@ -170,15 +167,13 @@ class SerializerPropietario(serializers.ModelSerializer):
         write_only=True,  
     )
     comuna = serializers.SerializerMethodField()
-    
-    
+        
     class Meta:
         model = Propietario
         fields = '__all__'
     
     def create(self, validated_data):
         personalidad_juridica = validated_data.pop("personalidad_juridica", None)
-        print(personalidad_juridica)
         if personalidad_juridica:
             personalidad_juridica = PersonalidadJuridica.objects.create(**personalidad_juridica)
         propietario = Propietario.objects.create(**validated_data, personalidad_juridica=personalidad_juridica)
@@ -235,7 +230,6 @@ class SerializerPropiedad(serializers.ModelSerializer):
                'seg_ape_prop':obj.propietario.seg_ape_prop,
                }
 
-
  
 class SerializerTipoPropiedad(serializers.ModelSerializer):
     
@@ -255,10 +249,7 @@ class SerializerArrendatario(serializers.ModelSerializer):
             raise serializers.ValidationError("Rut inválido")
         return data
 
-
-
-
-        
+ 
 class SerializerArriendo(serializers.ModelSerializer):
     arrendatario_id= serializers.PrimaryKeyRelatedField(
         queryset=Arrendatario.objects.all(),
@@ -274,9 +265,6 @@ class SerializerArriendo(serializers.ModelSerializer):
     )
     propiedad = serializers.SerializerMethodField()
 
-    
-    
-    
     class Meta:
         model = Arriendo
         fields = '__all__'
@@ -293,7 +281,6 @@ class SerializerArriendo(serializers.ModelSerializer):
                 'direccion_ppdd': obj.propiedad.direccion_ppdd,
                 'numero_ppdd': obj.propiedad.numero_ppdd
                 }
-    
     
 
 class SerializerArriendoDepartamento(serializers.ModelSerializer):
