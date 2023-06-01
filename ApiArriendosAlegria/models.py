@@ -142,6 +142,7 @@ class Propietario(models.Model):
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     email_prop = models.EmailField(verbose_name='Email Propietario')
     contacto_prop = models.IntegerField(verbose_name='Contacto Propietario')
+    pctje_cobro_honorario = models.FloatField(verbose_name='Porcentaje Contacto Propietario', null=True, blank=True)
     
     def __str__(self):
         return self.rut_prop
@@ -182,10 +183,13 @@ class Propiedad(models.Model):
     propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE)
     tipopropiedad = models.ForeignKey(TipoPropiedad, on_delete=models.CASCADE)
     
-    cod = models.IntegerField(null=True, blank=True)
+    cod = models.IntegerField(null=True, blank=True, unique=True) # Código que se maneja en los archivos ad hoc.
 
     nro_bodega = models.IntegerField(verbose_name='Número Bodega', null=True, blank=True, default=None)
     nro_estacionamiento = models.IntegerField(verbose_name='Número Estacionamiento', null=True, blank=True, default=None)
+
+    valor_arriendo_base = models.PositiveBigIntegerField(verbose_name='Valor Arriendo Base')
+    es_valor_uf = models.BooleanField(default=False)
     
     #Codigos de agua luz gas, en una proxima revision es necesario destructurar esta informacion
     gas = models.CharField(verbose_name='Código Gas', null=True, blank=True, max_length=50) # codigo y nombre de compañia de gas
@@ -233,6 +237,7 @@ class Arriendo(models.Model):
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
     estado_arriendo = models.BooleanField(default=True)
+    observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo')
         
     def __str__(self):
         return self.cod_arriendo
@@ -281,6 +286,13 @@ class DetalleArriendo(models.Model):
     def __str__(self):
         return self.arriendo
     
-    
-    
-    
+class Externo(models.Model):
+    """
+    Modelo para trabajadores como administrador de condominios (edificios o casas),
+    o conserjes.
+    """
+    nombre = models.CharField(max_length=50, unique=True)
+    contacto_arr = models.IntegerField( verbose_name='Contacto')
+    correo_arr = models.EmailField(verbose_name='Correo')
+    direccion = models.CharField(max_length=50)
+    comuna = models.ForeignKey(Comuna, on_delete=models.SET_NULL)
