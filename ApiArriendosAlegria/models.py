@@ -229,14 +229,16 @@ class Arriendo(models.Model):
     fecha_inicio = models.DateTimeField(verbose_name='Fecha de Inicio')
     fecha_termino = models.DateTimeField(verbose_name= 'Fecha de Termino')
     dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True)
-    comision = models.FloatField(verbose_name='Comisión', null=True, blank=True)
-    porcentaje_1 = models.FloatField(verbose_name='Porcentaje 1', null=True, blank=True) # Modificar nombre en cuanto se sepa
-    porcentaje_2 = models.FloatField(verbose_name='Porcentaje 2', null=True, blank=True) # Modificar nombre en cuanto se sepa
-    fecha_pri_ajuste = models.DateTimeField(blank=True, null=True)
+    comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # sumatoria de los porcentajes o se puede crear de forma manual
+    porcentaje_1 = models.FloatField(verbose_name='Porcentaje 1', null=True, blank=True) # Porcentaje honorarios
+    porcentaje_2 = models.FloatField(verbose_name='Porcentaje 2', null=True, blank=True) # Procentaje boleta de honorarios
+    fecha_pri_ajuste = models.DateTimeField(blank=True, null=True) #creado al momento de guardar o modificar el el monto del arriendo
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
     estado_arriendo = models.BooleanField(default=True)
+    
+    #estos codigos son unicos para las propiedades
     cod_gassur = models.CharField(verbose_name='Código GasSur', null=True, blank=True, max_length=50) # codigo del gas esto es agregado cuando el arriendo tiene gastos comunes incluidos, el dato guardado indica el estado inicial del medidor antes del arriendo, esto es para determinar cuanto debe pagar el arrendatario de forma proporcional 
     cod_esbio = models.CharField(verbose_name='Código ESSBIO', null=True, blank=True, max_length=50)
     cod_luz = models.CharField(verbose_name='Código Luz', null=True, blank=True, max_length=50)
