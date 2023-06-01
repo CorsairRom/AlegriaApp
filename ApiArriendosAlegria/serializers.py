@@ -63,8 +63,7 @@ class SerializerTipoTrabajado(serializers.ModelSerializer):
         model = TipoTrabajador
         fields = '__all__'
     
-    
-        
+         
 class SerializerTrabajador(serializers.ModelSerializer):
        
     comuna_id= serializers.PrimaryKeyRelatedField(
@@ -107,8 +106,7 @@ class SerializerTrabajador(serializers.ModelSerializer):
         if obj.usuario_id:
             return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
         return None
-    
-        
+         
         
 class SerializerBanco(serializers.ModelSerializer):
     
@@ -151,38 +149,44 @@ class SerializerCuenta(serializers.ModelSerializer):
     
     def get_tipocuenta(self, obj):
         return {'id':obj.tipocuenta.id, 'nom_cuenta':obj.tipocuenta.nom_cuenta}
-        
+
+
+class SerializerPersonalidadJuridica(serializers.ModelSerializer):
+    class Meta:
+        model = PersonalidadJuridica
+        fields = '__all__'
+
+
 class SerializerPropietario(serializers.ModelSerializer):
+
+    personalidad_juridica = SerializerPersonalidadJuridica(required=False, allow_null=True)
+
     comuna_id= serializers.PrimaryKeyRelatedField(
         queryset=Comuna.objects.all(),
         source='comuna', 
         write_only=True,  
     )
     comuna = serializers.SerializerMethodField()
+        
+    class Meta:
+        model = Propietario
+        fields = '__all__'
+    
+    def create(self, validated_data):
+        personalidad_juridica = validated_data.pop("personalidad_juridica", None)
+        if personalidad_juridica:
+            personalidad_juridica = PersonalidadJuridica.objects.create(**personalidad_juridica)
+        propietario = Propietario.objects.create(**validated_data, personalidad_juridica=personalidad_juridica)
+        return propietario
     
     def validate(self, data):
         rut_prop = data.get('rut_prop')
         if not validarRut(rut_prop):
             raise serializers.ValidationError("Rut inválido")
         return data
-    
-    class Meta:
-        model = Propietario
-        fields = '__all__'
         
     def get_comuna(self, obj):
         return {'id':obj.comuna.id, 'nom_comuna':obj.comuna.nom_com}
-    
-
-class SerializerPersonalidadJuridica(serializers.ModelSerializer):
-    propietario_id = serializers.SerializerMethodField()
-    class Meta:
-        model = PersonalidadJuridica
-        fields = '__all__'
-     
-    def get_propietario_id(self, obj):
-        return{'id': obj.propietario_id.id, 'rut_prop': obj.propietario_id.rut_prop}  
-
 
 
 class SerializerPropiedad(serializers.ModelSerializer):
@@ -226,7 +230,6 @@ class SerializerPropiedad(serializers.ModelSerializer):
                'seg_ape_prop':obj.propietario.seg_ape_prop,
                }
 
-
  
 class SerializerTipoPropiedad(serializers.ModelSerializer):
     
@@ -246,10 +249,7 @@ class SerializerArrendatario(serializers.ModelSerializer):
             raise serializers.ValidationError("Rut inválido")
         return data
 
-
-
-
-        
+ 
 class SerializerArriendo(serializers.ModelSerializer):
     arrendatario_id= serializers.PrimaryKeyRelatedField(
         queryset=Arrendatario.objects.all(),
@@ -265,9 +265,6 @@ class SerializerArriendo(serializers.ModelSerializer):
     )
     propiedad = serializers.SerializerMethodField()
 
-    
-    
-    
     class Meta:
         model = Arriendo
         fields = '__all__'
@@ -284,7 +281,6 @@ class SerializerArriendo(serializers.ModelSerializer):
                 'direccion_ppdd': obj.propiedad.direccion_ppdd,
                 'numero_ppdd': obj.propiedad.numero_ppdd
                 }
-    
     
 
 class SerializerArriendoDepartamento(serializers.ModelSerializer):

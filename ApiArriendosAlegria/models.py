@@ -7,7 +7,7 @@ from ApiArriendosAlegria.managers import GestorUsuario
 
 class ValoresGlobales(models.Model):
     nombre= models.CharField(max_length=200)
-    valor = models.IntegerField(verbose_name='Porcentaje Multa')
+    valor = models.FloatField()
     
     def __str__(self):
         return self.nombre
@@ -128,6 +128,19 @@ class Trabajador(models.Model):
         return self.rut_trab
  
 # model propietario-personalidadJuridica   
+class PersonalidadJuridica(models.Model):
+    """
+    Modelo que representa a las personalidades jurídicas, especialmente si son propietarios.
+    """
+    rut = models.CharField(max_length=80, unique=True)
+    razon_social = models.CharField(max_length=250, verbose_name='Razón Social')
+    direccion = models.CharField(max_length=200, verbose_name='Dirección Principal', null=True, blank=True)
+    comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE, null=True, blank=True)
+    email = models.EmailField(verbose_name='Email', null=True, blank=True)
+    contacto = models.IntegerField(verbose_name='Contacto', null=True, blank=True)
+    
+    def __str__(self):
+        return self.rut
 
 class Propietario(models.Model):
     """
@@ -143,21 +156,12 @@ class Propietario(models.Model):
     email_prop = models.EmailField(verbose_name='Email Propietario')
     contacto_prop = models.IntegerField(verbose_name='Contacto Propietario')
     pctje_cobro_honorario = models.FloatField(verbose_name='Porcentaje Contacto Propietario', null=True, blank=True)
+    personalidad_juridica = models.ForeignKey(PersonalidadJuridica, null=True, blank=True, default=None, on_delete=models.SET_NULL)
     
     def __str__(self):
         return self.rut_prop
     
-class PersonalidadJuridica(models.Model):
-    """
-    Modelo que representa a las personalidades jurídicas, especialmente si son propietarios.
-    """
-    rol = models.CharField(max_length=80, unique=True)
-    razon_social = models.CharField(max_length=250, verbose_name='Razón Social')
-    representante = models.CharField(max_length=150)
-    propietario = models.ForeignKey(Propietario, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.rol
+
 
 # model propiedad - tipo propiedad  
 
