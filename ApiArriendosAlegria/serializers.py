@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
-                                        Gastocomun, DetalleArriendo, PorcentajeMulta
+                                        Gastocomun, DetalleArriendo
 from ApiArriendosAlegria.Rut import validarRut
 
 class SerializadorUsuario(serializers.ModelSerializer):
@@ -247,10 +247,7 @@ class SerializerArrendatario(serializers.ModelSerializer):
         return data
 
 
-class PorcentajeMultaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PorcentajeMulta
-        fields = '__all__'
+
 
         
 class SerializerArriendo(serializers.ModelSerializer):
@@ -268,12 +265,7 @@ class SerializerArriendo(serializers.ModelSerializer):
     )
     propiedad = serializers.SerializerMethodField()
 
-    porcentaje_multa_id = serializers.PrimaryKeyRelatedField(
-        queryset=PorcentajeMulta.objects.all(),
-        source='porcentaje_multa', 
-        write_only=True, 
-    )
-    porcentaje_multa = serializers.SerializerMethodField()
+    
     
     
     class Meta:
@@ -293,11 +285,7 @@ class SerializerArriendo(serializers.ModelSerializer):
                 'numero_ppdd': obj.propiedad.numero_ppdd
                 }
     
-    def get_porcentaje_multa(self, obj):
-        return {'id':obj.porcentaje_multa.id, 
-                'porcentaje': obj.porcentaje_multa.porcentaje
-                }
-
+    
 
 class SerializerArriendoDepartamento(serializers.ModelSerializer):
     

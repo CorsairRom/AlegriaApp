@@ -249,9 +249,14 @@ class Arriendo(models.Model):
         return self.cod_arriendo
     
 
-class PorcentajeMulta(models.Model):
-    porcentaje = models.IntegerField(verbose_name='Porcentaje Multa')
-    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+class ValoresGlobales(models.Model):
+    nombre= models.CharField(max_length=200)
+    valor = models.IntegerField(verbose_name='Porcentaje Multa')
+    
+    def __str__(self):
+        return self.nombre
+    
+    
 
 
 class ArriendoDepartamento(models.Model):
