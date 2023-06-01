@@ -28,6 +28,7 @@ from ApiArriendosAlegria.models import (
     Gastocomun,
     ServiciosExtras,
     ArriendoDepartamento,
+    ValoresGlobales
 )
 from ApiArriendosAlegria.serializers import (
     SerializadorUsuario,
@@ -48,7 +49,7 @@ from ApiArriendosAlegria.serializers import (
     SerializerDetalleArriendo,
     SerializerGastoComun,
     SerializerServiciosExtas,
-    
+    SerializerValoresGlobales
 )
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsStaffUser
@@ -385,3 +386,11 @@ class GastoComunViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerGastoComun
     queryset = Gastocomun.objects.all()
+    
+    
+class ValoresGlobalesViewSet(viewsets.ModelViewSet):
+    
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerValoresGlobales
+    queryset = ValoresGlobales.objects.all()
