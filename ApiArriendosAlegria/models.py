@@ -196,6 +196,11 @@ class Propiedad(models.Model):
     nro_bodega = models.IntegerField(verbose_name='Número Bodega', null=True, blank=True, default=None)
     nro_estacionamiento = models.IntegerField(verbose_name='Número Estacionamiento', null=True, blank=True, default=None)
     
+    #Codigos de agua luz gas, en una proxima revision es necesario destructurar esta informacion
+    gas = models.CharField(verbose_name='Código Gas', null=True, blank=True, max_length=50) # codigo y nombre de compañia de gas
+    agua = models.CharField(verbose_name='Código ESSBIO', null=True, blank=True, max_length=50) # codigo y nombre de compañia de agua
+    luz = models.CharField(verbose_name='Código Luz', null=True, blank=True, max_length=50)  # codigo y nombre de compañia de luz
+    
     def __str__(self):
         return str(self.id)    
     
@@ -238,10 +243,7 @@ class Arriendo(models.Model):
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
     estado_arriendo = models.BooleanField(default=True)
     
-    #estos codigos son unicos para las propiedades
-    cod_gassur = models.CharField(verbose_name='Código GasSur', null=True, blank=True, max_length=50) # codigo del gas esto es agregado cuando el arriendo tiene gastos comunes incluidos, el dato guardado indica el estado inicial del medidor antes del arriendo, esto es para determinar cuanto debe pagar el arrendatario de forma proporcional 
-    cod_esbio = models.CharField(verbose_name='Código ESSBIO', null=True, blank=True, max_length=50)
-    cod_luz = models.CharField(verbose_name='Código Luz', null=True, blank=True, max_length=50)
+    
     
     def __str__(self):
         return self.cod_arriendo
