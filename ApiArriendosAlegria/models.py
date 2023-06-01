@@ -4,22 +4,13 @@ from datetime import datetime
 from rest_framework import serializers
 from ApiArriendosAlegria.managers import GestorUsuario
 
-# Create your models here.
-# ---------Choices---------
 
-tipoCuenta = {
-    'vista': "vista",
-    'Cuenta corriente': "Cuenta corriente",
-    'Rut' : "Rut",
+class ValoresGlobales(models.Model):
+    nombre= models.CharField(max_length=200)
+    valor = models.IntegerField(verbose_name='Porcentaje Multa')
     
-}
-
-sexo = {
-    'Hombre': "Hombre",
-    'Mujer' : "Mujer",
-    'No definido' : "No definido",
-}
-
+    def __str__(self):
+        return self.nombre
 
 # Model abstractUser
 class Usuario(AbstractBaseUser, PermissionsMixin):
@@ -242,23 +233,10 @@ class Arriendo(models.Model):
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
     estado_arriendo = models.BooleanField(default=True)
-    
-    
-    
+        
     def __str__(self):
         return self.cod_arriendo
     
-
-class ValoresGlobales(models.Model):
-    nombre= models.CharField(max_length=200)
-    valor = models.IntegerField(verbose_name='Porcentaje Multa')
-    
-    def __str__(self):
-        return self.nombre
-    
-    
-
-
 class ArriendoDepartamento(models.Model):
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE, null=True)
