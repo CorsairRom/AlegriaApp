@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
-                                        Gastocomun, DetalleArriendo, ValoresGlobales
+                                        Gastocomun, DetalleArriendo, ValoresGlobales, Externo
 from ApiArriendosAlegria.Rut import validarRut
 
 class SerializadorUsuario(serializers.ModelSerializer):
@@ -237,6 +237,12 @@ class SerializerTipoPropiedad(serializers.ModelSerializer):
         model = TipoPropiedad
         fields = '__all__'
 
+class ExternoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Externo
+        fields = '__all__'
+
+
 class SerializerArrendatario(serializers.ModelSerializer):
     
     class Meta:
@@ -251,6 +257,9 @@ class SerializerArrendatario(serializers.ModelSerializer):
 
  
 class SerializerArriendo(serializers.ModelSerializer):
+
+    externo = ExternoSerializer(required=False, allow_null=True)
+
     arrendatario_id= serializers.PrimaryKeyRelatedField(
         queryset=Arrendatario.objects.all(),
         source='arrendatario', 
@@ -281,6 +290,13 @@ class SerializerArriendo(serializers.ModelSerializer):
                 'direccion_ppdd': obj.propiedad.direccion_ppdd,
                 'numero_ppdd': obj.propiedad.numero_ppdd
                 }
+    
+    def create(self, validated_data):
+        externo = validated_data.pop("externo", None)
+        if externo:
+            externo = Externo.objects.create(**externo)
+        arriendo = Arriendo.objects.create(**validated_data, externo=externo)
+        return arriendo
     
 
 class SerializerArriendoDepartamento(serializers.ModelSerializer):
@@ -313,6 +329,9 @@ class SerializerValoresGlobales(serializers.ModelSerializer):
     class Meta:
         model = ValoresGlobales
         fields = '__all__'
+
+
+
 
     
 
