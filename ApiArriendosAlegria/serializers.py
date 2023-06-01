@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
-                                        Gastocomun, DetalleArriendo, ValoresGlobales
+                                        Gastocomun, DetalleArriendo, ValoresGlobales, Externo
 from ApiArriendosAlegria.Rut import validarRut
 
 class SerializadorUsuario(serializers.ModelSerializer):
@@ -312,6 +312,12 @@ class SerializerValoresGlobales(serializers.ModelSerializer):
     
     class Meta:
         model = ValoresGlobales
+        fields = '__all__'
+
+
+class ExternoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Externo
         fields = '__all__'
 
     
