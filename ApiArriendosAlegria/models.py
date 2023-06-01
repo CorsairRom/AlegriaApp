@@ -205,6 +205,15 @@ class Propiedad(models.Model):
     
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
+class Externo(models.Model):
+    """
+    Modelo para trabajadores como administrador de condominios (edificios o casas),
+    o conserjes.
+    """
+    nombre = models.CharField(max_length=50, unique=True)
+    contacto = models.IntegerField( verbose_name='Contacto')
+    correo = models.EmailField(verbose_name='Correo')
+    rol = models.CharField(verbose_name='Rol', max_length=50)
 
 class Arrendatario(models.Model):
     """
@@ -242,6 +251,7 @@ class Arriendo(models.Model):
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
     estado_arriendo = models.BooleanField(default=True)
     observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo')
+    externo = models.ForeignKey(Externo, null=True, blank=True, default=None, on_delete=models.SET_NULL)
         
     def __str__(self):
         return self.cod_arriendo
@@ -290,13 +300,5 @@ class DetalleArriendo(models.Model):
     def __str__(self):
         return self.arriendo
     
-class Externo(models.Model):
-    """
-    Modelo para trabajadores como administrador de condominios (edificios o casas),
-    o conserjes.
-    """
-    nombre = models.CharField(max_length=50, unique=True)
-    contacto_arr = models.IntegerField( verbose_name='Contacto')
-    correo_arr = models.EmailField(verbose_name='Correo')
-    direccion = models.CharField(max_length=50)
-    comuna = models.ForeignKey(Comuna, on_delete=models.SET_NULL)
+
+
