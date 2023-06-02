@@ -192,7 +192,7 @@ class Propiedad(models.Model):
     nro_bodega = models.IntegerField(verbose_name='Número Bodega', null=True, blank=True, default=None)
     nro_estacionamiento = models.IntegerField(verbose_name='Número Estacionamiento', null=True, blank=True, default=None)
 
-    valor_arriendo_base = models.PositiveBigIntegerField(verbose_name='Valor Arriendo Base')
+    valor_arriendo_base = models.PositiveBigIntegerField(verbose_name='Valor Arriendo Base', default=0)
     es_valor_uf = models.BooleanField(default=False)
     
     #Codigos de agua luz gas, en una proxima revision es necesario destructurar esta informacion
@@ -250,7 +250,7 @@ class Arriendo(models.Model):
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
     estado_arriendo = models.BooleanField(default=True)
-    observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo')
+    observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo', blank=True, null=True)
     externo = models.ForeignKey(Externo, null=True, blank=True, default=None, on_delete=models.SET_NULL)
         
     def __str__(self):
