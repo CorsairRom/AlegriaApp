@@ -132,7 +132,7 @@ class PersonalidadJuridica(models.Model):
     """
     Modelo que representa a las personalidades jurídicas, especialmente si son propietarios.
     """
-    rut = models.CharField(max_length=80, unique=True)
+    rut = models.CharField(max_length=80)
     razon_social = models.CharField(max_length=250, verbose_name='Razón Social')
     direccion = models.CharField(max_length=200, verbose_name='Dirección Principal', null=True, blank=True)
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE, null=True, blank=True)
@@ -155,7 +155,7 @@ class Propietario(models.Model):
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     email_prop = models.EmailField(verbose_name='Email Propietario')
     contacto_prop = models.IntegerField(verbose_name='Contacto Propietario')
-    pctje_cobro_honorario = models.FloatField(verbose_name='Porcentaje Contacto Propietario', null=True, blank=True)
+    pctje_cobro_honorario = models.FloatField(verbose_name='Porcentaje Cobro Propietario', null=True, blank=True)
     personalidad_juridica = models.ForeignKey(PersonalidadJuridica, null=True, blank=True, default=None, on_delete=models.SET_NULL)
     
     def __str__(self):
@@ -205,15 +205,6 @@ class Propiedad(models.Model):
     
     
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
-class Externo(models.Model):
-    """
-    Modelo para trabajadores como administrador de condominios (edificios o casas),
-    o conserjes.
-    """
-    nombre = models.CharField(max_length=50, unique=True)
-    contacto = models.IntegerField( verbose_name='Contacto')
-    correo = models.EmailField(verbose_name='Correo')
-    rol = models.CharField(verbose_name='Rol', max_length=50)
 
 class Arrendatario(models.Model):
     """
@@ -232,6 +223,15 @@ class Arrendatario(models.Model):
     def __str__(self):
         return self.rut_arr
 
+class Externo(models.Model):
+    """
+    Modelo para trabajadores como administrador de condominios (edificios o casas),
+    o conserjes.
+    """
+    nombre = models.CharField(max_length=50)
+    contacto = models.IntegerField( verbose_name='Contacto')
+    correo = models.EmailField(verbose_name='Correo')
+    rol = models.CharField(verbose_name='Rol', max_length=50)
 
 class Arriendo(models.Model):
     """
@@ -241,10 +241,8 @@ class Arriendo(models.Model):
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
     fecha_inicio = models.DateTimeField(verbose_name='Fecha de Inicio')
     fecha_termino = models.DateTimeField(verbose_name= 'Fecha de Termino')
-    dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True)
+    dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True) # 5 o cualquier otro día.
     comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # sumatoria de los porcentajes o se puede crear de forma manual
-    porcentaje_1 = models.FloatField(verbose_name='Porcentaje 1', null=True, blank=True) # Porcentaje honorarios
-    porcentaje_2 = models.FloatField(verbose_name='Porcentaje 2', null=True, blank=True) # Procentaje boleta de honorarios
     fecha_pri_ajuste = models.DateTimeField(blank=True, null=True) #creado al momento de guardar o modificar el el monto del arriendo
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')

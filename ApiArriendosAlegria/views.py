@@ -263,6 +263,16 @@ class PropietarioViewSet(viewsets.ModelViewSet):
     queryset = Propietario.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['rut_prop','pri_nom_prop','pri_ape_prop']
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.personalidad_juridica:
+            instance.personalidad_juridica.delete()
+            
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+        
     
     
 class PersonalidadJuridicaViewSet(viewsets.ModelViewSet):
@@ -339,6 +349,14 @@ class ArriendoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArriendo
     queryset = Arriendo.objects.all()
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.externo:
+            instance.externo.delete()
+            
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
     
 class ArriendoDepartamentoViewSet(viewsets.ModelViewSet):

@@ -179,6 +179,41 @@ class SerializerPropietario(serializers.ModelSerializer):
         propietario = Propietario.objects.create(**validated_data, personalidad_juridica=personalidad_juridica)
         return propietario
     
+    def update(self, instance, validated_data):
+        personalidad_juridica_data = validated_data.pop("personalidad_juridica", None)
+        personalidad_juridica = instance.personalidad_juridica
+
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        
+        
+        if personalidad_juridica_data and personalidad_juridica:
+
+            for key, value in personalidad_juridica_data.items():
+                setattr(personalidad_juridica, key, value)
+        
+            personalidad_juridica.save()
+            instance.save()
+            return instance
+
+        elif personalidad_juridica_data and personalidad_juridica is None:
+            personalidad_juridica = PersonalidadJuridica.objects.create(**personalidad_juridica_data)
+            instance.personalidad_juridica = personalidad_juridica
+            instance.save()
+            return instance
+
+        elif personalidad_juridica_data is None and personalidad_juridica:
+            instance.personalidad_juridica = None
+            instance.save()
+            personalidad_juridica.delete()
+            return instance
+        
+        instance.save()
+        return instance
+
+        
+
+    
     def validate(self, data):
         rut_prop = data.get('rut_prop')
         if not validarRut(rut_prop):
@@ -297,6 +332,38 @@ class SerializerArriendo(serializers.ModelSerializer):
             externo = Externo.objects.create(**externo)
         arriendo = Arriendo.objects.create(**validated_data, externo=externo)
         return arriendo
+    
+    def update(self, instance, validated_data):
+        externo_data = validated_data.pop("externo", None)
+        externo = instance.externo
+
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+        
+        
+        if externo_data and externo:
+
+            for key, value in externo_data.items():
+                setattr(externo, key, value)
+        
+            externo.save()
+            instance.save()
+            return instance
+
+        elif externo_data and externo is None:
+            externo = Externo.objects.create(**externo_data)
+            instance.externo = externo
+            instance.save()
+            return instance
+
+        elif externo_data is None and externo:
+            instance.externo = None
+            instance.save()
+            externo.delete()
+            return instance
+        
+        instance.save()
+        return instance
     
 
 class SerializerArriendoDepartamento(serializers.ModelSerializer):
