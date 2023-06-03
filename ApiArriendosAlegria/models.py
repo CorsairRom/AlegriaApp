@@ -1,9 +1,10 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+from django.db.models.signals import post_save
 from datetime import datetime
+from django.dispatch import receiver
 from rest_framework import serializers
 from ApiArriendosAlegria.managers import GestorUsuario
-
 
 class ValoresGlobales(models.Model):
     nombre= models.CharField(max_length=200)
@@ -243,7 +244,7 @@ class Arriendo(models.Model):
     fecha_inicio = models.DateTimeField(verbose_name='Fecha de Inicio')
     fecha_termino = models.DateTimeField(verbose_name= 'Fecha de Termino')
     dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True) # 5 o cualquier otro día.
-    comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # sumatoria de los porcentajes o se puede crear de forma manual
+    comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # 7.91 = 7% del propietario + 13% del boleta honorarios
     fecha_pri_ajuste = models.DateTimeField(blank=True, null=True) #creado al momento de guardar o modificar el el monto del arriendo
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
     monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
@@ -299,5 +300,11 @@ class DetalleArriendo(models.Model):
     def __str__(self):
         return self.arriendo
     
+
+# -------------signals----------
+
+@receiver(post_save, sender=Arriendo)
+def _post_save_receiver(sender,instance, **kwargs):
+    prop_id = instance.propiedad
 
 
