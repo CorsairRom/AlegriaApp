@@ -229,6 +229,7 @@ class Externo(models.Model):
     o conserjes.
     """
     nombre = models.CharField(max_length=50)
+    rut = models.CharField(max_length=12, verbose_name='rut externo', null=True, blank=True)
     contacto = models.IntegerField( verbose_name='Contacto')
     correo = models.EmailField(verbose_name='Correo')
     rol = models.CharField(verbose_name='Rol', max_length=50)
