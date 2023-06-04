@@ -304,28 +304,46 @@ class DetalleArriendo(models.Model):
 # -------------signals----------
 
 @receiver(post_save, sender=Arriendo)
-def _post_save_receiver(sender, instance, **kwargs):
+def _post_save_receiver(sender, instance, created, **kwargs):
     
-    propiedad = instance.propiedad
+    if created:
+        propiedad = instance.propiedad
 
-    propiedad.arriendo_set.all().filter(id=instance.id).update(estado_arriendo=False)
+        propiedad.arriendo_set.all().filter(id=instance.id).update(estado_arriendo=False)
 
-    pctje_cobro_honorario = propiedad.propietario.pctje_cobro_honorario
-    impuesto_honorario = ValoresGlobales.objects.get(pk=1) # Ver cual es el ID correcto
+        pctje_cobro_honorario = propiedad.propietario.pctje_cobro_honorario
+        impuesto_honorario = ValoresGlobales.objects.get(pk=1) # Ver cual es el ID correcto
 
-    porc_comision = (pctje_cobro_honorario * (impuesto_honorario / 100)) + pctje_cobro_honorario
+        porc_comision = (pctje_cobro_honorario * (impuesto_honorario / 100)) + pctje_cobro_honorario
 
-    instance.estado_arriendo = True
-    instance.comision = porc_comision
+        instance.estado_arriendo = True
+        instance.comision = porc_comision
 
-    instance.save(update_fields=["estado_arriendo", "comision"])
-    
-    ################################################################
-    # Cuando se actualiza el <pctje_cobro_honorario> del propietario, debería
-    # actualizace la comisión de los arriendos en curso de todas las propiedades de ese propietario.
-    # Hay que buscar los arriendos de las propiedades de los propietarios
-    """
-        SELECT *
-        FROM ARRIENDO ar
-        WHERE ar.propiedad_id IN (SELECT p.propiedario_id from PROPIEDAD p WHERE p.propietario_id = ? )
-    """
+        instance.save(update_fields=["estado_arriendo", "comision"])
+
+
+@receiver(post_save, sender=ValoresGlobales)
+def _post_save_valores_globales(sender, instance, created, **kwargs):
+    if not created and instance.id == 1:
+        nuevo_impuesto_honorario = instance.valor
+        
+        arriendos = Arriendo.objects.all().filter(estado_arriendo = True)
+
+        for arriendo in arriendos:
+            pctje_cobro_honorario = arriendo.propiedad.propietario.pctje_cobro_honorario
+            nueva_comision = (pctje_cobro_honorario * (nuevo_impuesto_honorario / 100)) + pctje_cobro_honorario
+            arriendo.comision = nueva_comision
+
+        Arriendo.objects.bulk_update(arriendos, ["comision"])
+
+
+
+################################################################
+# Cuando se actualiza el <pctje_cobro_honorario> del propietario, debería
+# actualizace la comisión de los arriendos en curso de todas las propiedades de ese propietario.
+# Hay que buscar los arriendos de las propiedades de los propietarios
+"""
+    SELECT *
+    FROM ARRIENDO ar
+    WHERE ar.propiedad_id IN (SELECT p.propiedario_id from PROPIEDAD p WHERE p.propietario_id = :? )
+"""
