@@ -374,4 +374,6 @@ def _post_save_propietario(sender, instance, created, **kwargs):
                 arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
 
             Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
+            
+            
 
