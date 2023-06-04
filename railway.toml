@@ -1,14 +1,19 @@
 [setup]
 python38 = true
-libmysqlclient-dev = true
 gcc = true
+
+
+[build.environment]
+NIXPACKS_PATH = "/usr/bin:/nix/store/g6vfz8ywax4g5vvk5q8jsykqk0cb1yc6-bash-5.1-p12/bin"
+
+[build.packages]
+libmysqlclient.dev = "8.0.26"
 
 [build]
 builder = "nixpacks"
 buildCommand = "echo building!"
 
-[build.packages]
-libmysqlclient.dev = "8.0.26"
+
 
 [deploy]
 startCommand = "python -m pip install --upgrade pip && python manage.py migrate && gunicorn AlegriaApp.wsgi"
