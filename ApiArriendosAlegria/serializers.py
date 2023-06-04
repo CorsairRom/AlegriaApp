@@ -399,6 +399,10 @@ class SerializerValoresGlobales(serializers.ModelSerializer):
 
 
 
+class SerializerActualizarValorArriendo(serializers.Serializer):
+    arriendo_id = serializers.IntegerField()
+    nuevo_valor_arriendo = serializers.IntegerField()
+    por_reajuste = serializers.BooleanField()
 
     
 

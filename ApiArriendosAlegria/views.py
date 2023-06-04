@@ -1,8 +1,9 @@
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from django.contrib.sessions.models import Session
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
@@ -49,7 +50,8 @@ from ApiArriendosAlegria.serializers import (
     SerializerDetalleArriendo,
     SerializerGastoComun,
     SerializerServiciosExtas,
-    SerializerValoresGlobales
+    SerializerValoresGlobales,
+    SerializerActualizarValorArriendo
 )
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsStaffUser
@@ -412,3 +414,39 @@ class ValoresGlobalesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerValoresGlobales
     queryset = ValoresGlobales.objects.all()
+
+
+class ActualizarValorArriendo(viewsets.GenericViewSet):
+    authentication_classes = [Authentication]
+    permission_classes = [IsAuthenticated, IsStaffUser]
+
+    def create(self, request, *args, **kwargs):
+        serializer = SerializerActualizarValorArriendo(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = serializer.data
+
+        try:
+            arriendo = Arriendo.objects.get(pk=data.get('arriendo_id'))
+        except:
+            return Response({'error': 'El Arriendo no existe'},
+                        status=status.HTTP_404_NOT_FOUND)
+
+        arriendo.valor_arriendo = data.get("nuevo_valor_arriendo")
+
+        if data.get("por_reajuste") == True:
+            nueva_fecha_reajuste = arriendo.fecha_reajuste + relativedelta(months=arriendo.periodo_reajuste)
+        else:
+            nueva_fecha_reajuste = datetime.utcnow() + relativedelta(months=arriendo.periodo_reajuste)
+
+        arriendo.fecha_reajuste = nueva_fecha_reajuste
+
+        arriendo.save(update_fields=["valor_arriendo", "fecha_reajuste"])
+
+        arriendo_serializer = SerializerArriendo(arriendo)
+        return Response(
+            status=status.HTTP_200_OK, 
+            data=arriendo_serializer.data
+        )
+        
+        

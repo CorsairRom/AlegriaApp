@@ -250,14 +250,17 @@ class Arriendo(models.Model):
     comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # 7.91 = 7% del propietario + 13% del boleta honorarios
 
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste') # 3, 6 o 12 meses.
-    fecha_pri_reajuste = models.DateTimeField(blank=True, null=True) # 3/8/2023
+    fecha_reajuste = models.DateTimeField(blank=True, null=True) # 3/8/2023
+
+    # Este valor de arriendo se va a poder cambiar manualmente solo para aplicar el reajuste de IPC | UF
+    valor_arriendo = models.PositiveBigIntegerField(verbose_name='Valor Arriendo', default=0)
 
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
 
     estado_arriendo = models.BooleanField(default=True) # Si esta activo, el arriendo en curso.
     observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo', blank=True, null=True)
     externo = models.ForeignKey(Externo, null=True, blank=True, default=None, on_delete=models.SET_NULL)
-        
+
     def __str__(self):
         return self.cod_arriendo
     
@@ -331,8 +334,10 @@ def _post_save_receiver(sender, instance, created, **kwargs):
 
         instance.estado_arriendo = True
         instance.comision = porc_comision
+        instance.valor_arriendo = (propiedad.valor_arriendo_base * (instance.comision / 100)) + propiedad.valor_arriendo_base
 
-        instance.save(update_fields=["estado_arriendo", "comision"])
+        instance.save(update_fields=["estado_arriendo", "comision", "valor_arriendo"])
+
 
 
 @receiver(post_save, sender=ValoresGlobales)
@@ -347,7 +352,10 @@ def _post_save_valores_globales(sender, instance, created, **kwargs):
             nueva_comision = (pctje_cobro_honorario * (nuevo_impuesto_honorario / 100)) + pctje_cobro_honorario
             arriendo.comision = nueva_comision
 
-        Arriendo.objects.bulk_update(arriendos, ["comision"])
+            arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
+
+
+        Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
 
 
 @receiver(post_save, sender=Propietario)
@@ -358,17 +366,12 @@ def _post_save_propietario(sender, instance, created, **kwargs):
 
         for propiedad in instance.propiedad_set.all():
             nueva_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
-            propiedad.arriendo_set.all().filter(estado_arriendo=True).update(comision=nueva_comision)
 
+            arriendos = propiedad.arriendo_set.all().filter(estado_arriendo=True)
 
-"""
-def fecha_reajuste(self):
-        fecha_proximo_reajuste = self.fecha_pri_reajuste + datetime.timedelta(months=self.periodo_reajuste - 1)
+            for arriendo in arriendos:
+                arriendos.comision = nueva_comision
+                arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
 
-        corresponde_reajuste_el_proximo_mes = fecha_proximo_reajuste.month == datetime.utcnow().month
-        if corresponde_reajuste_el_proximo_mes:
-            # Calcular el valor de arriendo que deberá pagar el arrendatario el proximo mes.
-            # Notifica....
-            pass
-        pass
-"""
+            Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
+
