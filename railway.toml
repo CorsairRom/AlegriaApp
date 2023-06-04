@@ -1,6 +1,6 @@
 [setup]
 python38 = true
-libmysqlclient.dev = true
+libmysqlclient-dev = true
 gcc = true
 
 [build]
