@@ -1,7 +1,7 @@
 [setup]
 python38 = true
 gcc = true
-libmysqlclient.dev = true
+libmysqlclient-dev = true
 
 
 [phases.setup]
