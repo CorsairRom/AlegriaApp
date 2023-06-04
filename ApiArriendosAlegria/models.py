@@ -314,7 +314,7 @@ def _post_save_receiver(sender, instance, created, **kwargs):
         pctje_cobro_honorario = propiedad.propietario.pctje_cobro_honorario
         impuesto_honorario = ValoresGlobales.objects.get(pk=1) # Ver cual es el ID correcto
 
-        porc_comision = (pctje_cobro_honorario * (impuesto_honorario / 100)) + pctje_cobro_honorario
+        porc_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
 
         instance.estado_arriendo = True
         instance.comision = porc_comision
@@ -335,6 +335,20 @@ def _post_save_valores_globales(sender, instance, created, **kwargs):
             arriendo.comision = nueva_comision
 
         Arriendo.objects.bulk_update(arriendos, ["comision"])
+
+
+@receiver(post_save, sender=Propietario)
+def _post_save_propietario(sender, instance, created, **kwargs):
+    if not created:
+        pctje_cobro_honorario = instance.pctje_cobro_honorario
+        impuesto_honorario = ValoresGlobales.objects.get(pk=1)
+
+        for propiedad in instance.propiedad_set.all():
+            nueva_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
+            propiedad.arriendo_set.all().filter(estado_arriendo=True).update(comision=nueva_comision)
+
+
+
 
 
 
