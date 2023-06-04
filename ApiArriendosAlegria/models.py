@@ -375,13 +375,6 @@ def _post_save_propietario(sender, instance, created, **kwargs):
 
             Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
 
-        corresponde_reajuste_el_proximo_mes = fecha_proximo_reajuste.month == datetime.utcnow().month
-        if corresponde_reajuste_el_proximo_mes:
-            # Calcular el valor de arriendo que deberá pagar el arrendatario el proximo mes.
-            # Notifica....
-            pass
-        pass
-
 
 
 
