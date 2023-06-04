@@ -2,8 +2,8 @@
 python38 = true
 gcc = true
 libmysqlclient.dev = true
-[phases.setup]
 
+[phases.setup]
 aptPkgs = ["...", "libmysqlclient-dev"]
 
 [build]
