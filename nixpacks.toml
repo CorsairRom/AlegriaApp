@@ -3,12 +3,11 @@ python38 = true
 gcc = true
 libmysqlclient.dev = true
 
-[phases.setup]
-aptPkgs = ["...", "libmysqlclient-dev"]
+
 
 [build]
 builder = "nixpacks"
 buildCommand = "echo building!"
 
-[start]
+[deploy]
 startCommand = "python -m pip install --upgrade pip && python manage.py migrate && gunicorn AlegriaApp.wsgi"
