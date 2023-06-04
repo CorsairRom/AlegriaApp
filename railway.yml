@@ -1,0 +1,5 @@
+name: my-railway
+commands:
+  start:
+    description: Start the application
+    script: python manage.py runserver
