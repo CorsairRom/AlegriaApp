@@ -242,21 +242,40 @@ class Arriendo(models.Model):
     """
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
+
     fecha_inicio = models.DateTimeField(verbose_name='Fecha de Inicio')
     fecha_termino = models.DateTimeField(verbose_name= 'Fecha de Termino')
+
     dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True) # 5 o cualquier otro día.
     comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # 7.91 = 7% del propietario + 13% del boleta honorarios
-    fecha_pri_ajuste = models.DateTimeField(blank=True, null=True) #creado al momento de guardar o modificar el el monto del arriendo
-    periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
-    monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
+
+    periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste') # 3, 6 o 12 meses.
+    fecha_pri_reajuste = models.DateTimeField(blank=True, null=True) # 3/8/2023
+
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
-    estado_arriendo = models.BooleanField(default=True)
+
+    estado_arriendo = models.BooleanField(default=True) # Si esta activo, el arriendo en curso.
     observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo', blank=True, null=True)
     externo = models.ForeignKey(Externo, null=True, blank=True, default=None, on_delete=models.SET_NULL)
         
     def __str__(self):
         return self.cod_arriendo
     
+class DetalleArriendo(models.Model):
+    """
+    Modelo que representa el detalle de los arriendos.
+    """
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    fecha_a_pagar = models.DateTimeField()
+    monto_a_pagar = models.PositiveIntegerField(null=True)
+
+    fecha_pagada = models.DateTimeField(default=None, null=True, blank=True)
+    monto_pagado = models.PositiveIntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.arriendo
+    
+
 class ArriendoDepartamento(models.Model):
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE, null=True)
@@ -289,17 +308,6 @@ class Gastocomun(models.Model):
     
     def __str__(self):
         return self.arriendo + ' - ' + self.valor
-    
-class DetalleArriendo(models.Model):
-    """
-    Modelo que representa el detalle de los arriendos.
-    """
-    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
-    fecha_pago = models.DateTimeField()
-    monto_pago = models.PositiveIntegerField(null=True)
-    
-    def __str__(self):
-        return self.arriendo
     
 
 # -------------signals----------
@@ -353,16 +361,14 @@ def _post_save_propietario(sender, instance, created, **kwargs):
             propiedad.arriendo_set.all().filter(estado_arriendo=True).update(comision=nueva_comision)
 
 
-
-
-
-
-################################################################
-# Cuando se actualiza el <pctje_cobro_honorario> del propietario, debería
-# actualizace la comisión de los arriendos en curso de todas las propiedades de ese propietario.
-# Hay que buscar los arriendos de las propiedades de los propietarios
 """
-    SELECT *
-    FROM ARRIENDO ar
-    WHERE ar.propiedad_id IN (SELECT p.propiedario_id from PROPIEDAD p WHERE p.propietario_id = :? )
+def fecha_reajuste(self):
+        fecha_proximo_reajuste = self.fecha_pri_reajuste + datetime.timedelta(months=self.periodo_reajuste - 1)
+
+        corresponde_reajuste_el_proximo_mes = fecha_proximo_reajuste.month == datetime.utcnow().month
+        if corresponde_reajuste_el_proximo_mes:
+            # Calcular el valor de arriendo que deberá pagar el arrendatario el proximo mes.
+            # Notifica....
+            pass
+        pass
 """
