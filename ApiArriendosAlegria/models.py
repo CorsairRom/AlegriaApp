@@ -1,3 +1,4 @@
+from enum import Enum
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.db.models.signals import post_save
@@ -303,6 +304,10 @@ class DetalleArriendo(models.Model):
 
 # -------------signals----------
 
+class ValoreGlobalEnum(int, Enum):
+    PORCENTAJE_MULTAS = 1
+    IMPUESTO_HONORARIO = 2
+
 @receiver(post_save, sender=Arriendo)
 def _post_save_receiver(sender, instance, created, **kwargs):
     
@@ -312,7 +317,7 @@ def _post_save_receiver(sender, instance, created, **kwargs):
         propiedad.arriendo_set.all().filter(id=instance.id).update(estado_arriendo=False)
 
         pctje_cobro_honorario = propiedad.propietario.pctje_cobro_honorario
-        impuesto_honorario = ValoresGlobales.objects.get(pk=1) # Ver cual es el ID correcto
+        impuesto_honorario = ValoresGlobales.objects.get(pk=ValoreGlobalEnum.IMPUESTO_HONORARIO) # Ver cual es el ID correcto
 
         porc_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
 
@@ -324,7 +329,7 @@ def _post_save_receiver(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=ValoresGlobales)
 def _post_save_valores_globales(sender, instance, created, **kwargs):
-    if not created and instance.id == 1:
+    if not created and instance.id == ValoreGlobalEnum.IMPUESTO_HONORARIO:
         nuevo_impuesto_honorario = instance.valor
         
         arriendos = Arriendo.objects.all().filter(estado_arriendo = True)
@@ -341,7 +346,7 @@ def _post_save_valores_globales(sender, instance, created, **kwargs):
 def _post_save_propietario(sender, instance, created, **kwargs):
     if not created:
         pctje_cobro_honorario = instance.pctje_cobro_honorario
-        impuesto_honorario = ValoresGlobales.objects.get(pk=1)
+        impuesto_honorario = ValoresGlobales.objects.get(pk=ValoreGlobalEnum.IMPUESTO_HONORARIO)
 
         for propiedad in instance.propiedad_set.all():
             nueva_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
