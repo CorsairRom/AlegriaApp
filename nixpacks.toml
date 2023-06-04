@@ -10,7 +10,5 @@ aptPkgs = ["...", "libmysqlclient-dev"]
 builder = "nixpacks"
 buildCommand = "echo building!"
 
-
-
-[deploy]
+[start]
 startCommand = "python -m pip install --upgrade pip && python manage.py migrate && gunicorn AlegriaApp.wsgi"
