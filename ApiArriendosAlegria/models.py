@@ -372,3 +372,29 @@ def fecha_reajuste(self):
             pass
         pass
 """
+
+
+
+def calcular_multa_arriendo(timezone):
+    """
+    if DetalleArriendo.fecha_pagada > DetalleArriendo.fecha_a_pagar
+    """
+
+    tasa_multa = ValoresGlobales.objects.filter(id=1) / 100 # 0.33% de multa por día
+
+    # Obtener la fecha y hora actual en la zona horaria especificada
+    today = timezone.now().date()
+
+    # Obtener el primer día del mes actual
+    first_day_month = today.replace(day=1)
+
+    # Calcular la diferencia de días entre el primer día del mes actual y la fecha actual
+    dias_pasados = (today - first_day_month).days
+
+    # Calcular el valor de la multa
+    valor_multa = DetalleArriendo.monto_a_pagar * tasa_multa * dias_pasados
+
+    # Calcular el valor total de la multa sumado al valor mensual del arriendo
+    valor_total = DetalleArriendo.monto_a_pagar + valor_multa
+
+    return valor_multa, valor_total
