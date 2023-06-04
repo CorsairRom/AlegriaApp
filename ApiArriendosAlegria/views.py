@@ -419,6 +419,7 @@ class ValoresGlobalesViewSet(viewsets.ModelViewSet):
 class ActualizarValorArriendo(viewsets.GenericViewSet):
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
+    serializer_class = SerializerActualizarValorArriendo
 
     def create(self, request, *args, **kwargs):
         serializer = SerializerActualizarValorArriendo(data=request.data)
