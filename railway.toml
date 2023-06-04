@@ -7,5 +7,8 @@ gcc = true
 builder = "nixpacks"
 buildCommand = "echo building!"
 
+[build.packages]
+libmysqlclient.dev = "8.0.26"
+
 [deploy]
 startCommand = "python -m pip install --upgrade pip && python manage.py migrate && gunicorn AlegriaApp.wsgi"
