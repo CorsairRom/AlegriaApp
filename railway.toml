@@ -1,11 +1,11 @@
 [setup]
 python38 = true
 gcc = true
-libmysqlclient-dev = true
+libmysqlclient.dev = true
 
 
 [phases.setup]
-aptPkgs = ["...", "libmysqlclient-dev"]
+aptPkgs = ["...", "libmysqlclient.dev"]
 
 [build]
 builder = "nixpacks"
