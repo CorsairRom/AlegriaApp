@@ -1,0 +1,6 @@
+[build]
+builder = "nixpacks"
+buildCommand = "echo building!"
+
+[deploy]
+startCommand = "python manage.py migrate && gunicorn AlegriaApp.wsgi"
