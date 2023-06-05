@@ -159,9 +159,9 @@ class SerializerPersonalidadJuridica(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         if instance.comuna:
-            rep['nom_comuna']= instance.comuna.nom_com
+            rep['nom_com']= instance.comuna.nom_com
         else:
-            rep['nom_comuna']= None
+            rep['nom_com']= None
         
         return rep
     
