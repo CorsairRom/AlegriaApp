@@ -1,7 +1,7 @@
 from enum import Enum
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from datetime import datetime
 from django.dispatch import receiver
 from rest_framework import serializers
@@ -158,7 +158,9 @@ class Propietario(models.Model):
     comuna = models.ForeignKey(Comuna, on_delete=models.CASCADE)
     email_prop = models.EmailField(verbose_name='Email Propietario')
     contacto_prop = models.IntegerField(verbose_name='Contacto Propietario')
+    
     pctje_cobro_honorario = models.FloatField(verbose_name='Porcentaje Cobro Propietario', default=7)
+    
     personalidad_juridica = models.ForeignKey(PersonalidadJuridica, null=True, blank=True, default=None, on_delete=models.SET_NULL)
     
     def __str__(self):
@@ -314,7 +316,7 @@ class ServiciosExtras(models.Model):
     
     def __str__(self):
         return self.arriendo_id +' - '+ self.nom_servicio
-
+    
 
 class Gastocomun(models.Model):
     """
@@ -389,3 +391,9 @@ def _post_save_propietario(sender, instance, created, **kwargs):
                 arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
 
             Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
+
+@receiver(pre_save, sender=ServiciosExtras)
+def calcular_monto_cuotas(sender, instance, **kwargs):
+    if instance.monto > 0 and instance.nro_cuotas > 0:
+        instance.monto_cuotas = instance.monto / instance.nro_cuotas
+        
