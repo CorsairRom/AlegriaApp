@@ -352,17 +352,3 @@ def _post_save_propietario(sender, instance, created, **kwargs):
             nueva_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
             propiedad.arriendo_set.all().filter(estado_arriendo=True).update(comision=nueva_comision)
 
-
-
-
-
-
-################################################################
-# Cuando se actualiza el <pctje_cobro_honorario> del propietario, debería
-# actualizace la comisión de los arriendos en curso de todas las propiedades de ese propietario.
-# Hay que buscar los arriendos de las propiedades de los propietarios
-"""
-    SELECT *
-    FROM ARRIENDO ar
-    WHERE ar.propiedad_id IN (SELECT p.propiedario_id from PROPIEDAD p WHERE p.propietario_id = :? )
-"""
