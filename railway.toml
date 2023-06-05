@@ -1,7 +1,4 @@
-[setup]
-python38 = true
-gcc = true
-libmysqlclient.dev = true
+
 
 [build]
 builder = "nixpacks"
