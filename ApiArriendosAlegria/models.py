@@ -242,21 +242,43 @@ class Arriendo(models.Model):
     """
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
+
     fecha_inicio = models.DateTimeField(verbose_name='Fecha de Inicio')
     fecha_termino = models.DateTimeField(verbose_name= 'Fecha de Termino')
+
     dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True) # 5 o cualquier otro día.
     comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # 7.91 = 7% del propietario + 13% del boleta honorarios
-    fecha_pri_ajuste = models.DateTimeField(blank=True, null=True) #creado al momento de guardar o modificar el el monto del arriendo
-    periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste')
-    monto_arriendo = models.IntegerField(verbose_name='Monto arriendo')
+
+    periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste') # 3, 6 o 12 meses.
+    fecha_reajuste = models.DateTimeField(blank=True, null=True) # 3/8/2023
+
+    # Este valor de arriendo se va a poder cambiar manualmente solo para aplicar el reajuste de IPC | UF
+    valor_arriendo = models.PositiveBigIntegerField(verbose_name='Valor Arriendo', default=0)
+
     fecha_entrega = models.DateTimeField(verbose_name='Fecha entrega arriendo', null=True, blank=True)
-    estado_arriendo = models.BooleanField(default=True)
+
+    estado_arriendo = models.BooleanField(default=True) # Si esta activo, el arriendo en curso.
     observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo', blank=True, null=True)
     externo = models.ForeignKey(Externo, null=True, blank=True, default=None, on_delete=models.SET_NULL)
-        
+
     def __str__(self):
         return self.cod_arriendo
     
+class DetalleArriendo(models.Model):
+    """
+    Modelo que representa el detalle de los arriendos.
+    """
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    fecha_a_pagar = models.DateTimeField()
+    monto_a_pagar = models.PositiveIntegerField(null=True)
+
+    fecha_pagada = models.DateTimeField(default=None, null=True, blank=True)
+    monto_pagado = models.PositiveIntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.arriendo
+    
+
 class ArriendoDepartamento(models.Model):
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
     arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE, null=True)
@@ -290,17 +312,6 @@ class Gastocomun(models.Model):
     def __str__(self):
         return self.arriendo + ' - ' + self.valor
     
-class DetalleArriendo(models.Model):
-    """
-    Modelo que representa el detalle de los arriendos.
-    """
-    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
-    fecha_pago = models.DateTimeField()
-    monto_pago = models.PositiveIntegerField(null=True)
-    
-    def __str__(self):
-        return self.arriendo
-    
 
 # -------------signals----------
 
@@ -323,8 +334,10 @@ def _post_save_receiver(sender, instance, created, **kwargs):
 
         instance.estado_arriendo = True
         instance.comision = porc_comision
+        instance.valor_arriendo = (propiedad.valor_arriendo_base * (instance.comision / 100)) + propiedad.valor_arriendo_base
 
-        instance.save(update_fields=["estado_arriendo", "comision"])
+        instance.save(update_fields=["estado_arriendo", "comision", "valor_arriendo"])
+
 
 
 @receiver(post_save, sender=ValoresGlobales)
@@ -339,7 +352,10 @@ def _post_save_valores_globales(sender, instance, created, **kwargs):
             nueva_comision = (pctje_cobro_honorario * (nuevo_impuesto_honorario / 100)) + pctje_cobro_honorario
             arriendo.comision = nueva_comision
 
-        Arriendo.objects.bulk_update(arriendos, ["comision"])
+            arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
+
+
+        Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
 
 
 @receiver(post_save, sender=Propietario)
@@ -350,5 +366,11 @@ def _post_save_propietario(sender, instance, created, **kwargs):
 
         for propiedad in instance.propiedad_set.all():
             nueva_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
-            propiedad.arriendo_set.all().filter(estado_arriendo=True).update(comision=nueva_comision)
 
+            arriendos = propiedad.arriendo_set.all().filter(estado_arriendo=True)
+
+            for arriendo in arriendos:
+                arriendos.comision = nueva_comision
+                arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
+
+            Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
