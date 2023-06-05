@@ -7,7 +7,5 @@ libmysqlclient.dev = true
 builder = "nixpacks"
 buildCommand = "echo building!"
 
-
-
 [deploy]
-startCommand = "sudo apt-get install libmysqlclient-dev && python manage.py migrate && gunicorn AlegriaApp.wsgi"
+startCommand = "apt-get install libmysqlclient-dev && python manage.py migrate && gunicorn AlegriaApp.wsgi"
