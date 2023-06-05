@@ -467,7 +467,7 @@ class ValoresGlobalesViewSet(viewsets.ModelViewSet):
     queryset = ValoresGlobales.objects.all()
 
 
-class ActualizarValorArriendo(viewsets.GenericViewSet):
+class ActualizarValorArriendoPropiedad(viewsets.GenericViewSet):
     authentication_classes = [Authentication]
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerActualizarValorArriendo
