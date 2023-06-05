@@ -1,5 +1,7 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from rest_framework.decorators import action
+from django.utils import timezone
 
 from django.contrib.sessions.models import Session
 from django_filters.rest_framework import DjangoFilterBackend
@@ -384,6 +386,55 @@ class DetalleArriendoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerDetalleArriendo
     queryset = DetalleArriendo.objects.all()
+
+    """
+    @action(detail=True, methods=['post'])
+    def set_password(self, request, pk=None):
+        user = self.get_object()
+        serializer = PasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user.set_password(serializer.validated_data['password'])
+            user.save()
+            return Response({'status': 'password set'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+    """
+    
+    @action(detail=True, methods=['post'])
+    def calcular_multa_arriendo(self, request, pk=None):
+        detalle_arriendo = self.get_object()
+        tasa_multa = ValoresGlobales.objects.get(id=1).valor / 100 # 0.33% de multa por día
+        fecha_a_pagar = detalle_arriendo.fecha_a_pagar
+        monto_a_pagar = detalle_arriendo.monto_a_pagar
+        today = timezone.now()
+        print(f"today = {today}")
+
+        if today > fecha_a_pagar:
+            if fecha_a_pagar.day <= 5:
+                # Obtener el primer día del mes actual
+                first_day_month = today.replace(day=1)
+                print(f"first_day_month = {first_day_month}")
+
+                # Calcular la diferencia de días entre el primer día del mes actual y la fecha actual
+                dias_pasados = (today - first_day_month).days
+            else:
+                # En caso que el día de pago sea, por ejemplo, el día 20 del mes
+                dias_pasados = (today - fecha_a_pagar).days
+        
+        print(f"dias_pasados = {dias_pasados}")
+        # Calcular el valor de la multa
+        valor_multa = monto_a_pagar * tasa_multa * dias_pasados
+
+        detalle_arriendo.valor_multa = valor_multa
+        detalle_arriendo.save(update_fields=["valor_multa"])
+
+        detalle_arriendo_serializer = SerializerDetalleArriendo(detalle_arriendo)
+
+        return Response(
+            data=detalle_arriendo_serializer.data,
+            status=status.HTTP_200_OK
+            )
 
 class ServiciosExtrasViewSet(viewsets.ModelViewSet):
     """

@@ -6,6 +6,7 @@ from datetime import datetime
 from django.dispatch import receiver
 from rest_framework import serializers
 from ApiArriendosAlegria.managers import GestorUsuario
+from django.utils import timezone
 
 class ValoresGlobales(models.Model):
     nombre= models.CharField(max_length=200)
@@ -195,12 +196,16 @@ class Propiedad(models.Model):
     nro_estacionamiento = models.IntegerField(verbose_name='Número Estacionamiento', null=True, blank=True, default=None)
 
     valor_arriendo_base = models.PositiveBigIntegerField(verbose_name='Valor Arriendo Base', default=0)
-    es_valor_uf = models.BooleanField(default=False)
+    es_valor_uf = models.BooleanField(default=False) # Si es false, es IPC / si es true, es UF
     
     #Codigos de agua luz gas, en una proxima revision es necesario destructurar esta informacion
     gas = models.CharField(verbose_name='Código Gas', null=True, blank=True, max_length=50) # codigo y nombre de compañia de gas
     agua = models.CharField(verbose_name='Código ESSBIO', null=True, blank=True, max_length=50) # codigo y nombre de compañia de agua
     luz = models.CharField(verbose_name='Código Luz', null=True, blank=True, max_length=50)  # codigo y nombre de compañia de luz
+
+    # Para los casos que se requiera gasto común
+    incluye_gc = models.BooleanField(default=False) # Si es true, valor_gasto_comun se va a sumar al valor del arriendo (?)
+    valor_gasto_comun = models.PositiveBigIntegerField(default=0)
     
     def __str__(self):
         return str(self.id)    
@@ -228,7 +233,7 @@ class Arrendatario(models.Model):
 class Externo(models.Model):
     """
     Modelo para trabajadores como administrador de condominios (edificios o casas),
-    o conserjes.
+    o conserjes. Es decir, trabajadores externos a la corredora.
     """
     nombre = models.CharField(max_length=50)
     rut = models.CharField(max_length=12, verbose_name='rut externo', null=True, blank=True)
@@ -239,6 +244,8 @@ class Externo(models.Model):
 class Arriendo(models.Model):
     """
     Modelo que representa a los arriendos.
+
+    NOTA: Los arriendos solo finalizan cuando se entregan en las condiciones pactadas.
     """
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, null=True)
     arrendatario = models.ForeignKey(Arrendatario, on_delete=models.CASCADE)
@@ -275,6 +282,8 @@ class DetalleArriendo(models.Model):
     fecha_pagada = models.DateTimeField(default=None, null=True, blank=True)
     monto_pagado = models.PositiveIntegerField(null=True, blank=True)
 
+    valor_multa = models.PositiveIntegerField(default=0)
+
     def __str__(self):
         return self.arriendo
     
@@ -292,15 +301,21 @@ class ServiciosExtras(models.Model):
 
     Por ejemplo: Gásfiter.
     """
-    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.SET_NULL, null=True)
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.SET_NULL, null=True)
+    externo = models.ForeignKey(Externo, on_delete=models.SET_NULL, null=True)
     nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
     descripcion = models.CharField(max_length=250)
-    fecha = models.DateTimeField()
-    Monto = models.IntegerField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    monto = models.IntegerField(default=0)
+    nro_cuotas = models.PositiveIntegerField(default=1)
+    monto_cuotas = models.PositiveBigIntegerField(default=0)
+    contador_cuotas = models.PositiveIntegerField(default=0)
     
     def __str__(self):
         return self.arriendo_id +' - '+ self.nom_servicio
-    
+
+
 class Gastocomun(models.Model):
     """
     Modelo que representa a los gastos comunes.
@@ -374,30 +389,3 @@ def _post_save_propietario(sender, instance, created, **kwargs):
                 arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
 
             Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
-
-
-
-
-def calcular_multa_arriendo(timezone):
-    """
-    if DetalleArriendo.fecha_pagada > DetalleArriendo.fecha_a_pagar
-    """
-
-    tasa_multa = ValoresGlobales.objects.filter(id=1) / 100 # 0.33% de multa por día
-
-    # Obtener la fecha y hora actual en la zona horaria especificada
-    today = timezone.now().date()
-
-    # Obtener el primer día del mes actual
-    first_day_month = today.replace(day=1)
-
-    # Calcular la diferencia de días entre el primer día del mes actual y la fecha actual
-    dias_pasados = (today - first_day_month).days
-
-    # Calcular el valor de la multa
-    valor_multa = DetalleArriendo.monto_a_pagar * tasa_multa * dias_pasados
-
-    # Calcular el valor total de la multa sumado al valor mensual del arriendo
-    valor_total = DetalleArriendo.monto_a_pagar + valor_multa
-
-    return valor_multa, valor_total
