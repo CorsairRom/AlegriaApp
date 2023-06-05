@@ -404,6 +404,3 @@ class SerializerActualizarValorArriendo(serializers.Serializer):
     nuevo_valor_arriendo = serializers.IntegerField()
     por_reajuste = serializers.BooleanField()
 
-    
-
-    
