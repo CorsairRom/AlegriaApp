@@ -1,0 +1,13 @@
+[setup]
+python38 = true
+gcc = true
+libmysqlclient.dev = true
+
+[build]
+builder = "nixpacks"
+buildCommand = "echo building!"
+
+
+
+[deploy]
+startCommand = "python -m pip install --upgrade pip && python manage.py migrate && gunicorn AlegriaApp.wsgi"
