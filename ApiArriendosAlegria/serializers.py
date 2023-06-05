@@ -3,6 +3,7 @@ from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Co
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
                                         Gastocomun, DetalleArriendo, ValoresGlobales, Externo
 from ApiArriendosAlegria.Rut import validarRut
+from django.utils import timezone
 
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
@@ -155,6 +156,17 @@ class SerializerPersonalidadJuridica(serializers.ModelSerializer):
     class Meta:
         model = PersonalidadJuridica
         fields = '__all__'
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.comuna:
+            rep['nom_com']= instance.comuna.nom_com
+        else:
+            rep['nom_com']= None
+        
+        return rep
+    
+
 
 
 class SerializerPropietario(serializers.ModelSerializer):
@@ -404,3 +416,34 @@ class SerializerActualizarValorArriendo(serializers.Serializer):
     nuevo_valor_arriendo = serializers.IntegerField()
     por_reajuste = serializers.BooleanField()
 
+
+class SerializerTablaArriendo(serializers.ModelSerializer):
+    class Meta:
+        model = Arriendo
+        fields = '__all__'
+    
+    def to_representation(self, instance):
+        
+        
+        today= timezone.now()
+        fecha_pago = today.replace(day=instance.dia_pago if instance.dia_pago else 5)
+        data = {
+            'arriendo_id': instance.id,
+            'propiedad_cod': instance.propiedad.cod if instance.propiedad else None,
+            'nombre_arrendatario' : instance.arrendatario.pri_nom_arr + ' ' + instance.arrendatario.pri_ape_arr,
+            'direccion': instance.propiedad.direccion_ppdd,
+            'fecha_pago': fecha_pago,
+            'monto_arriendo' : instance.valor_arriendo
+        }
+        
+        return data
+
+
+
+
+"arriendo.id"       
+"propiedad.cod"
+"arriendo.nombre_arrendatario"
+"propiedad.direccion"
+"fecha_pago"
+"monto_arriendo"

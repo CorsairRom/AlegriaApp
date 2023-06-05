@@ -253,7 +253,7 @@ class Arriendo(models.Model):
     fecha_inicio = models.DateTimeField(verbose_name='Fecha de Inicio')
     fecha_termino = models.DateTimeField(verbose_name= 'Fecha de Termino')
 
-    dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True) # 5 o cualquier otro día.
+    dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', default=5) # 5 o cualquier otro día.
     comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # 7.91 = 7% del propietario + 13% del boleta honorarios
 
     periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste') # 3, 6 o 12 meses.
@@ -269,7 +269,7 @@ class Arriendo(models.Model):
     externo = models.ForeignKey(Externo, null=True, blank=True, default=None, on_delete=models.SET_NULL)
 
     def __str__(self):
-        return self.cod_arriendo
+        return str(self.id)
     
 class DetalleArriendo(models.Model):
     """

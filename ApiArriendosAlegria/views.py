@@ -1,5 +1,6 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from django.http import JsonResponse
 from rest_framework.decorators import action
 from django.utils import timezone
 
@@ -36,6 +37,7 @@ from ApiArriendosAlegria.models import (
 from ApiArriendosAlegria.serializers import (
     SerializadorUsuario,
     SerializerArriendoDepartamento,
+    SerializerTablaArriendo,
     SerializerTrabajador,
     SerializerTipoTrabajado,
     SerializerRegion,
@@ -353,6 +355,12 @@ class ArriendoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArriendo
     queryset = Arriendo.objects.all()
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        print(queryset)
+        serializer_class = SerializerTablaArriendo(queryset, many=True)
+        return Response(serializer_class.data)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
