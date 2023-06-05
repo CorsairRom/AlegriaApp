@@ -1,1 +1,2 @@
-providers = ["...", "libmysqlclient-dev"]
+[phases.setup]
+aptPkgs = ["...", "libmysqlclient-dev"]
