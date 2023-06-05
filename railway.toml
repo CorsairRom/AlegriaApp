@@ -1,8 +1,0 @@
-
-
-[build]
-builder = "nixpacks"
-buildCommand = "echo building!"
-
-[deploy]
-startCommand = "apt-get install libmysqlclient-dev && python manage.py migrate && gunicorn AlegriaApp.wsgi"
