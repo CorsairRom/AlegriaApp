@@ -256,7 +256,7 @@ class Arriendo(models.Model):
     dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True) # 5 o cualquier otro día.
     comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # 7.91 = 7% del propietario + 13% del boleta honorarios
 
-    periodo_reajuste = models.IntegerField(verbose_name='Perdio Reajuste') # 3, 6 o 12 meses.
+    periodo_reajuste = models.IntegerField(verbose_name='Período Reajuste') # 3, 6 o 12 meses.
     fecha_reajuste = models.DateTimeField(blank=True, null=True) # 3/8/2023
 
     # Este valor de arriendo se va a poder cambiar manualmente solo para aplicar el reajuste de IPC | UF
