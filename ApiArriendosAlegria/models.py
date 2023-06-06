@@ -166,7 +166,19 @@ class Propietario(models.Model):
     def __str__(self):
         return self.rut_prop
     
-
+class Externo(models.Model):
+    """
+    Modelo para trabajadores como administrador de condominios (edificios o casas),
+    o conserjes. Es decir, trabajadores externos a la corredora.
+    """
+    nombre = models.CharField(max_length=50)
+    rut = models.CharField(max_length=12, verbose_name='rut externo', null=True, blank=True)
+    contacto = models.IntegerField( verbose_name='Contacto')
+    correo = models.EmailField(verbose_name='Correo')
+    rol = models.CharField(verbose_name='Rol', max_length=50)
+    
+    def __str__(self):
+        return self.nombre
 
 # model propiedad - tipo propiedad  
 
@@ -209,6 +221,8 @@ class Propiedad(models.Model):
     incluye_gc = models.BooleanField(default=False) # Si es true, valor_gasto_comun se va a sumar al valor del arriendo (?)
     valor_gasto_comun = models.PositiveBigIntegerField(default=0)
     
+    externo = models.ForeignKey(Externo, on_delete=models.SET_NULL, null=True)
+    
     def __str__(self):
         return str(self.id)    
     
@@ -232,16 +246,7 @@ class Arrendatario(models.Model):
     def __str__(self):
         return self.rut_arr
 
-class Externo(models.Model):
-    """
-    Modelo para trabajadores como administrador de condominios (edificios o casas),
-    o conserjes. Es decir, trabajadores externos a la corredora.
-    """
-    nombre = models.CharField(max_length=50)
-    rut = models.CharField(max_length=12, verbose_name='rut externo', null=True, blank=True)
-    contacto = models.IntegerField( verbose_name='Contacto')
-    correo = models.EmailField(verbose_name='Correo')
-    rol = models.CharField(verbose_name='Rol', max_length=50)
+
 
 class Arriendo(models.Model):
     """
@@ -304,8 +309,6 @@ class ServiciosExtras(models.Model):
     Por ejemplo: Gásfiter.
     """
     propiedad = models.ForeignKey(Propiedad, on_delete=models.SET_NULL, null=True)
-    arriendo = models.ForeignKey(Arriendo, on_delete=models.SET_NULL, null=True)
-    externo = models.ForeignKey(Externo, on_delete=models.SET_NULL, null=True)
     nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
     descripcion = models.CharField(max_length=250)
     fecha = models.DateTimeField(auto_now_add=True)
