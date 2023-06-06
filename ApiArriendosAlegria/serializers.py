@@ -433,7 +433,7 @@ class SerializerTablaArriendo(serializers.ModelSerializer):
             'nombre_arrendatario' : instance.arrendatario.pri_nom_arr + ' ' + instance.arrendatario.pri_ape_arr,
             'direccion': instance.propiedad.direccion_ppdd,
             'fecha_pago': fecha_pago,
-            'monto_arriendo' : instance.valor_arriendo
+            'monto_arriendo' : instance.valor_arriendo,
         }
         
         return data

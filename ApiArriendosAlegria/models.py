@@ -271,7 +271,7 @@ class Arriendo(models.Model):
 
     estado_arriendo = models.BooleanField(default=True) # Si esta activo, el arriendo en curso.
     observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo', blank=True, null=True)
-    externo = models.ForeignKey(Externo, null=True, blank=True, default=None, on_delete=models.SET_NULL)
+
 
     def __str__(self):
         return str(self.id)
