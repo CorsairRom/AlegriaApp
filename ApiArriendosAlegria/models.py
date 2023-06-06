@@ -1,7 +1,7 @@
 from enum import Enum
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from datetime import datetime
 from django.dispatch import receiver
 from rest_framework import serializers
@@ -164,6 +164,19 @@ class Propietario(models.Model):
     def __str__(self):
         return self.rut_prop
     
+class Externo(models.Model):
+    """
+    Modelo para trabajadores como administrador de condominios (edificios o casas),
+    o conserjes. Es decir, trabajadores externos a la corredora.
+    """
+    nombre = models.CharField(max_length=50)
+    rut = models.CharField(max_length=12, verbose_name='rut externo', null=True, blank=True)
+    contacto = models.IntegerField( verbose_name='Contacto')
+    correo = models.EmailField(verbose_name='Correo')
+    rol = models.CharField(verbose_name='Rol', max_length=50)
+    
+    def __str__(self):
+        return self.nombre
 
 
 # model propiedad - tipo propiedad  
@@ -207,6 +220,8 @@ class Propiedad(models.Model):
     incluye_gc = models.BooleanField(default=False) # Si es true, valor_gasto_comun se va a sumar al valor del arriendo (?)
     valor_gasto_comun = models.PositiveBigIntegerField(default=0)
     
+    externo = models.ForeignKey(Externo, on_delete=models.SET_NULL, null=True)
+    
     def __str__(self):
         return str(self.id)    
     
@@ -230,16 +245,6 @@ class Arrendatario(models.Model):
     def __str__(self):
         return self.rut_arr
 
-class Externo(models.Model):
-    """
-    Modelo para trabajadores como administrador de condominios (edificios o casas),
-    o conserjes. Es decir, trabajadores externos a la corredora.
-    """
-    nombre = models.CharField(max_length=50)
-    rut = models.CharField(max_length=12, verbose_name='rut externo', null=True, blank=True)
-    contacto = models.IntegerField( verbose_name='Contacto')
-    correo = models.EmailField(verbose_name='Correo')
-    rol = models.CharField(verbose_name='Rol', max_length=50)
 
 class Arriendo(models.Model):
     """
@@ -253,7 +258,7 @@ class Arriendo(models.Model):
     fecha_inicio = models.DateTimeField(verbose_name='Fecha de Inicio')
     fecha_termino = models.DateTimeField(verbose_name= 'Fecha de Termino')
 
-    dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', null=True, blank=True) # 5 o cualquier otro día.
+    dia_pago = models.IntegerField(verbose_name='Día de pago (nro.)', default=5) # 5 o cualquier otro día.
     comision = models.FloatField(verbose_name='Comisión', null=True, blank=True) # 7.91 = 7% del propietario + 13% del boleta honorarios
 
     periodo_reajuste = models.IntegerField(verbose_name='Período Reajuste') # 3, 6 o 12 meses.
@@ -266,10 +271,10 @@ class Arriendo(models.Model):
 
     estado_arriendo = models.BooleanField(default=True) # Si esta activo, el arriendo en curso.
     observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo', blank=True, null=True)
-    externo = models.ForeignKey(Externo, null=True, blank=True, default=None, on_delete=models.SET_NULL)
+
 
     def __str__(self):
-        return self.cod_arriendo
+        return str(self.id)
     
 class DetalleArriendo(models.Model):
     """
@@ -302,8 +307,6 @@ class ServiciosExtras(models.Model):
     Por ejemplo: Gásfiter.
     """
     propiedad = models.ForeignKey(Propiedad, on_delete=models.SET_NULL, null=True)
-    arriendo = models.ForeignKey(Arriendo, on_delete=models.SET_NULL, null=True)
-    externo = models.ForeignKey(Externo, on_delete=models.SET_NULL, null=True)
     nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
     descripcion = models.CharField(max_length=250)
     fecha = models.DateTimeField(auto_now_add=True)
@@ -313,7 +316,7 @@ class ServiciosExtras(models.Model):
     contador_cuotas = models.PositiveIntegerField(default=0)
     
     def __str__(self):
-        return self.arriendo_id +' - '+ self.nom_servicio
+        return str(self.propiedad.cod)+' - '+ self.nom_servicio
 
 
 class Gastocomun(models.Model):
@@ -389,3 +392,8 @@ def _post_save_propietario(sender, instance, created, **kwargs):
                 arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
 
             Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
+
+@receiver(pre_save, sender=ServiciosExtras)
+def calcular_monto_cuotas(sender, instance, **kwargs):
+    if instance.monto > 0 and instance.nro_cuotas > 0:
+        instance.monto_cuotas = instance.monto / instance.nro_cuotas

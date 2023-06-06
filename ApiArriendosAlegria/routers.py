@@ -19,7 +19,7 @@ from ApiArriendosAlegria.views import (
     GastoComunViewSet,
     ArriendoDepartamentoViewSet,
     ValoresGlobalesViewSet,
-    ActualizarValorArriendo
+    ActualizarValorArriendoPropiedad
     
 )
 
@@ -44,7 +44,7 @@ router.register(r'servicios_extras', ServiciosExtrasViewSet, basename="servicios
 router.register(r'gasto_comun', GastoComunViewSet, basename="gasto_comun")
 router.register(r'arriendo_departamento', ArriendoDepartamentoViewSet, basename="arriendo_departamento")
 router.register(r'valores_globales', ValoresGlobalesViewSet, basename="valores_globales")
-router.register(r'actualizar_valor_arriendo', ActualizarValorArriendo, basename="actualizar_valor_arriendo")
+router.register(r'actualizar_valor_arriendo_propiedad', ActualizarValorArriendoPropiedad, basename="actualizar_valor_arriendo_propiedad")
 
 
 urlpatterns = router.urls
