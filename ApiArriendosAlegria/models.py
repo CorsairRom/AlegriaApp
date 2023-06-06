@@ -1,7 +1,7 @@
 from enum import Enum
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from datetime import datetime
 from django.dispatch import receiver
 from rest_framework import serializers
@@ -392,3 +392,8 @@ def _post_save_propietario(sender, instance, created, **kwargs):
                 arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
 
             Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
+
+@receiver(pre_save, sender=ServiciosExtras)
+def calcular_monto_cuotas(sender, instance, **kwargs):
+    if instance.monto > 0 and instance.nro_cuotas > 0:
+        instance.monto_cuotas = instance.monto / instance.nro_cuotas
