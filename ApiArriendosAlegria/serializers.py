@@ -338,12 +338,12 @@ class SerializerArriendo(serializers.ModelSerializer):
                 'numero_ppdd': obj.propiedad.numero_ppdd
                 }
     
-    def create(self, validated_data):
-        externo = validated_data.pop("externo", None)
-        if externo:
-            externo = Externo.objects.create(**externo)
-        arriendo = Arriendo.objects.create(**validated_data, externo=externo)
-        return arriendo
+    # def create(self, validated_data):
+    #     externo = validated_data.pop("externo", None)
+    #     if externo:
+    #         externo = Externo.objects.create(**externo)
+    #     arriendo = Arriendo.objects.create(**validated_data, externo=externo)
+    #     return arriendo
     
     def update(self, instance, validated_data):
         externo_data = validated_data.pop("externo", None)
