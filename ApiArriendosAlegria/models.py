@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from rest_framework import serializers
 from ApiArriendosAlegria.managers import GestorUsuario
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
 class ValoresGlobales(models.Model):
     nombre= models.CharField(max_length=200)
@@ -408,9 +409,13 @@ def reajustar_valor_arriendo(sender, instance, **kwargs):
             arriendos = propiedadOld.arriendo_set.all().filter(estado_arriendo=True)
             for arriendo in arriendos:
                 valor_arriendo = (propiedadNew.valor_arriendo_base * (arriendo.comision / 100)) + propiedadNew.valor_arriendo_base
-                arriendo.valor_arriendo = valor_arriendo
+                nueva_fecha_reajuste = datetime.utcnow() + relativedelta(months=arriendo.periodo_reajuste)
 
-            Arriendo.objects.bulk_update(arriendos, ["valor_arriendo"])
+                arriendo.valor_arriendo = valor_arriendo
+                arriendo.fecha_reajuste = nueva_fecha_reajuste
+
+
+            Arriendo.objects.bulk_update(arriendos, ["valor_arriendo", "fecha_reajuste"])
     except:
        pass
             
