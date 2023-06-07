@@ -32,7 +32,8 @@ from ApiArriendosAlegria.models import (
     Gastocomun,
     ServiciosExtras,
     ArriendoDepartamento,
-    ValoresGlobales
+    ValoresGlobales,
+    CodigoPropiedad
 )
 from ApiArriendosAlegria.serializers import (
     SerializadorUsuario,
@@ -56,7 +57,8 @@ from ApiArriendosAlegria.serializers import (
     SerializerServiciosExtas,
     SerializerValoresGlobales,
     SerializerActualizarValorArriendo,
-    SerializerArriendoConDetalles
+    SerializerArriendoConDetalles,
+    ListadoCodigoPropiedadSerializer
 )
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsStaffUser
@@ -320,6 +322,14 @@ class PropiedadViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['propietario']
 
+    @action(detail=False, methods=['get'])
+    def con_codigo(self, request):
+        codigos = CodigoPropiedad.objects.all().order_by('cod')
+        serializer = ListadoCodigoPropiedadSerializer(codigos, many=True)
+        return Response(serializer.data)
+    
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 class TipoPropiedadViewSet(viewsets.ModelViewSet):
     """

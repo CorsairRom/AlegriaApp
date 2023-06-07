@@ -226,7 +226,10 @@ class Propiedad(models.Model):
     def __str__(self):
         return str(self.id)    
     
-    
+class CodigoPropiedad(models.Model):
+    cod = models.PositiveIntegerField(unique=True)
+    propiedad = models.OneToOneField(to=Propiedad, null=True, blank=True, default=None, on_delete=models.SET_NULL)
+
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
 
 class Arrendatario(models.Model):
@@ -418,8 +421,11 @@ def reajustar_valor_arriendo(sender, instance, **kwargs):
             Arriendo.objects.bulk_update(arriendos, ["valor_arriendo", "fecha_reajuste"])
     except:
        pass
-            
-                
 
 
-        
+@receiver(post_save, sender=Propiedad)
+def asignar_codigo_propiedad(sender, instance, created, **kwargs):
+    if created:
+        codigoPropiedad = CodigoPropiedad.objects.get(cod=instance.cod)
+        codigoPropiedad.propiedad = instance
+        codigoPropiedad.save(update_fields=['propiedad'])
