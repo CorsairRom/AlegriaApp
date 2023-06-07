@@ -221,7 +221,7 @@ class Propiedad(models.Model):
     incluye_gc = models.BooleanField(default=False) # Si es true, valor_gasto_comun se va a sumar al valor del arriendo (?)
     valor_gasto_comun = models.PositiveBigIntegerField(default=0)
     
-    externo = models.ForeignKey(Externo, on_delete=models.SET_NULL, null=True)
+    observaciones = models.TextField(verbose_name='Observaciones adicionales sobre la propiedad', blank=True, null=True)
     
     def __str__(self):
         return str(self.id)    
@@ -387,14 +387,18 @@ def _post_save_propietario(sender, instance, **kwargs):
         pctje_cobro_honorario_old = Propietario.objects.get(pk=instance.id).pctje_cobro_honorario
         impuesto_honorario = ValoresGlobales.objects.get(pk=ValoreGlobalEnum.IMPUESTO_HONORARIO)
         if pctje_cobro_honorario_new != pctje_cobro_honorario_old:
+
+            nueva_comision = (pctje_cobro_honorario_new * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario_new
+            print(f"_post_save_propietario -> Nueva comisión: {nueva_comision}")
+
             for propiedad in instance.propiedad_set.all():
-                nueva_comision = (pctje_cobro_honorario_new * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario_new
 
                 arriendos = propiedad.arriendo_set.all().filter(estado_arriendo=True)
 
                 for arriendo in arriendos:
                     arriendos.comision = nueva_comision
                     arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
+                    print(f"_post_save_propietario -> Arriendo valor: {(arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo}")
 
                 Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
 
