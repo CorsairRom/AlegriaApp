@@ -521,3 +521,4 @@ class ActualizarValorArriendoPropiedad(viewsets.GenericViewSet):
             status=status.HTTP_200_OK, 
             data=arriendo_serializer.data
         )
+        

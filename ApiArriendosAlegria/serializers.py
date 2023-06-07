@@ -498,10 +498,25 @@ class SerializerArriendoConDetalles(serializers.ModelSerializer):
 
  ##
 class ListadoCodigoPropiedadSerializer(serializers.ModelSerializer):
-    propiedad = SerializerPropiedad(required=False, allow_null=True, many=False)
+
     class Meta:
         model = CodigoPropiedad
         fields = '__all__'
+
+    def to_representation(self, instance):
+        propiedad = instance.propiedad
+        if propiedad:
+            prop = {
+                "direccion": propiedad.direccion_ppdd,
+                "propietario": propiedad.propietario.pri_nom_prop + " " + propiedad.propietario.pri_ape_prop,
+                "comuna": propiedad.comuna.nom_com
+            }
+        data = {
+            'cod': instance.cod,
+            'propiedad': prop if propiedad else None,
+        }
+        
+        return data
 
 
 "arriendo.id"       
