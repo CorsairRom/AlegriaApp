@@ -510,7 +510,9 @@ class ListadoCodigoPropiedadSerializer(serializers.ModelSerializer):
                 "direccion": propiedad.direccion_ppdd,
                 "propietario": propiedad.propietario.pri_nom_prop + " " + propiedad.propietario.pri_ape_prop,
                 "comuna": propiedad.comuna.nom_com,
-                "propietario_id" : propiedad.propietario.id
+                "propietario_id" : propiedad.propietario.id,
+                "propiedad_id" : propiedad.id
+            
             }
         data = {
             'cod': instance.cod,
