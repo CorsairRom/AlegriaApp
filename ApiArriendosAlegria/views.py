@@ -55,7 +55,8 @@ from ApiArriendosAlegria.serializers import (
     SerializerGastoComun,
     SerializerServiciosExtas,
     SerializerValoresGlobales,
-    SerializerActualizarValorArriendo
+    SerializerActualizarValorArriendo,
+    SerializerArriendoConDetalles
 )
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsStaffUser
@@ -355,12 +356,14 @@ class ArriendoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArriendo
     queryset = Arriendo.objects.all()
-    
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        print(queryset)
-        serializer_class = SerializerTablaArriendo(queryset, many=True)
-        return Response(serializer_class.data)
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return SerializerTablaArriendo
+        if self.action == 'retrieve':
+            return SerializerArriendoConDetalles
+        return super().get_serializer_class()
+
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

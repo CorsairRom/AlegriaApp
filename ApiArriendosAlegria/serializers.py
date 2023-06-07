@@ -424,7 +424,6 @@ class SerializerTablaArriendo(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         
-        
         today= timezone.now()
         fecha_pago = today.replace(day=instance.dia_pago if instance.dia_pago else 5)
         data = {
@@ -438,6 +437,62 @@ class SerializerTablaArriendo(serializers.ModelSerializer):
         
         return data
 
+
+
+######################## Vista del Detalle Arriendo
+
+class SerializerPersonalidadJuridicaRead(serializers.ModelSerializer):
+    comuna = SerializerComuna()
+    class Meta:
+        model= PersonalidadJuridica
+        fields = '__all__'
+
+class SerializerDetallePropietario(serializers.ModelSerializer):
+    comuna = SerializerComuna()
+    personalidad_juridica = SerializerPersonalidadJuridicaRead(required=False, allow_null=True)
+    class Meta:
+        model = Propietario
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        cuentas_bancarias = Cuenta.objects.filter(propietario_rut=instance.rut_prop)
+        rep['cuentas_bancarias'] = SerializerCuenta(cuentas_bancarias, many=True).data
+        return rep
+    
+
+class SerializerPropiedadEnArriendo(serializers.ModelSerializer):
+    propietario = SerializerDetallePropietario()
+    servicios_extras = SerializerServiciosExtas(many=True)
+    comuna = SerializerComuna()
+    tipopropiedad = SerializerTipoPropiedad()
+    externo = ExternoSerializer(required=False, allow_null=True)
+
+    class Meta:
+        model = Propiedad
+        fields = '__all__'
+
+
+class SerializerDetalleArrendatario(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Arrendatario
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        cuentas_bancarias = Cuenta.objects.filter(propietario_rut=instance.rut_arr)
+        rep['cuentas_bancarias'] = SerializerCuenta(cuentas_bancarias, many=True).data
+        return rep
+    
+class SerializerArriendoConDetalles(serializers.ModelSerializer):
+    detalle_arriendos = SerializerDetalleArriendo(many=True)
+    arrendatario = SerializerDetalleArrendatario()
+    propiedad = SerializerPropiedadEnArriendo()
+    class Meta:
+        model = Arriendo
+        fields = '__all__'
+        depth = 2
 
 
 
