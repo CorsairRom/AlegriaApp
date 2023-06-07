@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
                                         TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
-                                        Gastocomun, DetalleArriendo, ValoresGlobales, Externo
+                                        Gastocomun, DetalleArriendo, ValoresGlobales, Externo, CodigoPropiedad
 from ApiArriendosAlegria.Rut import validarRut
 from django.utils import timezone
 
@@ -494,6 +494,14 @@ class SerializerArriendoConDetalles(serializers.ModelSerializer):
         fields = '__all__'
         depth = 2
 
+
+
+ ##
+class ListadoCodigoPropiedadSerializer(serializers.ModelSerializer):
+    propiedad = SerializerPropiedad(required=False, allow_null=True, many=False)
+    class Meta:
+        model = CodigoPropiedad
+        fields = '__all__'
 
 
 "arriendo.id"       

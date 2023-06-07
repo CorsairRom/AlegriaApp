@@ -7,6 +7,7 @@ from django.dispatch import receiver
 from rest_framework import serializers
 from ApiArriendosAlegria.managers import GestorUsuario
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
 class ValoresGlobales(models.Model):
     nombre= models.CharField(max_length=200)
@@ -225,7 +226,10 @@ class Propiedad(models.Model):
     def __str__(self):
         return str(self.id)    
     
-    
+class CodigoPropiedad(models.Model):
+    cod = models.PositiveIntegerField(unique=True)
+    propiedad = models.OneToOneField(to=Propiedad, null=True, blank=True, default=None, on_delete=models.SET_NULL)
+
 # model Arrendatario - arriendo - servicios extras - gasto comun - detalle arriendo
 
 class Arrendatario(models.Model):
@@ -408,13 +412,20 @@ def reajustar_valor_arriendo(sender, instance, **kwargs):
             arriendos = propiedadOld.arriendo_set.all().filter(estado_arriendo=True)
             for arriendo in arriendos:
                 valor_arriendo = (propiedadNew.valor_arriendo_base * (arriendo.comision / 100)) + propiedadNew.valor_arriendo_base
-                arriendo.valor_arriendo = valor_arriendo
+                nueva_fecha_reajuste = datetime.utcnow() + relativedelta(months=arriendo.periodo_reajuste)
 
-            Arriendo.objects.bulk_update(arriendos, ["valor_arriendo"])
+                arriendo.valor_arriendo = valor_arriendo
+                arriendo.fecha_reajuste = nueva_fecha_reajuste
+
+
+            Arriendo.objects.bulk_update(arriendos, ["valor_arriendo", "fecha_reajuste"])
     except:
        pass
-            
-                
 
 
-        
+@receiver(post_save, sender=Propiedad)
+def asignar_codigo_propiedad(sender, instance, created, **kwargs):
+    if created:
+        codigoPropiedad = CodigoPropiedad.objects.get(cod=instance.cod)
+        codigoPropiedad.propiedad = instance
+        codigoPropiedad.save(update_fields=['propiedad'])
