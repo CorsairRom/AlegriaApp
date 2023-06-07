@@ -280,7 +280,7 @@ class DetalleArriendo(models.Model):
     """
     Modelo que representa el detalle de los arriendos.
     """
-    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE)
+    arriendo = models.ForeignKey(Arriendo, on_delete=models.CASCADE, related_name="detalle_arriendos")
     fecha_a_pagar = models.DateTimeField()
     monto_a_pagar = models.PositiveIntegerField(null=True)
 
@@ -306,7 +306,7 @@ class ServiciosExtras(models.Model):
 
     Por ejemplo: Gásfiter.
     """
-    propiedad = models.ForeignKey(Propiedad, on_delete=models.SET_NULL, null=True)
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.SET_NULL, null=True, related_name="servicios_extras")
     nom_servicio = models.CharField(max_length=150, verbose_name='Nombre servicio')
     descripcion = models.CharField(max_length=250)
     fecha = models.DateTimeField(auto_now_add=True)
