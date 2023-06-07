@@ -384,7 +384,8 @@ def _post_save_valores_globales(sender, instance, created, **kwargs):
 def _post_save_propietario(sender, instance, **kwargs):
     if instance.id:
         pctje_cobro_honorario_new = instance.pctje_cobro_honorario
-        pctje_cobro_honorario_old = Propietario.objects.get(pk=instance.id).pctje_cobro_honorario
+        prop_old = Propietario.objects.get(pk=instance.id)
+        pctje_cobro_honorario_old = prop_old.pctje_cobro_honorario
         impuesto_honorario = ValoresGlobales.objects.get(pk=ValoreGlobalEnum.IMPUESTO_HONORARIO)
         if pctje_cobro_honorario_new != pctje_cobro_honorario_old:
 
@@ -397,7 +398,7 @@ def _post_save_propietario(sender, instance, **kwargs):
 
                 for arriendo in arriendos:
                     arriendos.comision = nueva_comision
-                    arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
+                    arriendo.valor_arriendo = (propiedad.valor_arriendo_base * (nueva_comision / 100)) + propiedad.valor_arriendo_base
                     print(f"_post_save_propietario -> Arriendo valor: {(arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo}")
 
                 Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
