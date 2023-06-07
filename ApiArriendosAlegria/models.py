@@ -380,22 +380,23 @@ def _post_save_valores_globales(sender, instance, created, **kwargs):
         Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
 
 
-@receiver(post_save, sender=Propietario)
-def _post_save_propietario(sender, instance, created, **kwargs):
-    if not created:
-        pctje_cobro_honorario = instance.pctje_cobro_honorario
+@receiver(pre_save, sender=Propietario)
+def _post_save_propietario(sender, instance, **kwargs):
+    if instance.id:
+        pctje_cobro_honorario_new = instance.pctje_cobro_honorario
+        pctje_cobro_honorario_old = Propietario.objects.get(pk=instance.id).pctje_cobro_honorario
         impuesto_honorario = ValoresGlobales.objects.get(pk=ValoreGlobalEnum.IMPUESTO_HONORARIO)
+        if pctje_cobro_honorario_new != pctje_cobro_honorario_old:
+            for propiedad in instance.propiedad_set.all():
+                nueva_comision = (pctje_cobro_honorario_new * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario_new
 
-        for propiedad in instance.propiedad_set.all():
-            nueva_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
+                arriendos = propiedad.arriendo_set.all().filter(estado_arriendo=True)
 
-            arriendos = propiedad.arriendo_set.all().filter(estado_arriendo=True)
+                for arriendo in arriendos:
+                    arriendos.comision = nueva_comision
+                    arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
 
-            for arriendo in arriendos:
-                arriendos.comision = nueva_comision
-                arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
-
-            Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
+                Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
 
 @receiver(pre_save, sender=ServiciosExtras)
 def calcular_monto_cuotas(sender, instance, **kwargs):
