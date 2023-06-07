@@ -400,20 +400,20 @@ def calcular_monto_cuotas(sender, instance, **kwargs):
 
 
 @receiver(pre_save, sender=Propiedad)
-def reajustar_valor_arriendo(sender, instance, created, **kwargs):
-    if not created:
-        propiedadNew = instance
+def reajustar_valor_arriendo(sender, instance, **kwargs):
+    try:
         propiedadOld = Propiedad.objects.get(pk=instance.id)
-
+        propiedadNew = instance
         if propiedadNew.valor_arriendo_base != propiedadOld.valor_arriendo_base:
-
-
             arriendos = propiedadOld.arriendo_set.all().filter(estado_arriendo=True)
             for arriendo in arriendos:
                 valor_arriendo = (propiedadNew.valor_arriendo_base * (arriendo.comision / 100)) + propiedadNew.valor_arriendo_base
                 arriendo.valor_arriendo = valor_arriendo
 
             Arriendo.objects.bulk_update(arriendos, ["valor_arriendo"])
+    except:
+       pass
+            
                 
 
 
