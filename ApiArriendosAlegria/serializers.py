@@ -295,12 +295,36 @@ class SerializerArrendatario(serializers.ModelSerializer):
     class Meta:
         model = Arrendatario
         fields = '__all__'
-        
+         
     def validate(self, data):
         rut_arr = data.get('rut_arr')
         if not validarRut(rut_arr):
             raise serializers.ValidationError("Rut inválido")
         return data
+    
+    
+    
+    #------------*********
+    
+    
+class SerializerArrendatarioArriendo(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Arrendatario
+        fields = '__all__'
+    
+    def to_representation(self, instance):
+        
+        rep = super().to_representation(instance)
+        arriendo = instance.arriendo_set.all().filter(estado_arriendo = True).first()
+        if arriendo:
+            Arriendosdata = SerializerArriendoPagos(arriendo)
+            rep['arriendo'] = Arriendosdata.data
+        else:
+            rep['arriendo'] = None
+        return rep
+    
+    
 
  
 class SerializerArriendo(serializers.ModelSerializer):
@@ -493,6 +517,13 @@ class SerializerArriendoConDetalles(serializers.ModelSerializer):
         model = Arriendo
         fields = '__all__'
         depth = 2
+        
+class SerializerArriendoPagos(serializers.ModelSerializer):
+    detalle_arriendos = SerializerDetalleArriendo(many=True)
+
+    class Meta:
+        model = Arriendo
+        fields = '__all__'
 
 
 

@@ -37,6 +37,7 @@ from ApiArriendosAlegria.models import (
 )
 from ApiArriendosAlegria.serializers import (
     SerializadorUsuario,
+    SerializerArrendatarioArriendo,
     SerializerArriendoDepartamento,
     SerializerTablaArriendo,
     SerializerTrabajador,
@@ -353,6 +354,16 @@ class ArriendatarioViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArrendatario
     queryset = Arrendatario.objects.all()
+    
+    @action(detail=True, methods=['get'])
+    def detalle(self, request, pk=None):
+        arrendatario = self.get_object()
+        serializer = SerializerArrendatarioArriendo(arrendatario)
+        
+        return Response(serializer.data)
+        
+    
+    
 
 
 
