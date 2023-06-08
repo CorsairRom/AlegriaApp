@@ -97,6 +97,9 @@ class Cuenta(models.Model):
     propietario_rut = models.CharField( max_length=12, verbose_name='Propietario de la cuenta', default='01.234.456-7')
     rut_tercero = models.CharField( max_length=12, verbose_name='Propietario de la cuenta', null=True, blank=True, default="11.111.111-1")
     
+    def get_cuenta(self):
+        return self.cuenta + ' - ' +  self.tipocuenta.nom_cuenta + ' - ' + self.banco.nombre_banco
+    
     def __str__(self):
         return self.cuenta      
     
@@ -246,6 +249,9 @@ class Arrendatario(models.Model):
     estado = models.BooleanField()
     saldo = models.IntegerField()
     
+    def get_name(self):
+        return self.pri_nom_arr + " " + self.pri_ape_arr
+    
     def __str__(self):
         return self.rut_arr
 
@@ -275,7 +281,6 @@ class Arriendo(models.Model):
 
     estado_arriendo = models.BooleanField(default=True) # Si esta activo, el arriendo en curso.
     observaciones = models.TextField(verbose_name='Observaciones adicionales sobre el arriendo', blank=True, null=True)
-
 
     def __str__(self):
         return str(self.id)
@@ -345,6 +350,8 @@ class ValoreGlobalEnum(int, Enum):
 def _post_save_receiver(sender, instance, created, **kwargs):
     
     if created:
+        
+        # calculo de porcentaje comision y valor arriendo
         propiedad = instance.propiedad
 
         propiedad.arriendo_set.all().filter(id=instance.id).update(estado_arriendo=False)
@@ -357,8 +364,20 @@ def _post_save_receiver(sender, instance, created, **kwargs):
         instance.estado_arriendo = True
         instance.comision = porc_comision
         instance.valor_arriendo = (propiedad.valor_arriendo_base * (instance.comision / 100)) + propiedad.valor_arriendo_base
+        
+        # calculo de fechas de pago
+        fechas_pago = []
+        for i in range(1, 13):
+            fecha_inicio = instance.fecha_inicio + relativedelta(months=i)
+            fecha_pago = fecha_inicio.replace(days=instance.dia_pago)
+            detalle_arriendo = DetalleArriendo(arriendo = instance, fecha_a_pagar = fecha_pago)
+            fechas_pago.append(detalle_arriendo)
+            
+        DetalleArriendo.objects.bulk_create(fechas_pago)
 
         instance.save(update_fields=["estado_arriendo", "comision", "valor_arriendo"])
+        
+        
 
 
 

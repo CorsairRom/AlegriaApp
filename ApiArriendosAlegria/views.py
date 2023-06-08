@@ -58,7 +58,8 @@ from ApiArriendosAlegria.serializers import (
     SerializerValoresGlobales,
     SerializerActualizarValorArriendo,
     SerializerArriendoConDetalles,
-    ListadoCodigoPropiedadSerializer
+    ListadoCodigoPropiedadSerializer,
+    ArriendMultaDashboardSerializer
 )
 # from django.db import transaction
 from ApiArriendosAlegria.permission import IsStaffUser
@@ -366,6 +367,14 @@ class ArriendoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArriendo
     queryset = Arriendo.objects.all()
+    
+    
+    @action( methods=['get'])
+    def dashboard_multas(self, request):
+    # ArriendMultaDashboardSerializer
+        arriendo_atrasados = Arriendo.objects.filter()
+        serializer_class = ArriendMultaDashboardSerializer()
+        return Response
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -374,6 +383,19 @@ class ArriendoViewSet(viewsets.ModelViewSet):
             return SerializerArriendoConDetalles
         return super().get_serializer_class()
 
+    def create(self, request, *args, **kwargs):
+        
+        id = request.data.get('propiedad_id', None)
+        if id is not None:
+            try:
+                propiedad = Propiedad.objects.get(pk = id)
+                arriendos = propiedad.arriendo_set.all().filter(estado_arriendo = True).count()
+                if arriendos > 0:
+                    return Response({'error' : "Error propiedad ya registra un arriendo activo"}, status=404)
+            except:
+                pass
+        
+        return super().create(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

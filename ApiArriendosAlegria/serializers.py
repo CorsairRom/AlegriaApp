@@ -521,11 +521,48 @@ class ListadoCodigoPropiedadSerializer(serializers.ModelSerializer):
         }
         
         return data
-
-
-"arriendo.id"       
+    
+    
+#serializador fecha de pago, reemplazar    
+class ArriendMultaDashboardSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Arriendo
+        fields = '__all__'
+    
+    def to_representation(self, instance):
+        cuenta = Cuenta.objects.filter(propietario_rut = instance.arrendatario.rut_arr).first() #refactorizar
+        porcentaje = ValoresGlobales.objects.get(id=1).valor / 100 
+        today = timezone.now()
+        fecha_de_pago = today.replace(day=instance.dia_pago)
+        dias_multa = fecha_de_pago.day
+        if dias_multa > 0:
+            multa = porcentaje * instance.valor_arriendo * dias_multa
+        else:
+            multa = 0
+        data = {
+            "propiedad_cod" : instance.propiedad.cod,
+            "arrendatario" : instance.arrendatario.get_name(),
+            "cuenta" :  cuenta.get_cuenta(),
+            "fecha_pago" : today.replace(day=instance.dia_pago),
+            "valor_arriendo": instance.valor_arriendo,
+            "valor_diario" : porcentaje * instance.valor_arriendo,
+            'porcentaje' : porcentaje,
+            "multa" : multa,
+            "dias_multa" : dias_multa
+        }
+        
+        return data
+    
+        
+        
+        
+    
+    
 "propiedad.cod"
-"arriendo.nombre_arrendatario"
-"propiedad.direccion"
-"fecha_pago"
-"monto_arriendo"
+"arriendatario-nombre"
+"cuenta principal"
+"fecha de pago"
+"valor_arriendo"
+"multa"
+"porcentaje"
