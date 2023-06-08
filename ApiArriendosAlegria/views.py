@@ -397,13 +397,13 @@ class ArriendoViewSet(viewsets.ModelViewSet):
         
         return super().create(request, *args, **kwargs)
 
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if instance.externo:
-            instance.externo.delete()
+    # def destroy(self, request, *args, **kwargs):
+    #     instance = self.get_object()
+    #     if instance.externo:
+    #         instance.externo.delete()
             
-        self.perform_destroy(instance)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    #     self.perform_destroy(instance)
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
     
     
 class ArriendoDepartamentoViewSet(viewsets.ModelViewSet):
