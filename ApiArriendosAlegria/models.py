@@ -370,6 +370,7 @@ def _post_save_receiver(sender, instance, created, **kwargs):
         for i in range(1, 13):
             fecha_inicio = instance.fecha_inicio + relativedelta(months=i)
             fecha_pago = fecha_inicio.replace(day=instance.dia_pago)
+            print(fecha_inicio, fecha_pago)
             detalle_arriendo = DetalleArriendo(arriendo = instance, fecha_a_pagar = fecha_pago)
             fechas_pago.append(detalle_arriendo)
             

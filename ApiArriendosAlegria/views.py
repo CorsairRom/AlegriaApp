@@ -382,9 +382,10 @@ class ArriendoViewSet(viewsets.ModelViewSet):
         if self.action == 'retrieve':
             return SerializerArriendoConDetalles
         return super().get_serializer_class()
-
+    
     def create(self, request, *args, **kwargs):
-        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
         id = request.data.get('propiedad_id', None)
         if id is not None:
             try:
@@ -394,8 +395,10 @@ class ArriendoViewSet(viewsets.ModelViewSet):
                     return Response({'error' : "Error propiedad ya registra un arriendo activo"}, status=404)
             except:
                 pass
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
         
-        return super().create(request, *args, **kwargs)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     # def destroy(self, request, *args, **kwargs):
     #     instance = self.get_object()
