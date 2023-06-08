@@ -372,6 +372,9 @@ def _post_save_receiver(sender, instance, created, **kwargs):
             fecha_pago = fecha_inicio.replace(day=instance.dia_pago)
             print(fecha_inicio, fecha_pago)
             detalle_arriendo = DetalleArriendo(arriendo = instance, fecha_a_pagar = fecha_pago)
+            if i <= instance.periodo_reajuste:
+                valor_arriendo = instance.valor_arriendo
+                detalle_arriendo.monto_a_pagar = valor_arriendo
             fechas_pago.append(detalle_arriendo)
             
         DetalleArriendo.objects.bulk_create(fechas_pago)
