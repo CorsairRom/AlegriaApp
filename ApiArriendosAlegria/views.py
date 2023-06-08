@@ -369,12 +369,12 @@ class ArriendoViewSet(viewsets.ModelViewSet):
     queryset = Arriendo.objects.all()
     
     
-    @action( methods=['get'])
-    def dashboard_multas(self, request):
-    # ArriendMultaDashboardSerializer
-        arriendo_atrasados = Arriendo.objects.filter()
-        serializer_class = ArriendMultaDashboardSerializer()
-        return Response
+    # @action(detail=False methods=['get'])
+    # def dashboard_multas(self, request):
+    # # ArriendMultaDashboardSerializer
+    #     arriendo_atrasados = Arriendo.objects.filter()
+    #     serializer_class = ArriendMultaDashboardSerializer()
+    #     return Response
 
     def get_serializer_class(self):
         if self.action == 'list':
