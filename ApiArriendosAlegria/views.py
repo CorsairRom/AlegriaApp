@@ -378,7 +378,8 @@ class ArriendoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerArriendo
     queryset = Arriendo.objects.all()
-    
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['estado_arriendo','propiedad']
     
     # @action(detail=False methods=['get'])
     # def dashboard_multas(self, request):
