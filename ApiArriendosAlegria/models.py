@@ -391,7 +391,8 @@ def _post_save_receiver(sender, instance, created, **kwargs):
             if i <= instance.periodo_reajuste:
                 valor_arriendo = instance.valor_arriendo
                 detalle_arriendo.monto_a_pagar = valor_arriendo
-            if i % instance.periodo_reajuste == 0:
+            
+            if i % instance.periodo_reajuste == 1 and i != 1:
                 detalle_arriendo.toca_reajuste = True   
             
             fechas_pago.append(detalle_arriendo)
