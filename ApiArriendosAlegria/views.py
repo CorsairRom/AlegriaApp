@@ -457,6 +457,8 @@ class DetalleArriendoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerDetalleArriendo
     queryset = DetalleArriendo.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['arriendo']
 
     """
     @action(detail=True, methods=['post'])
