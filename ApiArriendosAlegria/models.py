@@ -306,7 +306,7 @@ class DetalleArriendo(models.Model):
 
     valor_multa = models.PositiveIntegerField(default=0)
     
-    toca_reajuste = models.BooleanField(default=False)
+    toca_reajuste = models.BooleanField( null=True, default=False)
 
     def __str__(self):
         return self.arriendo
