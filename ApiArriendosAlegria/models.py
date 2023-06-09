@@ -297,6 +297,8 @@ class DetalleArriendo(models.Model):
     monto_pagado = models.PositiveIntegerField(null=True, blank=True)
 
     valor_multa = models.PositiveIntegerField(default=0)
+    
+    toca_reajuste = models.BooleanField(default=False)
 
     def __str__(self):
         return self.arriendo
@@ -368,6 +370,7 @@ def _post_save_receiver(sender, instance, created, **kwargs):
         # calculo de fechas de pago
         fechas_pago = []
         for i in range(1, 13):
+            #4 periodos cada 3meses
             fecha_inicio = instance.fecha_inicio + relativedelta(months=i)
             fecha_pago = fecha_inicio.replace(day=instance.dia_pago)
             print(fecha_inicio, fecha_pago)
@@ -375,6 +378,9 @@ def _post_save_receiver(sender, instance, created, **kwargs):
             if i <= instance.periodo_reajuste:
                 valor_arriendo = instance.valor_arriendo
                 detalle_arriendo.monto_a_pagar = valor_arriendo
+            if i % instance.periodo_reajuste == 0:
+                detalle_arriendo.toca_reajuste = True   
+            
             fechas_pago.append(detalle_arriendo)
             
         DetalleArriendo.objects.bulk_create(fechas_pago)
@@ -398,6 +404,7 @@ def _post_save_valores_globales(sender, instance, created, **kwargs):
             arriendo.comision = nueva_comision
 
             arriendo.valor_arriendo = (arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo
+            #modificar valor de detalle_arriendo
 
 
         Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
@@ -422,6 +429,7 @@ def _post_save_propietario(sender, instance, **kwargs):
                 for arriendo in arriendos:
                     arriendos.comision = nueva_comision
                     arriendo.valor_arriendo = (propiedad.valor_arriendo_base * (nueva_comision / 100)) + propiedad.valor_arriendo_base
+                    #modificar valor de detalle_arriendo
                     print(f"_post_save_propietario -> Arriendo valor: {(arriendo.valor_arriendo * (nueva_comision / 100)) + arriendo.valor_arriendo}")
 
                 Arriendo.objects.bulk_update(arriendos, ["comision", "valor_arriendo"])
@@ -445,6 +453,7 @@ def reajustar_valor_arriendo(sender, instance, **kwargs):
 
                 arriendo.valor_arriendo = valor_arriendo
                 arriendo.fecha_reajuste = nueva_fecha_reajuste
+                #modificar valor de detalle_arriendo
 
 
             Arriendo.objects.bulk_update(arriendos, ["valor_arriendo", "fecha_reajuste"])

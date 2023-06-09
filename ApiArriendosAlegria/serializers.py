@@ -415,6 +415,19 @@ class SerializerDetalleArriendo(serializers.ModelSerializer):
         model = DetalleArriendo
         fields = '__all__'
         
+    def update(self, instance, validated_data):
+        
+        for attr, value in validated_data.items():         
+            setattr(instance, attr, value)
+        
+        
+        fecha_a_pagar = instance.fecha_a_pagar
+        periodo_reajuste = instance.arriendo.periodo_reajuste    
+
+        instance.save()
+        
+        return instance
+        
 class SerializerServiciosExtas(serializers.ModelSerializer):
     
     class Meta:
