@@ -309,7 +309,7 @@ class DetalleArriendo(models.Model):
     toca_reajuste = models.BooleanField( null=True, default=False)
 
     def __str__(self):
-        return self.arriendo
+        return str(self.id)
     
 
 class ArriendoDepartamento(models.Model):

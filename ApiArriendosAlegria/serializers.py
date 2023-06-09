@@ -417,9 +417,8 @@ class SerializerDetalleArriendo(serializers.ModelSerializer):
         
     def update(self, instance, validated_data):
         
-        for attr, value in validated_data.items():         
-            setattr(instance, attr, value)
-        
+        print(validated_data.get('monto_a_pagar') )
+        print(instance.monto_a_pagar)
         if validated_data.get('monto_a_pagar') and instance.monto_a_pagar == None:
             fecha_a_pagar = instance.fecha_a_pagar
             periodo_reajuste = instance.arriendo.periodo_reajuste
@@ -427,13 +426,18 @@ class SerializerDetalleArriendo(serializers.ModelSerializer):
             print('Arriendos siguientes: ', arriendos_siguientes)
             ar_list = []
             for arr in arriendos_siguientes:
-                print('monto a pagar',arr.monto_a_pagar)
-                arr.monto_a_pagar = instance.monto_a_pagar
-                arr.toca_reajuste = False
-                ar_list.append(arr)
                 if arr.toca_reajuste:
                     break 
-            DetalleArriendo.objects.bulk_update(ar_list)         
+                print('monto a pagar',arr.monto_a_pagar)
+                arr.monto_a_pagar = validated_data.get('monto_a_pagar')
+                
+                ar_list.append(arr)
+            
+            DetalleArriendo.objects.bulk_update(ar_list, fields=['monto_a_pagar'])      
+            
+        for attr, value in validated_data.items():         
+            setattr(instance, attr, value)   
+        instance.toca_reajuste = False    
         instance.save()
         
         return instance
