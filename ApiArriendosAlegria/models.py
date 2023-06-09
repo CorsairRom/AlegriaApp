@@ -225,6 +225,10 @@ class Propiedad(models.Model):
     valor_gasto_comun = models.PositiveBigIntegerField(default=0)
     
     observaciones = models.TextField(verbose_name='Observaciones adicionales sobre la propiedad', blank=True, null=True)
+
+    def esta_en_arriendo(self):
+        arriendos = self.arriendo_set.all().filter(estado_arriendo = True).count()
+        return arriendos > 0  
     
     def __str__(self):
         return str(self.id)    
@@ -251,6 +255,10 @@ class Arrendatario(models.Model):
     
     def get_name(self):
         return self.pri_nom_arr + " " + self.pri_ape_arr
+
+    def tiene_un_arriendo_activo(self):
+        arriendos = self.arriendo_set.all().filter(estado_arriendo = True).count()
+        return arriendos > 0
     
     def __str__(self):
         return self.rut_arr
@@ -351,21 +359,26 @@ def _post_save_receiver(sender, instance, created, **kwargs):
     
     if created:
         
-        # calculo de porcentaje comision y valor arriendo
         propiedad = instance.propiedad
 
+        # Se coloca el estado_arriendo en false en los arriendos de la propiedad del mismo arriendo que se está registrando
+        # Igualmente está validado para no registrar una propiead en estado de arriendo True(Activo)
         propiedad.arriendo_set.all().filter(id=instance.id).update(estado_arriendo=False)
+        print("_post_save_receiver - Arriendo - {instance.id}")
+
+        # calculo de porcentaje comision y valor arriendo
 
         pctje_cobro_honorario = propiedad.propietario.pctje_cobro_honorario
         impuesto_honorario = ValoresGlobales.objects.get(pk=ValoreGlobalEnum.IMPUESTO_HONORARIO) # Ver cual es el ID correcto
 
         porc_comision = (pctje_cobro_honorario * (impuesto_honorario.valor / 100)) + pctje_cobro_honorario
 
+        # Se establecen los valores del arriendo
         instance.estado_arriendo = True
         instance.comision = porc_comision
         instance.valor_arriendo = (propiedad.valor_arriendo_base * (instance.comision / 100)) + propiedad.valor_arriendo_base
         
-        # calculo de fechas de pago
+        # calculo de fechas de pago para el arriendo
         fechas_pago = []
         for i in range(1, 13):
             fecha_inicio = instance.fecha_inicio + relativedelta(months=i)
