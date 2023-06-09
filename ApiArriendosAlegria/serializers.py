@@ -424,8 +424,10 @@ class SerializerDetalleArriendo(serializers.ModelSerializer):
             fecha_a_pagar = instance.fecha_a_pagar
             periodo_reajuste = instance.arriendo.periodo_reajuste
             arriendos_siguientes = DetalleArriendo.objects.filter(arriendo = instance.arriendo.id).filter(id__gt = instance.id)
+            print('Arriendos siguientes: ', arriendos_siguientes)
             ar_list = []
             for arr in arriendos_siguientes:
+                print('monto a pagar',arr.monto_a_pagar)
                 arr.monto_a_pagar = instance.monto_a_pagar
                 ar_list.append(arr)
                 if arr.toca_reajuste:
