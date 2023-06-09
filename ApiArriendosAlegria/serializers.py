@@ -429,6 +429,7 @@ class SerializerDetalleArriendo(serializers.ModelSerializer):
             for arr in arriendos_siguientes:
                 print('monto a pagar',arr.monto_a_pagar)
                 arr.monto_a_pagar = instance.monto_a_pagar
+                arr.toca_reajuste = False
                 ar_list.append(arr)
                 if arr.toca_reajuste:
                     break 
