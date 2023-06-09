@@ -396,17 +396,30 @@ class ArriendoViewSet(viewsets.ModelViewSet):
         return super().get_serializer_class()
     
     def create(self, request, *args, **kwargs):
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        id = request.data.get('propiedad_id', None)
-        if id is not None:
+
+        propiedad_id = request.data.get('propiedad_id', None)
+        arrendatario_id = request.data.get('arrendatario_id', None)
+
+        if propiedad_id is not None:
             try:
-                propiedad = Propiedad.objects.get(pk = id)
-                arriendos = propiedad.arriendo_set.all().filter(estado_arriendo = True).count()
-                if arriendos > 0:
-                    return Response({'error' : "Error propiedad ya registra un arriendo activo"}, status=404)
+                propiedad = Propiedad.objects.get(pk = propiedad_id)
+                if propiedad.esta_en_arriendo():
+                    return Response({'error' : "La propiedad ya registra un arriendo activo"}, status=404)
             except:
                 pass
+
+        if arrendatario_id is not None:
+            try:
+                arrendatario = Arrendatario.objects.get(pk = arrendatario_id)
+                if arrendatario.tiene_un_arriendo_activo():
+                    return Response({'error' : "El Arrendatario ya registra un arriendo activo"}, status=404)
+            except:
+                pass
+
+
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         
