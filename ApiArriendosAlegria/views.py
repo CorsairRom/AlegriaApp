@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import action
 from django.utils import timezone
 
+from rest_framework.viewsets import GenericViewSet
 from django.contrib.sessions.models import Session
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets, generics
@@ -447,6 +448,52 @@ class ArriendoDepartamentoViewSet(viewsets.ModelViewSet):
     
 
 
+class DashboardViewSet(GenericViewSet):
+    queryset = DetalleArriendo.objects.all() 
+    serializer_class = SerializerDetalleArriendo
+    
+    @action(detail=False, methods=['get'])
+    def info(self, request):
+        today = datetime.utcnow()
+        try:
+            detalle_arriendo = self.get_queryset().filter(fecha_a_pagar__month = today.month , fecha_a_pagar__year = today.year).order_by('fecha_a_pagar')
+            propiedades_con_reajuste = detalle_arriendo.filter(toca_reajuste = True).count()
+            total_arriendos_mes = detalle_arriendo.count()
+            total_arriendos_pagados = 0
+            total_arriendos_por_pagar = 0
+            for detalle in detalle_arriendo:
+                if detalle.fecha_pagada != None:
+                    total_arriendos_pagados += 1
+                else:
+                    total_arriendos_por_pagar += 1
+
+            total_propiedades = Propiedad.objects.count()
+            total_arriendos = Arriendo.objects.count()
+            sin_arrendar = total_propiedades - total_arriendos
+            
+            data = {
+                "total_arriendos_mes": total_arriendos_mes,
+                "total_arriendos_pagados" : total_arriendos_pagados,
+                "total_arriendos_por_pagar" :total_arriendos_por_pagar,
+                "propiedades_con_reajuste" : propiedades_con_reajuste, 
+                "total_propiedades" : total_propiedades,
+                "total_arriendos" : total_arriendos,
+                "sin_arrendar": sin_arrendar   
+            }
+        except:
+            data = {
+                "total_arriendos_mes": 0,
+                "total_arriendos_pagados" : 0,
+                "total_arriendos_por_pagar" :0,
+                "propiedades_con_reajuste" : 0, 
+                "total_propiedades" : 0,
+                "total_arriendos" : 0,
+                "sin_arrendar": 0   
+            }
+        
+        return Response(data)
+
+
 class DetalleArriendoViewSet(viewsets.ModelViewSet):
     """
     Vista "Detalle Arriendo".
@@ -475,34 +522,9 @@ class DetalleArriendoViewSet(viewsets.ModelViewSet):
                             
                             
     """
-    @action(detail=False, methods=['get'])
-    def info_pagos(self, request):
-        today = datetime.utcnow()
-        detalle_arriendo = self.get_queryset().filter(fecha_a_pagar__month = today.month , fecha_a_pagar__year = today.year).order_by('fecha_a_pagar')
-        propiedades_con_reajuste = detalle_arriendo.filter(toca_reajuste = True).count()
-        total_arriendos_mes = detalle_arriendo.count()
-        total_arriendos_pagados = 0
-        total_arriendos_por_pagar = 0
-        for detalle in detalle_arriendo:
-            if detalle.fecha_pagada != None:
-                total_arriendos_pagados += 1
-            else:
-                total_arriendos_por_pagar += 1
-
-        total_propiedades = Propiedad.objects.count()
-        total_arriendos = Arriendo.objects.count()
-        sin_arrendar = total_propiedades - total_arriendos
-        
-        print("total_arriendos_mes: ", total_arriendos_mes)
-        print("total_arriendos_pagados: ", total_arriendos_pagados)
-        print("total_arriendos_por_pagar: ", total_arriendos_por_pagar)    
-        print("propiedades_con_reajuste: ", propiedades_con_reajuste)    
-        print("total_propiedades: ", total_propiedades)    
-        print("total_arriendos: ", total_arriendos)    
-        print("sin_arrendar: ", sin_arrendar)    
-
-        serializer = SerializerDetalleArriendo(detalle_arriendo, many=True)
-        return Response(serializer.data)
+    
+    #dashboard/info
+   
   
   
     @action(detail=True, methods=['post'])
