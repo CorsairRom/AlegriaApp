@@ -384,7 +384,10 @@ def _post_save_receiver(sender, instance, created, **kwargs):
         fechas_pago = []
         for i in range(1, 13):
             #4 periodos cada 3meses
-            fecha_inicio = instance.fecha_inicio + relativedelta(months=i)
+            if i == 1:
+                fecha_inicio = instance.fecha_inicio
+            else:
+                fecha_inicio = instance.fecha_inicio + relativedelta(months=i-1)
             fecha_pago = fecha_inicio.replace(day=instance.dia_pago)
             print(fecha_inicio, fecha_pago)
             detalle_arriendo = DetalleArriendo(arriendo = instance, fecha_a_pagar = fecha_pago)
