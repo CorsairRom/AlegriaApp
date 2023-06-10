@@ -472,8 +472,39 @@ class DetalleArriendoViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+                            
+                            
     """
-    
+    @action(detail=False, methods=['get'])
+    def info_pagos(self, request):
+        today = datetime.utcnow()
+        detalle_arriendo = self.get_queryset().filter(fecha_a_pagar__month = today.month , fecha_a_pagar__year = today.year).order_by('fecha_a_pagar')
+        propiedades_con_reajuste = detalle_arriendo.filter(toca_reajuste = True).count()
+        total_arriendos_mes = detalle_arriendo.count()
+        total_arriendos_pagados = 0
+        total_arriendos_por_pagar = 0
+        for detalle in detalle_arriendo:
+            if detalle.fecha_pagada != None:
+                total_arriendos_pagados += 1
+            else:
+                total_arriendos_por_pagar += 1
+
+        total_propiedades = Propiedad.objects.count()
+        total_arriendos = Arriendo.objects.count()
+        sin_arrendar = total_propiedades - total_arriendos
+        
+        print("total_arriendos_mes: ", total_arriendos_mes)
+        print("total_arriendos_pagados: ", total_arriendos_pagados)
+        print("total_arriendos_por_pagar: ", total_arriendos_por_pagar)    
+        print("propiedades_con_reajuste: ", propiedades_con_reajuste)    
+        print("total_propiedades: ", total_propiedades)    
+        print("total_arriendos: ", total_arriendos)    
+        print("sin_arrendar: ", sin_arrendar)    
+
+        serializer = SerializerDetalleArriendo(detalle_arriendo, many=True)
+        return Response(serializer.data)
+  
+  
     @action(detail=True, methods=['post'])
     def calcular_multa_arriendo(self, request, pk=None):
         detalle_arriendo = self.get_object()

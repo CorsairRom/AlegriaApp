@@ -580,6 +580,8 @@ class ListadoCodigoPropiedadSerializer(serializers.ModelSerializer):
         
         return data
     
+#DashboardInfoPagos
+    
     
 #serializador fecha de pago, reemplazar    
 class ArriendMultaDashboardSerializer(serializers.ModelSerializer):
