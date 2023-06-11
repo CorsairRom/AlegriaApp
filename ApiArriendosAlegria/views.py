@@ -589,6 +589,9 @@ class ServiciosExtrasViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsStaffUser]
     serializer_class = SerializerServiciosExtas
     queryset = ServiciosExtras.objects.all()
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['propiedad']
     
 class GastoComunViewSet(viewsets.ModelViewSet):
     """
