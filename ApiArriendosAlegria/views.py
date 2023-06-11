@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
+from ApiArriendosAlegria.fecha_scl import GetfechaScl
 
 from ApiArriendosAlegria.models import (
     Usuario,
@@ -454,8 +455,8 @@ class DashboardViewSet(GenericViewSet):
     
     @action(detail=False, methods=['get'])
     def info(self, request):
-        scl = tz.gettz('America/Santiago') 
-        today = datetime.now(tz=scl)
+        
+        today = GetfechaScl()
 
         try:
             detalle_arriendo = self.get_queryset().filter(fecha_a_pagar__month = today.month , fecha_a_pagar__year = today.year).order_by('fecha_a_pagar')

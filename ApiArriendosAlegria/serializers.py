@@ -4,6 +4,7 @@ from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Co
                                         Gastocomun, DetalleArriendo, ValoresGlobales, Externo, CodigoPropiedad
 from ApiArriendosAlegria.Rut import validarRut
 from django.utils import timezone
+from ApiArriendosAlegria.fecha_scl import GetfechaScl
 
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
@@ -475,7 +476,7 @@ class SerializerTablaArriendo(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         
-        today= timezone.now()
+        today=GetfechaScl()
         fecha_pago = today.replace(day=instance.dia_pago if instance.dia_pago else 5)
         data = {
             'arriendo_id': instance.id,
@@ -591,7 +592,7 @@ class ArriendMultaDashboardSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         cuenta = Cuenta.objects.filter(propietario_rut = instance.arrendatario.rut_arr).first() #refactorizar
         porcentaje = ValoresGlobales.objects.get(id=1).valor / 100 
-        today = timezone.now()
+        today = GetfechaScl()
         fecha_de_pago = today.replace(day=instance.dia_pago)
         dias_multa = fecha_de_pago.day
         if dias_multa > 0:
