@@ -475,7 +475,7 @@ class DashboardViewSet(GenericViewSet):
                     propiedad_cod = detalle.arriendo.propiedad.cod
                     arrendatarios_nom = detalle.arriendo.arrendatario.get_name()
                     fecha_pago = detalle.fecha_a_pagar
-                    propiedad_id = detalle.arriendo.propiedad.id,
+                    propiedad_id = detalle.arriendo.propiedad.id
                     dias_atrazo = today.day - fecha_pago.day
                     if dias_atrazo > 0:
                         atrasados = {
@@ -483,7 +483,7 @@ class DashboardViewSet(GenericViewSet):
                             'arrendatarios_nom' : arrendatarios_nom,
                             'fecha_pago' : fecha_pago,
                             'dias_atraso' : dias_atrazo,
-                            'propiedad_id': propiedad_id,
+                            'propiedad_id': propiedad_id
                         }
                         arriendo_atrazados.append(atrasados)
             
