@@ -366,7 +366,7 @@ def _post_save_receiver(sender, instance, created, **kwargs):
         # Se coloca el estado_arriendo en false en los arriendos de la propiedad del mismo arriendo que se está registrando
         # Igualmente está validado para no registrar una propiead en estado de arriendo True(Activo)
         propiedad.arriendo_set.all().filter(id=instance.id).update(estado_arriendo=False)
-        print("_post_save_receiver - Arriendo - {instance.id}")
+        print(f"_post_save_receiver - Arriendo - {instance.id}")
 
         # calculo de porcentaje comision y valor arriendo
 
