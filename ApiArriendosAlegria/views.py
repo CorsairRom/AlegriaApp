@@ -3,7 +3,7 @@ from dateutil.relativedelta import relativedelta
 from django.http import JsonResponse
 from rest_framework.decorators import action
 from django.utils import timezone
-
+from dateutil import tz
 from rest_framework.viewsets import GenericViewSet
 from django.contrib.sessions.models import Session
 from django_filters.rest_framework import DjangoFilterBackend
@@ -455,6 +455,9 @@ class DashboardViewSet(GenericViewSet):
     @action(detail=False, methods=['get'])
     def info(self, request):
         today = timezone.now()
+        scl = tz.gettz('America/Santiago') 
+        print(today.astimezone(tz=scl))
+        print('servidor',  today)
         try:
             detalle_arriendo = self.get_queryset().filter(fecha_a_pagar__month = today.month , fecha_a_pagar__year = today.year).order_by('fecha_a_pagar')
             propiedades_con_reajuste = detalle_arriendo.filter(toca_reajuste = True).count()
