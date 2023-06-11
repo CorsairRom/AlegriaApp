@@ -454,7 +454,7 @@ class DashboardViewSet(GenericViewSet):
     
     @action(detail=False, methods=['get'])
     def info(self, request):
-        today = datetime.utcnow()
+        today = timezone.now()
         try:
             detalle_arriendo = self.get_queryset().filter(fecha_a_pagar__month = today.month , fecha_a_pagar__year = today.year).order_by('fecha_a_pagar')
             propiedades_con_reajuste = detalle_arriendo.filter(toca_reajuste = True).count()
@@ -473,7 +473,7 @@ class DashboardViewSet(GenericViewSet):
                     arrendatarios_nom = detalle.arriendo.arrendatario.get_name()
                     fecha_pago = detalle.fecha_a_pagar
                     
-                    dias_atrazo = today.day - fecha_pago.day
+                    dias_atrazo = today.astimezone().day - fecha_pago.day
                     if dias_atrazo > 0:
                         atrasados = {
                             'propiedad_cod' : propiedad_cod,
