@@ -461,12 +461,28 @@ class DashboardViewSet(GenericViewSet):
             total_arriendos_mes = detalle_arriendo.count()
             total_arriendos_pagados = 0
             total_arriendos_por_pagar = 0
+            
+            arriendo_atrazados = []
+            
             for detalle in detalle_arriendo:
                 if detalle.fecha_pagada != None:
                     total_arriendos_pagados += 1
                 else:
                     total_arriendos_por_pagar += 1
-
+                    propiedad_cod = detalle.arriendo.propiedad.cod
+                    arrendatarios_nom = detalle.arriendo.arrendatario.get_name()
+                    fecha_pago = detalle.fecha_a_pagar
+                    
+                    dias_atrazo = today.day - fecha_pago.day
+                    if dias_atrazo > 0:
+                        atrasados = {
+                            'propiedad_cod' : propiedad_cod,
+                            'arrendatarios_nom' : arrendatarios_nom,
+                            'fecha_pago' : fecha_pago,
+                            'dias_atraso' : dias_atrazo
+                        }
+                        arriendo_atrazados.append(atrasados)
+            
             total_propiedades = Propiedad.objects.count()
             total_arriendos = Arriendo.objects.count()
             sin_arrendar = total_propiedades - total_arriendos
@@ -478,7 +494,8 @@ class DashboardViewSet(GenericViewSet):
                 "propiedades_con_reajuste" : propiedades_con_reajuste, 
                 "total_propiedades" : total_propiedades,
                 "total_arriendos" : total_arriendos,
-                "sin_arrendar": sin_arrendar   
+                "sin_arrendar": sin_arrendar,
+                "atrasados" : arriendo_atrazados  
             }
         except:
             data = {
@@ -488,10 +505,13 @@ class DashboardViewSet(GenericViewSet):
                 "propiedades_con_reajuste" : 0, 
                 "total_propiedades" : 0,
                 "total_arriendos" : 0,
-                "sin_arrendar": 0   
+                "sin_arrendar": 0,
+                "atrasados" : []     
             }
         
         return Response(data)
+    
+
 
 
 class DetalleArriendoViewSet(viewsets.ModelViewSet):
@@ -522,9 +542,6 @@ class DetalleArriendoViewSet(viewsets.ModelViewSet):
                             
                             
     """
-    
-    #dashboard/info
-   
   
   
     @action(detail=True, methods=['post'])

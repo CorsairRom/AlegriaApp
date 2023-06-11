@@ -551,10 +551,8 @@ class SerializerArriendoPagos(serializers.ModelSerializer):
     class Meta:
         model = Arriendo
         fields = '__all__'
+ 
 
-
-
- ##
 class ListadoCodigoPropiedadSerializer(serializers.ModelSerializer):
 
     class Meta:
