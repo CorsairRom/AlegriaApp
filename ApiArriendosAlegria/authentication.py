@@ -33,7 +33,7 @@ class ExpiringTokenAuthentication(TokenAuthentication):
         
         # Cuenta regresiva para la muerte del token: no es visible al usuario, pero es útil para el desarrollador.
         remaining_time = datetime.combine(datetime.now().date(), expiration_time) - datetime.combine(datetime.now().date(), current_time)
-        print(f"\nToken will expire in: {remaining_time}\n")
+
         
         token_is_expired = current_time > expiration_time
 
