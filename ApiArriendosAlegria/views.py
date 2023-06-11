@@ -482,7 +482,8 @@ class DashboardViewSet(GenericViewSet):
                             'propiedad_cod' : propiedad_cod,
                             'arrendatarios_nom' : arrendatarios_nom,
                             'fecha_pago' : fecha_pago,
-                            'dias_atraso' : dias_atrazo
+                            'dias_atraso' : dias_atrazo,
+                            'propiedad_id': detalle.arriendo.id
                         }
                         arriendo_atrazados.append(atrasados)
             
