@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime
 
 from django.contrib.sessions.models import Session
 from django.utils import timezone
@@ -6,15 +6,24 @@ from django.utils import timezone
 from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication
 
+from django.conf import settings
+
 
 class ExpiringTokenAuthentication(TokenAuthentication):
     """
     Autenticación de credenciales mediante token (authtoken)
     con tiempo de expiración.
-
-    La hora de expiración diaria global está definida para las 19:00 horas.
     """
     token_expired = False
+
+    def is_token_expired(self):
+        current_time = timezone.localtime(timezone.now()).time()
+        expiration_time = settings.DAILY_TOKEN_EXPIRATION_TIME  # Aquí puedes definir la hora de muerte diaria del token.
+        
+        token_is_expired = current_time > expiration_time
+
+        return token_is_expired
+
 
     def authenticate_credentials(self, key):
         model = self.get_model()
@@ -24,20 +33,10 @@ class ExpiringTokenAuthentication(TokenAuthentication):
         except model.DoesNotExist:
             raise exceptions.AuthenticationFailed('Token inválido.')
         
-        if token is not None:
-            if not token.user.is_active:
-                raise exceptions.AuthenticationFailed('Usuario inactivo o eliminado.')
-        
-        current_time = timezone.localtime(timezone.now()).time()
-        expiration_time = time(23, 59)  # Aquí puedes definir la hora de muerte diaria del token.
-        
-        # Cuenta regresiva para la muerte del token: no es visible al usuario, pero es útil para el desarrollador.
-        remaining_time = datetime.combine(datetime.now().date(), expiration_time) - datetime.combine(datetime.now().date(), current_time)
+        if not token.user.is_active:
+            raise exceptions.AuthenticationFailed('Usuario inactivo o eliminado.')
 
-        
-        token_is_expired = current_time > expiration_time
-
-        if token_is_expired:
+        if self.is_token_expired():
             user = token.user
             self.token_expired = True
             # Delete all sessions for user

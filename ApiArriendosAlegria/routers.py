@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from ApiArriendosAlegria.views import (
+from ApiArriendosAlegria.views.api_views import (
     UsuarioViewSet,
     TrabajadorViewSet,
     TypeWorkerViewSet,
@@ -21,7 +21,6 @@ from ApiArriendosAlegria.views import (
     ValoresGlobalesViewSet,
     ActualizarValorArriendoPropiedad,
     DashboardViewSet
-    
 )
 
 router = DefaultRouter()

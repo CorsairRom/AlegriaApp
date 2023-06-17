@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
+from datetime import time
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -148,3 +148,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200","https://prop-alegria-front.vercel.app"
 ]
+
+
+DAILY_TOKEN_EXPIRATION_TIME = time(23, 59)

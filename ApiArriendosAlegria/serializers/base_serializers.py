@@ -1,10 +1,30 @@
 from rest_framework import serializers
-from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
-                                        TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
-                                        Gastocomun, DetalleArriendo, ValoresGlobales, Externo, CodigoPropiedad
-from ApiArriendosAlegria.Rut import validarRut
-from django.utils import timezone
-from ApiArriendosAlegria.fecha_scl import GetfechaScl
+from ApiArriendosAlegria.models import (
+    ArriendoDepartamento, 
+    Usuario, 
+    Region, 
+    Comuna, 
+    TipoTrabajador, 
+    Trabajador, 
+    Propietario, 
+    PersonalidadJuridica,
+    TipoPropiedad, 
+    Propiedad,
+    Banco,
+    TipoCuenta,
+    Cuenta, 
+    Arrendatario, 
+    Arriendo, 
+    ServiciosExtras,
+    Gastocomun, 
+    DetalleArriendo, 
+    ValoresGlobales, 
+    Externo, 
+    CodigoPropiedad
+)
+from ApiArriendosAlegria.validators import validarRut
+from ApiArriendosAlegria.utils import GetfechaScl
+
 
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
@@ -612,16 +632,3 @@ class ArriendMultaDashboardSerializer(serializers.ModelSerializer):
         }
         
         return data
-    
-        
-        
-        
-    
-    
-"propiedad.cod"
-"arriendatario-nombre"
-"cuenta principal"
-"fecha de pago"
-"valor_arriendo"
-"multa"
-"porcentaje"
