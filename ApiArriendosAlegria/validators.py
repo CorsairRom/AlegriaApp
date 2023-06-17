@@ -13,7 +13,7 @@ def validarRut(rut):
 		s = sum(d * f for d, f in zip(revertido,factors))
 	except:
 		return False
-	#s = sum(d * f for d, f in zip(revertido,factors))
+	
 	res = (-s)%11
  
 	if str(res) == dv:
