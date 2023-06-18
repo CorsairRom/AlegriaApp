@@ -54,6 +54,7 @@
 
     .total {
         font-weight: bold;
+        background-color: lightgray;
     }
 </style>
 
@@ -93,6 +94,9 @@
                   <td> ${{d.pago | intcomma}} </td>
                 </tr>
                 {% endfor %}
+                <tr>
+                    <td class="total">Total: </td>
+                </tr>
             </tbody>
           </table>
     </div>
