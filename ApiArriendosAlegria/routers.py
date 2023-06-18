@@ -20,7 +20,8 @@ from ApiArriendosAlegria.views.api_views import (
     ArriendoDepartamentoViewSet,
     ValoresGlobalesViewSet,
     ActualizarValorArriendoPropiedad,
-    DashboardViewSet
+    DashboardViewSet,
+    Reportes
 )
 
 router = DefaultRouter()
@@ -46,6 +47,7 @@ router.register(r'arriendo_departamento', ArriendoDepartamentoViewSet, basename=
 router.register(r'valores_globales', ValoresGlobalesViewSet, basename="valores_globales")
 router.register(r'actualizar_valor_arriendo_propiedad', ActualizarValorArriendoPropiedad, basename="actualizar_valor_arriendo_propiedad")
 router.register(r'dashboard', DashboardViewSet, basename="dashboard")
+router.register(r'reportes', Reportes, basename="reportes")
 
 
 urlpatterns = router.urls

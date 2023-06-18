@@ -1,5 +1,6 @@
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from django.http import HttpResponse
 
 from django.utils import timezone
 
@@ -9,6 +10,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 from ApiArriendosAlegria.utils import GetfechaScl
 
@@ -63,7 +65,8 @@ from ApiArriendosAlegria.serializers.base_serializers import (
 
 from ApiArriendosAlegria.permission import IsStaffUser
 from ApiArriendosAlegria.authentication_mixins import Authentication
-
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 # -------------Api Bancos---------------
 class BancoViewSet(viewsets.ReadOnlyModelViewSet):
@@ -437,4 +440,25 @@ class ActualizarValorArriendoPropiedad(viewsets.GenericViewSet):
             status=status.HTTP_200_OK, 
             data=arriendo_serializer.data
         )
+
+class Reportes(viewsets.GenericViewSet):
+    
+    
+    
+    def list(self, request):
+        try:
+            
+            template_path = '../templates/reporte.html'
+            response = HttpResponse(content_type='application/pdf')
+            # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+            template = get_template(template_path)
+            context = {'msg': 'Hola mundo'}
+            html = template.render(context)
+            pisa_status = pisa.CreatePDF(html, dest=response)
+        except:
+            pass
+                
         
+        return  response
+
+

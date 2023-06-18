@@ -6,7 +6,7 @@ from datetime import datetime
 from django.dispatch import receiver
 from ApiArriendosAlegria.managers import GestorUsuario
 from dateutil.relativedelta import relativedelta
-
+from xhtml2pdf import pisa
 
 class ValoresGlobales(models.Model):
     nombre= models.CharField(max_length=200)

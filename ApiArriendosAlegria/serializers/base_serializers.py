@@ -632,3 +632,6 @@ class ArriendMultaDashboardSerializer(serializers.ModelSerializer):
         }
         
         return data
+
+    
+    
