@@ -51,6 +51,12 @@
     .styled-table tbody tr:last-of-type {
         border-bottom: 2px solid #009879;
     }
+
+    .total {
+        font-size: 15px;
+        font-weight: bold;
+        background-color: lightgray;
+    }
 </style>
 
 <body>
@@ -72,11 +78,11 @@
         <table class="styled-table">
             <thead>
                 <tr>
-                <td>Mes</td>
-                <td>Propiedad</td>
-                <td>Monto pagado</td>
-                <td>Impuesto</td>
-                <td>Pago propietario</td>
+                    <td>Mes</td>
+                    <td>Propiedad</td>
+                    <td>Monto pagado</td>
+                    <td>Impuesto</td>
+                    <td>Pago propietario</td>
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +96,15 @@
                 </tr>
                 {% endfor %}
             </tbody>
+            <tfoot>
+                <tr class="total">
+                    <td><div> </div></td>
+                    <td>Total:</td>
+                    <td>${{ total_monto | intcomma }}</td>
+                    <td>${{ total_comision | intcomma }}</td>
+                    <td>${{ total_pago | intcomma }}</td>
+                </tr>
+            </tfoot>
           </table>
     </div>
 
