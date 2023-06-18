@@ -77,11 +77,11 @@
         <table class="styled-table">
             <thead>
                 <tr>
-                <td>Mes</td>
-                <td>Propiedad</td>
-                <td>Monto pagado</td>
-                <td>Impuesto</td>
-                <td>Pago propietario</td>
+                    <td>Mes</td>
+                    <td>Propiedad</td>
+                    <td>Monto pagado</td>
+                    <td>Impuesto</td>
+                    <td>Pago propietario</td>
                 </tr>
             </thead>
             <tbody>
@@ -94,10 +94,16 @@
                   <td> ${{d.pago | intcomma}} </td>
                 </tr>
                 {% endfor %}
-                <tr>
-                    <td class="total">Total: </td>
-                </tr>
             </tbody>
+            <tfoot>
+                <tr>
+                    <td>-</td>
+                    <td>Total:</td>
+                    <td>{{ total_monto | intcomma }}</td>
+                    <td>{{ total_comision | intcomma }}</td>
+                    <td>{{ total_pago | intcomma }}</td>
+                </tr>
+            </tfoot>
           </table>
     </div>
 
