@@ -442,7 +442,7 @@ class ActualizarValorArriendoPropiedad(viewsets.GenericViewSet):
         )
 
 class Reportes(viewsets.GenericViewSet):
-    
+    #Agregar Permisos
     
     
     def list(self, request):
@@ -450,7 +450,7 @@ class Reportes(viewsets.GenericViewSet):
             
             template_path = '../templates/reporte.html'
             response = HttpResponse(content_type='application/pdf')
-            # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+            response['Content-Disposition'] = 'attachment; filename="report.pdf"'
             template = get_template(template_path)
             context = {'msg': 'Hola mundo'}
             html = template.render(context)
