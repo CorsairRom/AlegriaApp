@@ -164,8 +164,12 @@ class Propietario(models.Model):
     pctje_cobro_honorario = models.FloatField(verbose_name='Porcentaje Cobro Propietario', default=7)
     personalidad_juridica = models.ForeignKey(PersonalidadJuridica, null=True, blank=True, default=None, on_delete=models.SET_NULL)
     
+    def get_name(self):
+        return self.pri_nom_prop + " " + self.pri_ape_prop
+    
     def __str__(self):
         return self.rut_prop
+    
     
 class Externo(models.Model):
     """

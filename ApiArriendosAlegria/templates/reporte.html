@@ -1,9 +1,51 @@
+{% load humanize %}
+
 <!DOCTYPE html>
 <html lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
 <body>
-    <h1>Hola Mundo</h1>
-    <h1> {{msg}} </h1>
+    <style>
+
+
+    </style>
+
+
+    <div>
+        <h1>
+            Informe de arriendo
+        </h1>
+    </div>
+    <div>
+        <h4>Propietario: {{propietario}}</h4>
+        
+        <h4>Año: {{year}}</h4>
+    </div>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                <td>Mes</td>
+                <td>Propiedad</td>
+                <td>Monto pagado</td>
+                <td>Impuesto</td>
+                <td>Pago propietario</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in lista %}
+                <tr>
+                  <td>{{d.mes}}</td>
+                  <td>{{d.cod}}</td>
+                  <td> ${{d.monto | intcomma}} </td>
+                  <td> ${{d.comision | intcomma}} </td>
+                  <td> ${{d.pago | intcomma}} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+    </div>
+
 </body>
 </html>

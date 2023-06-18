@@ -446,13 +446,47 @@ class Reportes(viewsets.GenericViewSet):
     
     
     def list(self, request):
+        
+        #id 1 tiene 2 propiedades y 2 arriendos
+        id = request.GET.get('propietario')
+        year = request.GET.get('year')
+        today = GetfechaScl()
+        if id is not None and year is not None:
+            propietario = Propietario.objects.get(pk=id)
+            propiedades = Propiedad.objects.filter(propietario=propietario)
+            
+            
+            reporte = {}
+            reporte['propietario'] = propietario.get_name()
+            reporte['year'] = year
+            lista = []
+            for prop in propiedades:
+                arriendos = prop.arriendo_set.all().filter(estado_arriendo = True)
+                for arr in arriendos:
+                    detalle = arr.detalle_arriendos.all().filter(fecha_a_pagar__year=year) 
+                    for det in detalle:
+                        monto = det.monto_pagado if det.monto_pagado else 0 #323.730
+                        porcentaje = (arr.comision / 100) + 1
+                        pago = round(monto/porcentaje) #300.000
+                        comision =   round(monto - pago)   #23.730
+                        detalle ={
+                            'mes': str(det.fecha_a_pagar.month).zfill(2),
+                            'cod': prop.cod,
+                            'monto': monto, #total pagado
+                            'comision': comision, # monto de la comision cobrada
+                            'pago' : pago, # Monto pagado al propietario
+                        }
+                        lista.append(detalle)
+            reporte['lista'] = lista
+                 
+                    
         try:
             
             template_path = '../templates/reporte.html'
             response = HttpResponse(content_type='application/pdf')
             response['Content-Disposition'] = 'attachment; filename="report.pdf"'
             template = get_template(template_path)
-            context = {'msg': 'Hola mundo'}
+            context = reporte
             html = template.render(context)
             pisa_status = pisa.CreatePDF(html, dest=response)
         except:
