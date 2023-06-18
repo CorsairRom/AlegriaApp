@@ -460,6 +460,9 @@ class Reportes(viewsets.GenericViewSet):
             reporte['propietario'] = propietario.get_name()
             reporte['year'] = year
             lista = []
+            total_monto = 0
+            total_comision = 0
+            total_pago = 0
             for prop in propiedades:
                 arriendos = prop.arriendo_set.all().filter(estado_arriendo = True)
                 for arr in arriendos:
@@ -469,15 +472,22 @@ class Reportes(viewsets.GenericViewSet):
                         porcentaje = (arr.comision / 100) + 1
                         pago = round(monto/porcentaje) #300.000
                         comision =   round(monto - pago)   #23.730
+                        total_monto = total_monto + monto 
+                        total_comision = total_comision + comision
+                        total_pago = total_pago + pago
                         detalle ={
                             'mes': str(det.fecha_a_pagar.month).zfill(2),
                             'cod': prop.cod,
                             'monto': monto, #total pagado
                             'comision': comision, # monto de la comision cobrada
-                            'pago' : pago, # Monto pagado al propietario
+                            'pago' : pago # Monto pagado al propietario
+                            
                         }
                         lista.append(detalle)
             reporte['lista'] = lista
+            reporte['total_monto'] = total_monto
+            reporte['total_comision'] = total_comision
+            reporte['total_pago'] = total_pago
                  
                     
         try:
