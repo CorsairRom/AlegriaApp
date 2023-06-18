@@ -53,6 +53,7 @@
     }
 
     .total {
+        font-size: 15px;
         font-weight: bold;
         background-color: lightgray;
     }
@@ -96,12 +97,12 @@
                 {% endfor %}
             </tbody>
             <tfoot>
-                <tr>
-                    <td>-</td>
+                <tr class="total">
+                    <td><div> </div></td>
                     <td>Total:</td>
-                    <td>{{ total_monto | intcomma }}</td>
-                    <td>{{ total_comision | intcomma }}</td>
-                    <td>{{ total_pago | intcomma }}</td>
+                    <td>${{ total_monto | intcomma }}</td>
+                    <td>${{ total_comision | intcomma }}</td>
+                    <td>${{ total_pago | intcomma }}</td>
                 </tr>
             </tfoot>
           </table>
