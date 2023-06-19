@@ -336,7 +336,18 @@ class ServiciosExtras(models.Model):
     
     def __str__(self):
         return str(self.propiedad.cod)+' - '+ self.nom_servicio
-
+    
+class PagoPropietarios(models.Model):
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.SET_NULL)
+    servicio_extra = models.ForeignKey(ServiciosExtras, on_delete=models.SET_NULL, null=True)
+    detalle_arriendo = models.ForeignKey(DetalleArriendo, on_delete=models.SET_NULL, null=True)
+    fecha_pago = models.DateTimeField()
+    monto_canon = models.PositiveBigIntegerField(default=0)
+    monto_honorarios = models.PositiveBigIntegerField(default=0)
+    monto_final = models.PositiveBigIntegerField(default=0)
+    n_boleta = models.PositiveBigIntegerField(default=0)
+    
+     
 
 class Gastocomun(models.Model):
     """
