@@ -8,34 +8,18 @@ class Authentication(authentication.BaseAuthentication):
     Módulo base de autenticación de usuarios, que permite la autenticación
     mediante sistema de tokens de Django REST Framework.
     """
-    user = None
-    
-    def get_user(self,request):
-        """
-        Retorna:
-            * user      : Instancia de Usuario or 
-            * message   : Mensaje de error or 
-            * None      : Token dañado
-        """
-        token = get_authorization_header(request).split()
-        if token:
-            try:
-                token = token[1].decode()
-            except:
-                return None           
-        
-            token_expire = ExpiringTokenAuthentication()
-            user = token_expire.authenticate_credentials(token)
-            
-            if user != None:
-                self.user = user
-                return user
-        
-        return None
-
     def authenticate(self, request):
-        self.get_user(request)
-        if self.user is None:
-            raise exceptions.AuthenticationFailed('No se han enviado las credenciales.')
+        token = get_authorization_header(request).split()
+        
+        if not token:
+            raise exceptions.AuthenticationFailed('No hay token en la petición.')
+        
+        try:
+            token = token[1].decode()
+        except:
+            raise exceptions.AuthenticationFailed('El token es inválido o está dañado.')
+    
+        token_expire = ExpiringTokenAuthentication()
+        user = token_expire.authenticate_credentials(token)
 
-        return (self.user, 1)
+        return (user, 1)

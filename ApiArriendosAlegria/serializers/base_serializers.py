@@ -1,10 +1,30 @@
 from rest_framework import serializers
-from ApiArriendosAlegria.models import ArriendoDepartamento, Usuario, Region, Comuna, TipoTrabajador, Trabajador, Propietario, PersonalidadJuridica,\
-                                        TipoPropiedad,Propiedad, Banco, TipoCuenta, Cuenta, Arrendatario, Arriendo, ServiciosExtras,\
-                                        Gastocomun, DetalleArriendo, ValoresGlobales, Externo, CodigoPropiedad
-from ApiArriendosAlegria.Rut import validarRut
-from django.utils import timezone
-from ApiArriendosAlegria.fecha_scl import GetfechaScl
+from ApiArriendosAlegria.models import (
+    ArriendoDepartamento, 
+    Usuario, 
+    Region, 
+    Comuna, 
+    TipoTrabajador, 
+    Trabajador, 
+    Propietario, 
+    PersonalidadJuridica,
+    TipoPropiedad, 
+    Propiedad,
+    Banco,
+    TipoCuenta,
+    Cuenta, 
+    Arrendatario, 
+    Arriendo, 
+    ServiciosExtras,
+    Gastocomun, 
+    DetalleArriendo, 
+    ValoresGlobales, 
+    Externo, 
+    CodigoPropiedad
+)
+from ApiArriendosAlegria.validators import validarRut
+from ApiArriendosAlegria.utils import GetfechaScl
+
 
 class SerializadorUsuario(serializers.ModelSerializer):
     class Meta:
@@ -78,15 +98,10 @@ class SerializerTrabajador(serializers.ModelSerializer):
         source='tipo_trab', 
         write_only=True,  
     )
-    usuario = serializers.PrimaryKeyRelatedField(
-        queryset=Usuario.objects.all(),
-        source='usuario_id',
-        write_only=True,
-        required=False
-    )
+    
     comuna = serializers.SerializerMethodField()
     tipo_trab = serializers.SerializerMethodField()
-    usuario_id = serializers.SerializerMethodField()
+    
     
     class Meta:
         model = Trabajador
@@ -103,12 +118,7 @@ class SerializerTrabajador(serializers.ModelSerializer):
     
     def get_tipo_trab(self, obj):
         return {'id':obj.tipo_trab.id, 'tipo':obj.tipo_trab.tipo}
-    
-    def get_usuario_id(self, obj):
-        if obj.usuario_id:
-            return {'id':obj.usuario_id.id, 'username':obj.usuario_id.username}
-        return None
-         
+
         
 class SerializerBanco(serializers.ModelSerializer):
     
@@ -612,16 +622,6 @@ class ArriendMultaDashboardSerializer(serializers.ModelSerializer):
         }
         
         return data
-    
-        
-        
-        
+
     
     
-"propiedad.cod"
-"arriendatario-nombre"
-"cuenta principal"
-"fecha de pago"
-"valor_arriendo"
-"multa"
-"porcentaje"
