@@ -340,7 +340,7 @@ class ServiciosExtras(models.Model):
         return str(self.propiedad.cod)+' - '+ self.nom_servicio
     
 class PagoPropietarios(models.Model):
-    propiedad = models.ForeignKey(Propiedad, on_delete=models.SET_NULL)
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.SET_NULL, null=True)
     servicio_extra = models.ForeignKey(ServiciosExtras, on_delete=models.SET_NULL, null=True)
     detalle_arriendo = models.ForeignKey(DetalleArriendo, on_delete=models.SET_NULL, null=True)
     fecha_pago = models.DateTimeField()
