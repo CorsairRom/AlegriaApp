@@ -348,6 +348,9 @@ class PagoPropietarios(models.Model):
     monto_honorarios = models.PositiveBigIntegerField(default=0)
     monto_final = models.PositiveBigIntegerField(default=0)
     n_boleta = models.PositiveBigIntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.n_boleta}'
     
      
 
